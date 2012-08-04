@@ -46,7 +46,14 @@ $(document).ready(function() {
             console.log(data);
             console.log('Game started!');
             socket.on('new-hand', function(data) {
-                console.log('Starting new hand.');
+                var hole1 = data.hole[0], hole2 = data.hole[1];
+
+                console.log(data.gs);
+                console.log('Starting new hand (' + data.hole[0].card + data.hole[1].card + ').');
+                $('#hole1').html(data.hole[0].card);
+                $('#hole2').html(data.hole[1].card);
+
+
             });
         });
     }

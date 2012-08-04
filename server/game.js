@@ -21,39 +21,58 @@ var holdem = require('./holdem');
 
 // Global vars. Games and hands hold games/hands in progress which should then
 // be saved to DB on completion.
-var clients = {}, games = {}, hands = {};
+var clients = {}, hands = {};
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
     var seat;
-    var g = {
-        seat1: null, seat2: null
+
+    // Shared game state of a hand.
+    var gs = {
+        seat1Id: null,
+        seat2Id: null,
+        button: 'seat1',
+        smallBlind: 10,
+        bigBlind: 20,
+        pot: 0,
+        flop1: null,
+        flop2: null,
+        flop3: null,
+        turn: null,
+        river: null,
+        actionOn: 'seat1',
     }
 
     socket.on('new-game', function(data) {
         // Set up game.
         if (data.seat == 'seat1') {
             seat = 'seat1';
-            g.seat1 = data.heroId;
-            g.seat2 = data.villainId;
-            games[g.seat1] = g;
+            gs.seat1Id = data.heroId;
+            gs.seat2Id = data.villainId;
         } else {
             seat = 'seat2';
-            g.seat2 = data.heroId;
-            g.seat1 = data.villainId;
+            gs.seat2Id = data.heroId;
+            gs.seat1Id = data.villainId;
         }
         clients[data.heroId] = socket;
-        socket.emit('new-game', g);
+        socket.emit('new-game', gs);
 
         // Play game.
         var winner = false;
         while (!winner) {
-            // Only have one 'socket' initialize the deck (using seat numbers).
-            // This is sort of akin to having seat1 deal every round.
+            // Have the socket in seat1 deal the hand.
             if (seat == 'seat1') {
-                hands[g.seat1] = { 'deck': new holdem.Deck() };
-                socket.emit('new-hand', hands[g.seat1].deck.draw(2));
-                clients[g.seat1].emit('new-hand', hands[g.seat1].deck.draw(2));
+                hands[gs.seat1Id] = {
+                    deck: new holdem.Deck(),
+                };
+                hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
+                hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
+
+                socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
+                clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
+
+                // Swap button.
+                var button = button == 'seat1' ? 'seat2' : 'seat1';
             }
             winner = true;
         }
