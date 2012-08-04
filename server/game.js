@@ -17,25 +17,44 @@ new mysql.Database({
     }
 });
 
-// Global vars.
-var clients = {};
+var holdem = require('./holdem');
+
+// Global vars. Games and hands hold games/hands in progress which should then
+// be saved to DB on completion.
+var clients = {}, games = {}, hands = {};
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
+    var seat;
     var g = {
         seat1: null, seat2: null
     }
 
     socket.on('new-game', function(data) {
+        // Set up game.
         if (data.seat == 'seat1') {
+            seat = 'seat1';
             g.seat1 = data.heroId;
             g.seat2 = data.villainId;
+            games[g.seat1] = g;
         } else {
+            seat = 'seat2';
             g.seat2 = data.heroId;
             g.seat1 = data.villainId;
         }
         clients[data.heroId] = socket;
         socket.emit('new-game', g);
+
+        // Play game.
+        var winner = false;
+        while (!winner) {
+            // Only have one 'socket' initialize the deck (using seat numbers).
+            // This is sort of akin to having seat1 deal every round.
+            if (seat == 'seat1') {
+                hands.seat1 = { 'deck': holdem.deck() };
+            }
+            winner = true;
+        }
     });
 
 });
