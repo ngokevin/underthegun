@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var playerId;
+    var heroId, villainId;
 
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
@@ -10,23 +10,21 @@ $(document).ready(function() {
 
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
-            playerId = data.playerId;
-            console.log('Your player id is ' + playerId);
+            heroId = data.heroId;
+            console.log('Your player id is ' + heroId);
         });
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
-            console.log('Player found (' + data.matchId + '), start game.');
+            villainId = data.villainId;
+            console.log('Player found (' + villainId + '), start game.');
             game();
         });
 
-        // Match not found so keep polling until a match is found.
-        socket.on('find-match-retry', function() {
-            setTimeout(function() { socket.emit('find-match-retry', { playerId: playerId }); }, 3000);
-        });
-
-        socket.emit('find-match', { playerId: playerId });
+        socket.emit('find-match', { heroId: heroId });
         console.log('Looking for match...');
+
+        $(this).unbind('click');
     });
 
 
@@ -34,9 +32,13 @@ $(document).ready(function() {
         $('#lobby').hide();
         $('#game').show();
 
-        socket.on('new-game', function(data) {
-            console.log('Starting new game.');
+        var socket = io.connect('http://localhost:8433');
 
+        console.log('Starting new game...');
+        socket.emit('new-game', { playerId: heroId, villainId: villainId });
+
+        socket.on('new-game', function(data) {
+            console.log('Game started!');
             socket.on('new-hand', function(data) {
                 console.log('Starting new hand.');
             });
