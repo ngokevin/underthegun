@@ -1,4 +1,15 @@
-exports.deck = function() {
+var Deck = function() {
+    this.deck = createDeck();
+}
+Deck.prototype.draw = function(n) {
+    if (!n || n == 1) {
+        return this.deck.pop();
+    }
+    return this.deck.splice(0, n);
+}
+exports.Deck = Deck;
+
+function createDeck() {
     // Returns a shuffled deck.
     var ranks = [[2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6'],
                  [7, '7'], [8, '8'], [9, '9'], [10, 'T'], [11, 'J'],
@@ -31,17 +42,4 @@ function shuffle(array) {
     }
 
     return array;
-}
-
-
-exports.drawNCards = function(deck, n) {
-    if (n == 1) {
-        return deck.pop();
-    }
-
-    var cards = [];
-    for (var i=0; i<n; i++) {
-        cards.push(deck.pop());
-    }
-    return cards;
 }

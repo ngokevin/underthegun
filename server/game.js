@@ -51,7 +51,9 @@ io.sockets.on('connection', function(socket) {
             // Only have one 'socket' initialize the deck (using seat numbers).
             // This is sort of akin to having seat1 deal every round.
             if (seat == 'seat1') {
-                hands.seat1 = { 'deck': holdem.deck() };
+                hands[g.seat1] = { 'deck': new holdem.Deck() };
+                socket.emit('new-hand', hands[g.seat1].deck.draw(2));
+                clients[g.seat1].emit('new-hand', hands[g.seat1].deck.draw(2));
             }
             winner = true;
         }
