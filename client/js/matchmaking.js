@@ -42,20 +42,62 @@ $(document).ready(function() {
         console.log('Starting new game...');
         socket.emit('new-game', d);
 
+        // Start game.
         socket.on('new-game', function(data) {
             console.log(data);
             console.log('Game started!');
-            socket.on('new-hand', function(data) {
-                var hole1 = data.hole[0], hole2 = data.hole[1];
 
+            // Start hand.
+            socket.on('new-hand', function(data) {
+                // Receive hole cards.
+                var hole1 = data.hole[0], hole2 = data.hole[1];
                 console.log(data.gs);
                 console.log('Starting new hand (' + data.hole[0].card + data.hole[1].card + ').');
                 $('#hole1').html(data.hole[0].card);
                 $('#hole2').html(data.hole[1].card);
 
+                // Preflop betting round.
+                if (data.gs.actionOn == d.seat) {
+                    getAction('preflop', data);
+                }
+                socket.on('preflop-action', function(data) {
+                    console.log(data);
+                    getAction('preflop');
+                });
+                socket.on('preflop-done', function(data) {
+                    // Receive turn.
 
+                    // Turn betting round.
+                });
             });
-        });
-    }
 
+            function getAction() {
+                // Displays action buttons, gets the one clicked, and sends the
+                // action to the server.
+                $('#actions').show().bind('click', function() {
+                    var data = {}
+                    switch (this.id) {
+                        case 'fold':
+                            data.action = ['fold', 0];
+                            break;
+                        case 'call':
+                            data.action = ['call', 0];
+                            break;
+                        case 'bet':
+                            data.action = ['bet', 10];
+                            break;
+                        case 'raise':
+                            data.action = ['raise', 10];
+                            break;
+                    }
+                    socket.emit('preflop-action', data)
+
+                    $('#actions').hide().unbind('click');
+                });
+            }
+
+        });
+
+        // When game over, disconnect and redirect to lobby.
+    }
 });
