@@ -1,0 +1,77 @@
+html, body {
+  color: #d2d2d2;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%; }
+
+li {
+  list-style: none;
+  margin-left: -10%; }
+
+span.button {
+  background: #390208;
+  border-radius: 10px;
+  box-shadow: 3px 3px 2px 0 black;
+  cursor: pointer;
+  float: left;
+  height: 35px;
+  width: 20%;
+  margin-left: 7.5%;
+  margin-top: 1%;
+  padding: 14px 8px 2px 8px;
+  text-align: center;
+  z-index: 2; }
+  span.button:hover {
+    background: #370208; }
+  span.button.clicked {
+    box-shadow: 0px 0px 0px 0 black; }
+
+#lobby {
+  height: 100%;
+  width: 100%;
+  background: #0a3102; }
+  #lobby #sidebar {
+    background: #141414;
+    border-radius: 50px 50px 20px 20px;
+    bottom: 0;
+    right: 0;
+    height: 90%;
+    width: 25%;
+    min-width: 360px;
+    position: absolute;
+    text-align: center;
+    z-index: 1; }
+    #lobby #sidebar #rank-logo {
+      height: 8%; }
+    #lobby #sidebar #rank {
+      background: #282828;
+      border-radius: 50px 50px 0 0;
+      height: 12%;
+      padding-top: 12px; }
+      #lobby #sidebar #rank #league {
+        font-size: 24px; }
+      #lobby #sidebar #rank #rank {
+        font-size: 36px; }
+    #lobby #sidebar #stats {
+      background: #282828;
+      border-radius: 50px 50px 0 0; }
+      #lobby #sidebar #stats #stats-header {
+        font-size: 36px;
+        padding-top: 12px; }
+      #lobby #sidebar #stats li {
+        margin-top: 24px; }
+    #lobby #sidebar #ladder {
+      position: absolute;
+      left: 15%;
+      width: 50%; }
+  #lobby #footer {
+    background: #141414;
+    width: 80%;
+    height: 8%;
+    position: absolute;
+    bottom: 0;
+    left: 0; }
+
+#game {
+  display: none; }

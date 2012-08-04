@@ -18,11 +18,26 @@ new mysql.Database({
 });
 
 // Global vars.
-var newGameMatchQueue = {};
+var clients = {};
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
-    var seat1, seat2;
+    var g = {
+        seat1: null, seat2: null
+    }
+
+    socket.on('new-game', function(data) {
+        if (data.seat == 'seat1') {
+            g.seat1 = data.heroId;
+            g.seat2 = data.villainId;
+        } else {
+            g.seat2 = data.heroId;
+            g.seat1 = data.villainId;
+        }
+        clients[data.heroId] = socket;
+        socket.emit('new-game', g);
+    });
+
 });
 
 function f() { return false; }

@@ -18,7 +18,7 @@ new mysql.Database({
 });
 
 // Global vars.
-var numPlayers = 0, waitingPlayers = [], matchFoundQueue = {};
+var numPlayers = 0, clients = [];
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
@@ -29,42 +29,35 @@ io.sockets.on('connection', function(socket) {
         // Assign a player id to player if they don't have one.
         if (!('playerId' in data)) {
             playerId = numPlayers;
-            socket.emit('assign-player-id', { playerId: playerId });
+            socket.set('playerId', playerId, f);
+            socket.emit('assign-player-id', { heroId: playerId });
             numPlayers++;
         } else {
             playerId = data.playerId;
+            socket.set('playerId', playerId, f);
         }
         findMatch(playerId, false);
     });
 
-    // Find a match knowing the player is already in the waiting list.
-    socket.on('find-match-retry', function(data) {
-        findMatch(data.playerId, true);
-    });
-
     // Remove player from waiting list if disconnected.
     socket.on('disconnect', function() {
-        var index = waitingPlayers.indexOf(playerId);
-        waitingPlayers.splice(index, index);
+        var index = clients.indexOf(playerId);
+        clients.splice(index, index);
     });
 
-    function findMatch(playerId, retrying) {
+    function findMatch(playerId) {
         // Match a player if there's already player waiting.
-        if (!retrying && waitingPlayers.length > 0) {
-            var matchId = waitingPlayers.shift();
-            matchFoundQueue[matchId] = playerId;
-            return socket.emit('match-found', { matchId: matchId });
-        // Else, join the waiting list and retry.
-        } else if (!retrying) {
-            waitingPlayers.push(playerId);
-        // If retrying, check if someone matched up with the player while the
-        // player was waiting.
+        if (clients.length > 0) {
+            var matchSocket = clients.shift();
+            matchSocket.get('playerId', function(err, playerId) {
+                socket.emit('match-found', { villainId: playerId, seat: 'seat2' })
+            });
+            matchSocket.emit('match-found', { villainId: playerId, seat: 'seat1' });
+        // Else, store our socket in the waiting list (with playerId attached
+        // to it).
         } else {
-            if (playerId in matchFoundQueue) {
-                return socket.emit('match-found', { matchId: matchFoundQueue[playerId] });
-            }
+            clients.push(socket);
         }
-        socket.emit('find-match-retry');
     }
 });
 
