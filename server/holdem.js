@@ -1,3 +1,4 @@
+// Deck Stuff
 var Deck = function() {
     this.deck = createDeck();
 }
@@ -27,7 +28,6 @@ function createDeck() {
             });
         }
     }
-
     return shuffle(deck);
 }
 
@@ -43,3 +43,61 @@ function shuffle(array) {
 
     return array;
 }
+
+// Game State Stuff
+
+// Shared game state of a hand.
+var Gs = function() {
+    this.seat1Id = null;
+    this.seat2Id = null;
+    this.button = 'seat1';
+    this.smallBlind = 10;
+    this.bigBlind = 20;
+    this.seat1Chips = 1500;
+    this.seat2Chips = 1500;
+    this.pot = 30;
+    this.currentRound = 'preflop';
+    this.flop1 = null;
+    this.flop2 = null;
+    this.flop3 = null;
+    this.turn = null;
+    this.river = null;
+    this.actionOn = 'seat1';
+    this.preflopActions = [];
+    this.flopActions = [];
+    this.turnActions = [];
+    this.riverActions = [];
+    this.winner = null;
+}
+Gs.prototype.applyAction = function(seat, action) {
+    // Parses an action, manipulates the game state and tells the
+    // players. Sort of like a finite state machine. Returns true if
+    // move onto the next round.
+    this[this.currentRound + 'Actions'].push(action);
+
+    switch (action[0]) {
+        case 'fold':
+            // Next round if a player folds.
+            this[winner] = getOtherPlayer(seat);
+            return { 'handComplete': true };
+            break;
+        case 'check':
+            if (seat == this.button) {
+                // Or end hand if player checks back the river.
+                if (this.currentRound == 'river') {
+                    // TODO: calculate winner
+                    return { 'hand-complete': true };
+                // Next round if last player checks.
+                } else {
+                    return true;
+                }
+            }
+        case 'call':
+            break;
+        case 'bet':
+            break;
+        case 'raise':
+            break;
+    }
+}
+exports.Gs = Gs;

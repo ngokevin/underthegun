@@ -10,7 +10,7 @@ li {
   margin-left: -10%; }
 
 span.button {
-  background: #390208;
+  background: #490208;
   border-radius: 10px;
   box-shadow: 3px 3px 2px 0 black;
   cursor: pointer;
@@ -23,7 +23,7 @@ span.button {
   text-align: center;
   z-index: 2; }
   span.button:hover {
-    background: #370208; }
+    background: #470208; }
   span.button.clicked {
     box-shadow: 0px 0px 0px 0 black; }
 

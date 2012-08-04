@@ -1,4 +1,4 @@
-// Start up match-making server.
+// Start up hand server.
 var http = require('http').createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain'});
     response.end('Hello World');
@@ -26,24 +26,7 @@ var clients = {}, hands = {};
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
     var seat;
-
-    // Shared game state of a hand.
-    var gs = {
-        seat1Id: null,
-        seat2Id: null,
-        button: 'seat1',
-        smallBlind: 10,
-        bigBlind: 20,
-        seat1Chips: 1500,
-        seat2Chips: 1500,
-        pot: 30,
-        flop1: null,
-        flop2: null,
-        flop3: null,
-        turn: null,
-        river: null,
-        actionOn: 'seat1',
-    }
+    var gs = new holdem.Gs();
 
     socket.on('new-game', function(data) {
         // Set up game.
@@ -59,31 +42,39 @@ io.sockets.on('connection', function(socket) {
         clients[data.heroId] = socket;
         socket.emit('new-game', gs);
 
-        // Play game.
-        var winner = false;
-        while (!winner) {
-            // Have the socket in seat1 deal the hand.
-            if (seat == 'seat1') {
-                hands[gs.seat1Id] = {
-                    deck: new holdem.Deck(),
-                };
-                hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
-                hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
-
-                socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
-                clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
-
-                socket.on('preflop-action', function(data) {
-                    console.log('preflop-action ' + data.action);
-                });
-
-                // Swap button.
-                var button = button == 'seat1' ? 'seat2' : 'seat1';
-            }
-            winner = true;
+        function broadcast(ev, data) {
+            clients[gs.seat1Id].emit(ev, data);
+            clients[gs.seat2Id].emit(ev, data);
         }
+
+        // Play game.
+        // Have the socket in seat1 deal the hand.
+        if (seat == 'seat1') {
+            hands[gs.seat1Id] = {
+                deck: new holdem.Deck(),
+            };
+            hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
+            hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
+
+            socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
+            clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
+        }
+
+        socket.on('preflop-action', function(data) {
+            console.log('preflop-action ' + data.action);
+            // TODO: verify game state
+            var handStatus = gs.applyAction(gs, data.action);
+        });
+
+        socket.on('hand-complete', function(data) {
+            // TODO: verify game state (check if game state has winner)
+        });
     });
 
+    function getOtherPlayer(seat) {
+        // Get other player.
+        return seat == 'seat1' ? 'seat2' : 'seat1';
+    }
 });
 
 function f() { return false; }

@@ -1,3 +1,10 @@
+@import 'globals';
+
 #actions span {
-    display: none;
+    &.inactive {
+        background: $dark-gray;
+        color: $light-gray;
+        cursor: normal;
+        box-shadow: 0 0 0 0;
+    }
 }

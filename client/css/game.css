@@ -1,2 +1,5 @@
-#actions span {
-  display: none; }
+#actions span.inactive {
+  background: #141414;
+  color: #505050;
+  cursor: normal;
+  box-shadow: 0 0 0 0; }

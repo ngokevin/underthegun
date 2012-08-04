@@ -1,0 +1,17 @@
+span.button {
+  background: #490208;
+  border-radius: 10px;
+  box-shadow: 3px 3px 2px 0 black;
+  cursor: pointer;
+  float: left;
+  height: 35px;
+  width: 20%;
+  margin-left: 7.5%;
+  margin-top: 1%;
+  padding: 14px 8px 2px 8px;
+  text-align: center;
+  z-index: 2; }
+  span.button:hover {
+    background: #470208; }
+  span.button.clicked {
+    box-shadow: 0px 0px 0px 0 black; }
