@@ -34,7 +34,9 @@ io.sockets.on('connection', function(socket) {
         button: 'seat1',
         smallBlind: 10,
         bigBlind: 20,
-        pot: 0,
+        seat1Chips: 1500,
+        seat2Chips: 1500,
+        pot: 30,
         flop1: null,
         flop2: null,
         flop3: null,
@@ -70,6 +72,10 @@ io.sockets.on('connection', function(socket) {
 
                 socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
                 clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
+
+                socket.on('preflop-action', function(data) {
+                    console.log('preflop-action ' + data.action);
+                });
 
                 // Swap button.
                 var button = button == 'seat1' ? 'seat2' : 'seat1';
