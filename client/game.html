@@ -5,14 +5,45 @@
         <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
         <title>Under the Gun</title>
         <link rel='stylesheet' href='css/base.css'>
+        <link rel='stylesheet' href='css/lobby.css'>
+        <link rel='stylesheet' href='css/game.css'>
         <link rel='stylesheet' href='css/font-awesome.css'>
-        <link rel='icon' type="image/x-icon" href="img/favicon.png" />
+        <link rel='icon' type='image/x-icon' href='img/favicon.png' />
         <script src='js/lib/jquery.min.js'></script>
         <script src='js/lib/socket.io.js'></script>
+
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
     </head>
 
     <body>
-        <button id='find-match'>Find Game</button>
+        <div id='lobby'>
+            <div id='sidebar'>
+                <div id='rank-logo'></div>
+                <ul id='rank'>
+                    <li id='league'>Star League</li>
+                    <li id='rank'>Rank 82</li>
+                </ul>
+                <ul id='stats'>
+                    <li id='stats-header'>Statistics</li>
+                    <li>Wins: <span id="wins"></span></li>
+                    <li>Losses: <span id="losses"></span></li>
+                    <li>Win-Loss %: <span id="win-loss-percentage"></span></li>
+                    <li>Win-Loss L10: <span id="win-loss-l10"></span></li>
+                </ul>
+                <span id='ladder' class='button'>Ladder</span>
+            </div>
+
+            <div id='footer'>
+                <span id='find-match' class='button'>Find Game</span>
+                <span id='custom-game' class='button'>Custom Game</span>
+                <span id='settings' class='button'>Settings</span>
+            </div>
+        </div>
+
+        <div id='game'>
+            <canvas id='c'></canvas>
+        </div>
+
         <script src='js/matchmaking.js'></script>
     </body>
 </html>
