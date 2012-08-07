@@ -40,41 +40,48 @@ io.sockets.on('connection', function(socket) {
             gs.seat1Id = data.villainId;
         }
         clients[data.heroId] = socket;
-        socket.emit('new-game', gs);
 
-        function broadcast(ev, data) {
-            clients[gs.seat1Id].emit(ev, data);
-            clients[gs.seat2Id].emit(ev, data);
-        }
-
-        // Play game.
-        // Have the socket in seat1 deal the hand.
         if (seat == 'seat1') {
+            // Initialize the deck.
             hands[gs.seat1Id] = {
                 deck: new holdem.Deck(),
             };
-            hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
-            hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
-
-            socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
-            clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
         }
+
+        socket.emit('new-game', gs);
+        newHand();
 
         socket.on('preflop-action', function(data) {
             console.log('preflop-action ' + data.action);
             // TODO: verify game state
             var handStatus = gs.applyAction(gs, data.action);
+            if ('hand-complete' in handStatus) {
+                emitAll('hand-complete', {gs: gs});
+            }
         });
 
         socket.on('hand-complete', function(data) {
             // TODO: verify game state (check if game state has winner)
         });
-    });
 
-    function getOtherPlayer(seat) {
-        // Get other player.
-        return seat == 'seat1' ? 'seat2' : 'seat1';
-    }
+        function newHand() {
+            // Have the socket in seat1 deal the hand.
+            if (seat == 'seat1') {
+                hands[gs.seat1Id].deck
+
+                hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
+                hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
+
+                socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
+                clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
+            }
+        }
+
+        function emitAll(ev, data) {
+            clients[gs.seat1Id].emit(ev, data);
+            clients[gs.seat2Id].emit(ev, data);
+        }
+    });
 });
 
 function f() { return false; }

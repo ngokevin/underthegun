@@ -71,6 +71,10 @@ $(document).ready(function() {
 
                     // Turn betting round.
                 });
+
+                socket.on('hand-complete', function(data) {
+                    console.log('hand complete');
+                });
             });
 
             function getAction(action) {

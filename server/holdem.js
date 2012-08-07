@@ -1,6 +1,7 @@
 // Deck Stuff
 var Deck = function() {
     this.deck = createDeck();
+    this.shuffle();
 }
 Deck.prototype.draw = function(n) {
     if (!n || n == 1) {
@@ -8,8 +9,18 @@ Deck.prototype.draw = function(n) {
     }
     return this.deck.splice(0, n);
 }
-exports.Deck = Deck;
+Deck.prototype.shuffle = function() {
+    var tmp, current, top = this.deck.length;
 
+    if(top) while(--top) {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = this.deck[current];
+        this.deck[current] = this.deck[top];
+        this.deck[top] = tmp;
+    }
+
+    return this.deck;
+}
 function createDeck() {
     // Returns a shuffled deck.
     var ranks = [[2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6'],
@@ -28,21 +39,10 @@ function createDeck() {
             });
         }
     }
-    return shuffle(deck);
+    return deck;
 }
+exports.Deck = Deck;
 
-function shuffle(array) {
-    var tmp, current, top = array.length;
-
-    if(top) while(--top) {
-        current = Math.floor(Math.random() * (top + 1));
-        tmp = array[current];
-        array[current] = array[top];
-        array[top] = tmp;
-    }
-
-    return array;
-}
 
 // Game State Stuff
 
@@ -62,7 +62,7 @@ var Gs = function() {
     this.flop3 = null;
     this.turn = null;
     this.river = null;
-    this.actionOn = 'seat1';
+    this.actionOn = this.button;
     this.preflopActions = [];
     this.flopActions = [];
     this.turnActions = [];
@@ -78,8 +78,8 @@ Gs.prototype.applyAction = function(seat, action) {
     switch (action[0]) {
         case 'fold':
             // Next round if a player folds.
-            this[winner] = getOtherPlayer(seat);
-            return { 'handComplete': true };
+            this.winner = getOtherPlayer(seat);
+            return { 'hand-complete': true };
             break;
         case 'check':
             if (seat == this.button) {
@@ -89,7 +89,7 @@ Gs.prototype.applyAction = function(seat, action) {
                     return { 'hand-complete': true };
                 // Next round if last player checks.
                 } else {
-                    return true;
+                    return { 'next-round': true };
                 }
             }
         case 'call':
@@ -99,5 +99,24 @@ Gs.prototype.applyAction = function(seat, action) {
         case 'raise':
             break;
     }
+};
+Gs.prototype.newHand = function() {
+    this.button = getOtherPlayer(this.button);
+    this.pot = this.smallBlind + this.bigBlind;
+    this.currentRound = 'preflop';
+    this.flop1 = null;
+    this.flop2 = null;
+    this.flop3 = null;
+    this.river = null;
+    this.actionOn = this.button;
+    this.preflopActions = [];
+    this.flopActions = [];
+    this.turnActions = [];
+    this.riverActions = [];
+    this.winner = null;
+}
+function getOtherPlayer(seat) {
+    // Get other player.
+    return seat == 'seat1' ? 'seat2' : 'seat1';
 }
 exports.Gs = Gs;
