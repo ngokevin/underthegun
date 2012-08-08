@@ -21,42 +21,43 @@ var holdem = require('./holdem');
 
 // Global vars. Games and hands hold games/hands in progress which should then
 // be saved to DB on completion.
-var clients = {}, hands = {};
+var clients = {};
+var gameStates = {}
+var numGames = 0;
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
-    var seat;
-    var gs = new holdem.Gs();
+    var seat, seat1Id, playerId, gameId;
 
     socket.on('new-game', function(data) {
         // Set up game.
-        if (data.seat == 'seat1') {
-            seat = 'seat1';
+        seat = data.seat;
+        seat1Id = seat == 'seat1' ? data.heroId : data.villainId;
+        playerId = data.heroId;
+        clients[playerId] = socket;
+
+        // Have only one player's socket initialize the game state into the
+        // global object.
+        if (seat == 'seat1') {
+            var gs = new holdem.Gs();
+            gs.gameId = numGames++;
             gs.seat1Id = data.heroId;
             gs.seat2Id = data.villainId;
-        } else {
-            seat = 'seat2';
-            gs.seat2Id = data.heroId;
-            gs.seat1Id = data.villainId;
-        }
-        clients[data.heroId] = socket;
 
-        if (seat == 'seat1') {
-            // Initialize the deck.
-            hands[gs.seat1Id] = {
-                deck: new holdem.Deck(),
-            };
-        }
+            // Store it in a global object so both sockets can access it via
+            // the game id (which will be handed out soon).
+            gameStates[seat1Id] = gs;
 
-        socket.emit('new-game', gs);
-        newHand();
+            emitGsAll('new-game');
+            newHand();
+        }
 
         socket.on('preflop-action', function(data) {
             console.log('preflop-action ' + data.action);
             // TODO: verify game state
             var handStatus = gs.applyAction(gs, data.action);
             if ('hand-complete' in handStatus) {
-                emitAll('hand-complete', {gs: gs});
+                emitGsAll('hand-complete');
             }
         });
 
@@ -65,21 +66,24 @@ io.sockets.on('connection', function(socket) {
         });
 
         function newHand() {
-            // Have the socket in seat1 deal the hand.
             if (seat == 'seat1') {
-                hands[gs.seat1Id].deck
-
-                hands[gs.seat1Id].seat1Hole = hands[gs.seat1Id].deck.draw(2),
-                hands[gs.seat1Id].seat2Hole = hands[gs.seat1Id].deck.draw(2),
-
-                socket.emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat1Hole});
-                clients[gs.seat2Id].emit('new-hand', {gs: gs, hole: hands[gs.seat1Id].seat2Hole});
+                gsSet('seat1Hole', gsGet('deck').draw(2));
+                gsSet('seat2Hole', gsGet('deck').draw(2));
+                emitGsAll('new-hand');
             }
         }
 
-        function emitAll(ev, data) {
-            clients[gs.seat1Id].emit(ev, data);
-            clients[gs.seat2Id].emit(ev, data);
+        function emitGsAll(eventName) {
+            clients[gs.seat1Id].emit(eventName, gs.filter('seat1'));
+            clients[gs.seat2Id].emit(eventName, gs.filter('seat2'));
+        }
+
+        function gsGet(k) {
+            return gameStates[seat1Id][k];
+        }
+
+        function gsSet(k, v) {
+            gameStates[seat1Id][k] = v;
         }
     });
 });

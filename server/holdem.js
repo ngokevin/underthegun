@@ -48,13 +48,17 @@ exports.Deck = Deck;
 
 // Shared game state of a hand.
 var Gs = function() {
+    this.gameId = null;
     this.seat1Id = null;
     this.seat2Id = null;
+    this.deck = new Deck();
     this.button = 'seat1';
     this.smallBlind = 10;
     this.bigBlind = 20;
     this.seat1Chips = 1500;
     this.seat2Chips = 1500;
+    this.seat1Hole = [];
+    this.seat2Hole = [];
     this.pot = 30;
     this.currentRound = 'preflop';
     this.flop1 = null;
@@ -102,9 +106,12 @@ Gs.prototype.applyAction = function(seat, action) {
     }
 };
 Gs.prototype.newHand = function() {
+    this.deck.shuffle();
     this.button = getOtherPlayer(this.button);
     this.pot = this.smallBlind + this.bigBlind;
     this.currentRound = 'preflop';
+    this.seat1Hole = [];
+    this.seat2Hole = [];
     this.flop1 = null;
     this.flop2 = null;
     this.flop3 = null;
@@ -115,6 +122,18 @@ Gs.prototype.newHand = function() {
     this.turnActions = [];
     this.riverActions = [];
     this.winner = null;
+};
+Gs.prototype.filter = function(seat) {
+    // Hide certain values based on seat (for security reasons so they can't
+    // snoop other player's hole cards.
+    var filterKeys = [seat + 'Hole', 'deck'];
+    var filteredGs = {}
+    for(var keys = Object.keys(this), l = keys.length; l; --l) {
+        if (!filterKeys.indexOf(keys[l-1])) {
+            filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
+        }
+    }
+    return filteredGs;
 };
 Gs.prototype.isButton = function(seat) {
     return seat == this.button ? true : false;

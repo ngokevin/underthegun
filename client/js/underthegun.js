@@ -43,64 +43,58 @@ $(document).ready(function() {
         socket.emit('new-game', d);
 
         // Start game.
-        socket.on('new-game', function(data) {
-            var gs;
-
-            console.log(data);
+        socket.on('new-game', function(gs) {
             console.log('Game started!');
 
             // Start hand.
-            socket.on('new-hand', function(data) {
+            socket.on('new-hand', function(gs) {
                 // Receive hole cards.
-                var hole1 = data.hole[0], hole2 = data.hole[1];
-                gs = data.gs;
-                console.log('Starting new hand (' + data.hole[0].card + data.hole[1].card + ').');
-                $('#hole1').html(data.hole[0].card);
-                $('#hole2').html(data.hole[1].card);
+                var hole1 = gs[d.seat + 'Hole'][0];
+                var hole2 = gs[d.seat + 'Hole'][1];
+                $('#hole1').html(hole1.card);
+                $('#hole2').html(hole2.card);
+                console.log('Starting new hand (' + hole1.card + hole2.card + ').');
 
                 // Preflop betting round.
-                if (data.gs.actionOn == d.seat) {
-                    getAction('preflop', data);
+                if (gs.actionOn == d.seat) {
+                    getAction('preflop');
                 }
-                socket.on('preflop-action', function(data) {
-                    console.log(data);
+                socket.on('preflop-action', function(gs) {
                     getAction('preflop');
                 });
-                socket.on('preflop-done', function(data) {
+                socket.on('preflop-done', function(gs) {
                     // Receive turn.
-
                     // Turn betting round.
                 });
 
-                socket.on('hand-complete', function(data) {
+                socket.on('hand-complete', function(gs) {
                     console.log('hand complete');
                 });
             });
 
-            function getAction(action) {
+            function getAction(round) {
                 // Displays action buttons, gets the one clicked, and sends the
                 // action to the server.
+                var actionEvent = round + '-action';
                 $('#actions span').removeClass('inactive').bind('click', function() {
-                    var data = {gs: gs};
-
                     switch (this.id) {
                         case 'fold':
-                            data.action = ['fold', 0];
+                            gs[actionEvent].push(['fold', 0]);
                             break;
                         case 'check':
-                            data.action = ['check', 0];
+                            gs[actionEvent].push(['check', 0]);
                             break;
                         case 'call':
-                            data.action = ['call', 0];
+                            gs[actionEvent].push(['call', 0]);
                             break;
                         case 'bet':
-                            data.action = ['bet', 10];
+                            gs[actionEvent].push(['bet', 10]);
                             break;
                         case 'raise':
-                            data.action = ['raise', 10];
+                            gs[actionEvent].push(['raise', 10]);
                             break;
                     }
-                    socket.emit(action + '-action', data)
+                    socket.emit(actionEvent, gs)
                     $('#actions span').addClass('inactive').unbind('click');
                 });
             }
