@@ -82,15 +82,16 @@ Gs.prototype.applyAction = function(seat, action) {
             return { 'hand-complete': true };
             break;
         case 'check':
-            if (seat == this.button) {
-                // Or end hand if player checks back the river.
+            if (isButton(seat)) {
+                // End hand if player checks back the river.
                 if (this.currentRound == 'river') {
                     // TODO: calculate winner
                     return { 'hand-complete': true };
-                // Next round if last player checks.
+                // Next round if player checks back.
                 } else {
                     return { 'next-round': true };
                 }
+            } else {
             }
         case 'call':
             break;
@@ -114,7 +115,14 @@ Gs.prototype.newHand = function() {
     this.turnActions = [];
     this.riverActions = [];
     this.winner = null;
-}
+};
+Gs.prototype.isButton = function(seat) {
+    return seat == this.button ? true : false;
+};
+Gs.prototype.nextTurn = function() {
+    // Switch turn to next player (action on other player).
+    this.actionOn = getOtherPlayer(this.actionOn);
+};
 function getOtherPlayer(seat) {
     // Get other player.
     return seat == 'seat1' ? 'seat2' : 'seat1';
