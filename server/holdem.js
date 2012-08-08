@@ -129,7 +129,7 @@ Gs.prototype.filter = function(seat) {
     var filterKeys = [seat + 'Hole', 'deck'];
     var filteredGs = {}
     for(var keys = Object.keys(this), l = keys.length; l; --l) {
-        if (!filterKeys.indexOf(keys[l-1])) {
+        if (filterKeys.indexOf(keys[l-1] == -1)) {
             filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
         }
     }

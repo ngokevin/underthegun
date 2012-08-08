@@ -1,9 +1,7 @@
 $(document).ready(function() {
-    var d = {
-        heroId: null,
-        villainId: null,
-        seat: null
-    }
+    var heroId = null;
+    var villainId = null;
+    var seat = null;
 
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
@@ -14,19 +12,19 @@ $(document).ready(function() {
 
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
-            d.heroId = data.heroId;
-            console.log('Your player id is ' + d.heroId);
+            heroId = data.heroId;
+            console.log('Your player id is ' + heroId);
         });
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
-            d.seat = data.seat;
-            d.villainId = data.villainId;
-            console.log('Player found (' + d.villainId + '), start game.');
+            seat = data.seat;
+            villainId = data.villainId;
+            console.log('Player found (' + villainId + '), start game.');
             game();
         });
 
-        socket.emit('find-match', { heroId: d.heroId });
+        socket.emit('find-match', { heroId: heroId });
         console.log('Looking for match...');
 
         $(this).unbind('click');
@@ -40,7 +38,7 @@ $(document).ready(function() {
         var socket = io.connect('http://localhost:8433');
 
         console.log('Starting new game...');
-        socket.emit('new-game', d);
+        socket.emit('new-game', { heroId: heroId, villainId: villainId, seat: seat });
 
         // Start game.
         socket.on('new-game', function(gs) {
@@ -49,18 +47,19 @@ $(document).ready(function() {
             // Start hand.
             socket.on('new-hand', function(gs) {
                 // Receive hole cards.
-                var hole1 = gs[d.seat + 'Hole'][0];
-                var hole2 = gs[d.seat + 'Hole'][1];
+                var hole1 = gs[seat + 'Hole'][0];
+                var hole2 = gs[seat + 'Hole'][1];
                 $('#hole1').html(hole1.card);
                 $('#hole2').html(hole2.card);
                 console.log('Starting new hand (' + hole1.card + hole2.card + ').');
 
                 // Preflop betting round.
-                if (gs.actionOn == d.seat) {
-                    getAction('preflop');
+                console.log(gs);
+                if (gs.actionOn == seat) {
+                    getAction('preflop', gs);
                 }
                 socket.on('preflop-action', function(gs) {
-                    getAction('preflop');
+                    getAction('preflop', gs);
                 });
                 socket.on('preflop-done', function(gs) {
                     // Receive turn.
@@ -72,35 +71,33 @@ $(document).ready(function() {
                 });
             });
 
-            function getAction(round) {
+            function getAction(round, gs) {
                 // Displays action buttons, gets the one clicked, and sends the
                 // action to the server.
-                var actionEvent = round + '-action';
+                var action;
                 $('#actions span').removeClass('inactive').bind('click', function() {
                     switch (this.id) {
                         case 'fold':
-                            gs[actionEvent].push(['fold', 0]);
+                            action = ['fold', 0];
                             break;
                         case 'check':
-                            gs[actionEvent].push(['check', 0]);
+                            action = ['check', 0];
                             break;
                         case 'call':
-                            gs[actionEvent].push(['call', 0]);
+                            action = ['call', 0];
                             break;
                         case 'bet':
-                            gs[actionEvent].push(['bet', 10]);
+                            action = ['bet', 10];
                             break;
                         case 'raise':
-                            gs[actionEvent].push(['raise', 10]);
+                            action = ['raise', 10];
                             break;
                     }
-                    socket.emit(actionEvent, gs)
+                    socket.emit(round + '-action', {action: action, gs: gs})
                     $('#actions span').addClass('inactive').unbind('click');
                 });
             }
-
         });
-
         // When game over, disconnect and redirect to lobby.
     }
 });
