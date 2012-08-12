@@ -126,10 +126,10 @@ Gs.prototype.newHand = function() {
 Gs.prototype.filter = function(seat) {
     // Hide certain values based on seat (for security reasons so they can't
     // snoop other player's hole cards.
-    var filterKeys = [seat + 'Hole', 'deck'];
+    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
     var filteredGs = {}
     for(var keys = Object.keys(this), l = keys.length; l; --l) {
-        if (filterKeys.indexOf(keys[l-1] == -1)) {
+        if (filterKeys.indexOf(keys[l-1]) < 0) {
             filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
         }
     }
