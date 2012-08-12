@@ -60,6 +60,8 @@ var Gs = function() {
     this.seat1Hole = [];
     this.seat2Hole = [];
     this.pot = 30;
+    this.seat1Pot = 0;
+    this.seat2Pot = 0;
     this.currentRound = 'preflop';
     this.flop1 = null;
     this.flop2 = null;
@@ -81,33 +83,55 @@ Gs.prototype.applyAction = function(seat, action) {
 
     switch (action[0]) {
         case 'fold':
-            // Next round if a player folds.
-            this.winner = getOtherPlayer(seat);
+            // Next hand if a player folds.
+            this.winner = nextPlayer();
             return { 'hand-complete': true };
             break;
+
         case 'check':
             if (isButton(seat)) {
-                // End hand if player checks back the river.
+                // End hand if button checks back river.
                 if (this.currentRound == 'river') {
                     // TODO: calculate winner
                     return { 'hand-complete': true };
-                // Next round if player checks back.
+                // Next round if button checks back round.
                 } else {
+                    this.nextTurn();
                     return { 'next-round': true };
                 }
+            // Next turn if player leads with check.
             } else {
+                this.nextTurn();
+                return { 'next-turn': true };
             }
+
         case 'call':
+            var toCall = this.getSeatAttr(seat, 'Pot') - this.getSeatAttr(nextPlayer(), 'Pot');
+            this.subtractChips(seat, 'Chips', toCall);
+            this.addChips(seat, 'Pot', toCall);
+            this.scoopPot();
+
+            // End hand if player calls river bet.
+            if (this.currentRound == 'river') {
+                // TODO: calculate winner
+                return { 'hand-complete': true };
+            // Next round if player calls bet.
+            } else {
+                this.nextTurn();
+                return { 'next-round': true };
+            }
             break;
+
         case 'bet':
             break;
+
         case 'raise':
             break;
     }
 };
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
-    this.button = getOtherPlayer(this.button);
+    this.button = nextPlayer(this.button);
     this.pot = this.smallBlind + this.bigBlind;
     this.currentRound = 'preflop';
     this.seat1Hole = [];
@@ -117,6 +141,7 @@ Gs.prototype.newHand = function() {
     this.flop3 = null;
     this.river = null;
     this.actionOn = this.button;
+    this.currentBet = 0;
     this.preflopActions = [];
     this.flopActions = [];
     this.turnActions = [];
@@ -126,7 +151,7 @@ Gs.prototype.newHand = function() {
 Gs.prototype.filter = function(seat) {
     // Hide certain values based on seat (for security reasons so they can't
     // snoop other player's hole cards.
-    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
+    var filterKeys = [otherPlayer(seat) + 'Hole', 'deck'];
     var filteredGs = {}
     for(var keys = Object.keys(this), l = keys.length; l; --l) {
         if (filterKeys.indexOf(keys[l-1]) < 0) {
@@ -140,10 +165,31 @@ Gs.prototype.isButton = function(seat) {
 };
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
-    this.actionOn = getOtherPlayer(this.actionOn);
+    this.actionOn = nextPlayer(this.actionOn);
 };
-function getOtherPlayer(seat) {
+Gs.prototype.getSeatAttr = function(seat, attr) {
+    return this[seat + attr];
+};
+Gs.prototype.setSeatAttr = function(seat, attr, val) {
+    this[seat + attr] = val;
+};
+Gs.prototype.subtract = function(seat, attr, chips) {
+    this[seat + attr] -= chips;
+};
+Gs.prototype.add = function(seat, attr, chips) {
+    this[seat + attr] += chips;
+};
+Gs.prototype.scoopPot = function() {
+    this.pot += this.seat1Pot + this.seat2Pot;
+    this.seat1Pot = 0;
+    this.seat2Pot = 0;
+}
+function otherPlayer(seat) {
     // Get other player.
     return seat == 'seat1' ? 'seat2' : 'seat1';
+}
+function nextPlayer() {
+    // Get other player.
+    return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
 }
 exports.Gs = Gs;
