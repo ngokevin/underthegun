@@ -55,8 +55,13 @@ io.sockets.on('connection', function(socket) {
         socket.on('preflop-action', function(data) {
             console.log('preflop-action ' + data.action);
             // TODO: verify game state
-            var handStatus = gs.applyAction(gs, data.action);
-            if ('hand-complete' in handStatus) {
+            var handStatus = gs.applyAction(seat, data.action);
+            console.log(handStatus);
+            if ('next-turn' in handStatus) {
+                emitGsAll('next-turn');
+            } else if ('next-round' in handStatus) {
+                emitGsAll('next-round');
+            } else if ('hand-complete' in handStatus) {
                 emitGsAll('hand-complete');
             }
         });
@@ -67,6 +72,7 @@ io.sockets.on('connection', function(socket) {
 
         function newHand() {
             if (seat == 'seat1') {
+                gameStates[seat1Id].newHand();
                 gsSet('seat1Hole', gsGet('deck').draw(2));
                 gsSet('seat2Hole', gsGet('deck').draw(2));
                 emitGsAll('new-hand');
