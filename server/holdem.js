@@ -81,6 +81,9 @@ Gs.prototype.applyAction = function(seat, action) {
     // players. Sort of like a finite state machine. Returns true if
     // move onto the next round.
     this[this.currentRound + 'Actions'].push(action);
+    if (!this.availableActions[action[0]]) {
+        return { 'error': true}
+    }
 
     switch (action[0]) {
         case 'fold':
@@ -131,9 +134,28 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
 
         case 'bet':
+            // Add the bet to the pot.
+            var bet = action[1];
+            this.subtractChips(seat, 'Chips', bet);
+            this.addChips(seat, 'Pot', bet);
+            this.pot += bet;
+
+            this.nextTurn();
+            this.availableActions = ['fold', 'call', 'raise'];
+            return { 'next-turn': true };
             break;
 
         case 'raise':
+            // Raise the bet to action[1].
+            var raiseTo = action[1];
+            var raiseBy = raiseTo - this[nextPlayer() + 'Pot'];
+            this.subtractChips(seat, 'Chips', raiseBy);
+            this.addChips(seat, 'Pot', raiseBy);
+            this.pot += raiseBy;
+
+            this.nextTurn();
+            this.availableActions = ['fold', 'call', 'raise'];
+            return { 'next-turn': true };
             break;
     }
 };
@@ -149,7 +171,7 @@ Gs.prototype.newHand = function() {
     this.flop3 = null;
     this.river = null;
     this.actionOn = this.button;
-    this.availableActions = [];
+    this.availableActions = ['fold', 'call', 'raise'];
     this.currentBet = 0;
     this.preflopActions = [];
     this.flopActions = [];
