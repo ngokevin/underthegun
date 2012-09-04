@@ -81,8 +81,8 @@ Gs.prototype.applyAction = function(seat, action) {
     // players. Sort of like a finite state machine. Returns true if
     // move onto the next round.
     this[this.currentRound + 'Actions'].push(action);
-    if (!this.availableActions.indexOf(action[0])) {
-        return { 'error': true}
+    if (this.availableActions.indexOf(action[0]) < 0) {
+        return { 'error': true }
     }
 
     switch (action[0]) {
