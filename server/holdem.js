@@ -104,10 +104,17 @@ Gs.prototype.applyAction = function(seat, action) {
                     return { 'next-round': true };
                 }
             } else {
-                // Next turn if player leads with check or big blind checks.
-                this.nextTurn();
-                this.availableActions = ['fold', 'check', 'bet'];
-                return { 'next-turn': true };
+                if (this.currentRound == 'preflop') {
+                    // Next round if big blind checks.
+                    this.nextRound();
+                    this.availableActions = ['fold', 'check', 'bet'];
+                    return { 'next-round': true };
+                } else {
+                    // Next turn if big blind leads with check.
+                    this.nextTurn();
+                    this.availableActions = ['fold', 'check', 'bet'];
+                    return { 'next-turn': true };
+                }
             }
 
         case 'call':

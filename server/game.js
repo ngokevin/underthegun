@@ -27,7 +27,7 @@ var numGames = 0;
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
-    var seat, seat1Id, playerId, gameId;
+    var seat, seat1Id, playerId, gameId, gs;
 
     socket.on('new-game', function(data) {
         // Set up game.
@@ -39,7 +39,7 @@ io.sockets.on('connection', function(socket) {
         // Have only one player's socket initialize the game state into the
         // global object.
         if (seat == 'seat1') {
-            var gs = new holdem.Gs();
+            gs = new holdem.Gs();
             gs.gameId = numGames++;
             gs.seat1Id = data.heroId;
             gs.seat2Id = data.villainId;
@@ -52,11 +52,12 @@ io.sockets.on('connection', function(socket) {
             newHand();
         }
 
-        socket.on('preflop-action', function(data) {
-            console.log('preflop-action ' + data.action);
+        socket.on('action', function(data) {
             // TODO: verify game state
+            if (!gs) { gs = gameStates[seat1Id]; }
+
             var handStatus = gs.applyAction(seat, data.action);
-            console.log(handStatus);
+            console.log('action ' + data.action);
             if ('next-turn' in handStatus) {
                 emitGsAll('next-turn');
             } else if ('next-round' in handStatus) {

@@ -53,19 +53,16 @@ $(document).ready(function() {
                 $('#hole2').html(hole2.card);
                 console.log('Starting new hand (' + hole1.card + hole2.card + ').');
 
-                // Preflop betting round.
-                console.log(gs);
-                if (gs.actionOn == seat) {
-                    getAction('preflop', gs);
-                }
-                socket.on('preflop-action', function(gs) {
-                    getAction('preflop', gs);
+                // Betting rounds.
+                getAction(gs.currentRound, gs);  // Button preflop.
+                socket.on('next-turn', function(gs) {
+                    console.log('next-turn');
+                    getAction(gs.currentRound, gs);  // Big blind preflop, button post-flop.
                 });
-                socket.on('preflop-done', function(gs) {
-                    // Receive turn.
-                    // Turn betting round.
+                socket.on('next-round', function(gs) {
+                    console.log('next-round');
+                    getAction(gs.currentRound, gs);  // Big blind.
                 });
-
                 socket.on('hand-complete', function(gs) {
                     console.log('hand complete');
                 });
@@ -74,8 +71,15 @@ $(document).ready(function() {
             function getAction(round, gs) {
                 // Displays action buttons, gets the one clicked, and sends the
                 // action to the server.
+                if (gs.actionOn != seat) { return; }
                 var action;
-                $('#actions span').removeClass('inactive').bind('click', function() {
+
+                var enabledButtons = $();
+                $(gs.availableActions).each(function(index, action) {
+                    enabledButtons = enabledButtons.add($('#actions span#' + action));
+                });
+
+                enabledButtons.removeClass('inactive').bind('click', function() {
                     switch (this.id) {
                         case 'fold':
                             action = ['fold', 0];
@@ -93,8 +97,8 @@ $(document).ready(function() {
                             action = ['raise', 10];
                             break;
                     }
-                    socket.emit(round + '-action', {action: action, gs: gs})
-                    $('#actions span').addClass('inactive').unbind('click');
+                    socket.emit('action', {action: action, gs: gs})
+                    enabledButtons.addClass('inactive').unbind('click');
                 });
             }
         });
