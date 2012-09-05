@@ -81,11 +81,11 @@ Gs.prototype.applyAction = function(seat, action) {
     // players. Sort of like a finite state machine. Returns true if
     // move onto the next round.
     this[this.currentRound + 'Actions'].push(action);
-    if (this.availableActions.indexOf(action[0]) < 0) {
+    if (this.availableActions.indexOf(action.action) < 0) {
         return { 'error': true }
     }
 
-    switch (action[0]) {
+    switch (action.action) {
         case 'fold':
             // Next hand if a player folds.
             this.winner = this.nextPlayer();
@@ -142,7 +142,7 @@ Gs.prototype.applyAction = function(seat, action) {
 
         case 'bet':
             // Add the bet to the pot.
-            var bet = action[1];
+            var bet = action.amount;
             this.subtractChips(seat, 'Chips', bet);
             this.addChips(seat, 'Pot', bet);
             this.pot += bet;
@@ -153,8 +153,8 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
 
         case 'raise':
-            // Raise the bet to action[1].
-            var raiseTo = action[1];
+            // Raise the bet to the raise amount.
+            var raiseTo = action.amount;
             var raiseBy = raiseTo - this[this.nextPlayer() + 'Pot'];
             this.subtractChips(seat, 'Chips', raiseBy);
             this.addChips(seat, 'Pot', raiseBy);
@@ -236,6 +236,12 @@ Gs.prototype.nextRound = function() {
     this.seat2Pot = 0;
     this.actionOn = this.nextPlayer(this.actionOn);
 };
+Gs.prototype.hasGameWinner = function() {
+    // Check if anyone has busted.
+    if (this.seat1Chips === 0) { return 'seat2'; }
+    else if (this.seat2Chips === 0) { return 'seat1'; }
+    return false;
+}
 Gs.prototype.subtractChips = function(seat, attr, chips) {
     this[seat + attr] -= chips;
 };

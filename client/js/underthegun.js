@@ -53,19 +53,20 @@ $(document).ready(function() {
                 $('#hole2').html(hole2.card);
                 console.log('Starting new hand (' + hole1.card + hole2.card + ').');
 
-                // Betting rounds.
                 getAction(gs.currentRound, gs);  // Button preflop.
-                socket.on('next-turn', function(gs) {
-                    console.log('next-turn');
-                    getAction(gs.currentRound, gs);  // Big blind preflop, button post-flop.
-                });
-                socket.on('next-round', function(gs) {
-                    console.log('next-round');
-                    getAction(gs.currentRound, gs);  // Big blind.
-                });
-                socket.on('hand-complete', function(gs) {
-                    console.log('hand complete');
-                });
+            });
+            // Betting rounds.
+            socket.on('next-turn', function(gs) {
+                console.log('next-turn');
+                getAction(gs.currentRound, gs);  // Big blind preflop, button post-flop.
+            });
+            socket.on('next-round', function(gs) {
+                console.log('next-round');
+                getAction(gs.currentRound, gs);  // Big blind.
+            });
+            socket.on('hand-complete', function(gs) {
+                console.log('hand complete');
+                socket.emit('hand-complete', {gs: gs})
             });
 
             function getAction(round, gs) {
@@ -82,19 +83,19 @@ $(document).ready(function() {
                 enabledButtons.removeClass('inactive').bind('click', function() {
                     switch (this.id) {
                         case 'fold':
-                            action = ['fold', 0];
+                            action = {action: 'fold', amount: 0};
                             break;
                         case 'check':
-                            action = ['check', 0];
+                            action = {action: 'check', amount: 0};
                             break;
                         case 'call':
-                            action = ['call', 0];
+                            action = {action: 'call', amount: 0};
                             break;
                         case 'bet':
-                            action = ['bet', 10];
+                            action = {action: 'bet', amount: 10};
                             break;
                         case 'raise':
-                            action = ['raise', 10];
+                            action = {action: 'raise', amount: 10};
                             break;
                     }
                     socket.emit('action', {action: action, gs: gs})

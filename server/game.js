@@ -54,10 +54,10 @@ io.sockets.on('connection', function(socket) {
 
         socket.on('action', function(data) {
             // TODO: verify game state
+            // Tell seat2 where game state is.
             if (!gs) { gs = gameStates[seat1Id]; }
 
             var handStatus = gs.applyAction(seat, data.action);
-            console.log('action ' + data.action);
             if ('next-turn' in handStatus) {
                 emitGsAll('next-turn');
             } else if ('next-round' in handStatus) {
@@ -68,7 +68,13 @@ io.sockets.on('connection', function(socket) {
         });
 
         socket.on('hand-complete', function(data) {
-            // TODO: verify game state (check if game state has winner)
+            // TODO: verify game state
+            // Tell seat2 where game state is.
+            if (!gs) { gs = gameStates[seat1Id]; }
+
+            if (gs.hasGameWinner() === false) {
+                newHand();
+            }
         });
 
         function newHand() {
