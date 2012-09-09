@@ -91,10 +91,11 @@ io.sockets.on('connection', function(socket) {
             clients[gs.seat2Id].emit(eventName, gs.filter('seat2'));
         }
 
+        // Getter and setters that pulls the correct gamestate keyed off of the
+        // first seat's player ID.
         function gsGet(k) {
             return gameStates[seat1Id][k];
         }
-
         function gsSet(k, v) {
             gameStates[seat1Id][k] = v;
         }

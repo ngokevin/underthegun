@@ -63,11 +63,7 @@ var Gs = function() {
     this.seat1Pot = 0;
     this.seat2Pot = 0;
     this.currentRound = null;
-    this.flop1 = null;
-    this.flop2 = null;
-    this.flop3 = null;
-    this.turn = null;
-    this.river = null;
+    this.boardCards = [];
     this.actionOn = null;
     this.availableActions = [];
     this.preflopActions = [];
@@ -79,7 +75,8 @@ var Gs = function() {
 Gs.prototype.applyAction = function(seat, action) {
     // Parses an action, manipulates the game state and tells the
     // players. Sort of like a finite state machine. Returns true if
-    // move onto the next round.
+    // move onto the next round. We store each player's VPIP for the current
+    // round to calculate how much to call a bet or raise.
     this[this.currentRound + 'Actions'].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
         return { 'error': true }
@@ -88,7 +85,8 @@ Gs.prototype.applyAction = function(seat, action) {
     switch (action.action) {
         case 'fold':
             // Next hand if a player folds.
-            this.winner = this.nextPlayer();
+            this.winner = this.getNextPlayer();
+            this[this.winner + 'Chips'] += this.pot;
             return { 'hand-complete': true };
             break;
 
@@ -96,6 +94,7 @@ Gs.prototype.applyAction = function(seat, action) {
             if (this.isButton(seat)) {
                 if (this.currentRound == 'river') {
                     // End hand if button checks back river.
+                    this.calcWinner();
                     return { 'hand-complete': true };
                 } else {
                     // Next round if button checks back round.
@@ -119,9 +118,9 @@ Gs.prototype.applyAction = function(seat, action) {
 
         case 'call':
             // Add the call to the pot.
-            var toCall = this[this.nextPlayer() + 'Pot'] - this[seat + 'Pot'];
-            this.subtractChips(seat, 'Chips', toCall);
-            this.addChips(seat, 'Pot', toCall);
+            var toCall = this[this.getNextPlayer() + 'Pot'] - this[seat + 'Pot'];
+            this[seat + 'Chips'] -= toCall;
+            this[seat + 'Pot'] += toCall;
             this.pot += toCall;
 
             if (this.currentRound == 'preflop' && this.isButton(seat) && this[seat + 'Pot'] == this.bigBlind) {
@@ -131,6 +130,7 @@ Gs.prototype.applyAction = function(seat, action) {
                 return { 'next-turn': true };
             } else if (this.currentRound == 'river') {
                 // End hand if player calls river bet.
+                this.calcWinner();
                 return { 'hand-complete': true };
             } else {
                 // Next round if player calls bet.
@@ -143,8 +143,8 @@ Gs.prototype.applyAction = function(seat, action) {
         case 'bet':
             // Add the bet to the pot.
             var bet = action.amount;
-            this.subtractChips(seat, 'Chips', bet);
-            this.addChips(seat, 'Pot', bet);
+            this[seat + 'Chips'] -= bet;
+            this[seat + 'Pot'] += bet;
             this.pot += bet;
 
             this.nextTurn();
@@ -155,9 +155,9 @@ Gs.prototype.applyAction = function(seat, action) {
         case 'raise':
             // Raise the bet to the raise amount.
             var raiseTo = action.amount;
-            var raiseBy = raiseTo - this[this.nextPlayer() + 'Pot'];
-            this.subtractChips(seat, 'Chips', raiseBy);
-            this.addChips(seat, 'Pot', raiseBy);
+            var raiseBy = raiseTo - this[this.getNextPlayer() + 'Pot'];
+            this[seat + 'Chips'] -= raiseBy;
+            this[seat + 'Pot'] += raiseBy;
             this.pot += raiseBy;
 
             this.nextTurn();
@@ -166,10 +166,13 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
     }
 };
+Gs.prototype.calcWinner = function() {
+    return;
+};
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
     if (this.button) {
-        this.button = this.nextPlayer(this.button);
+        this.button = this.getNextPlayer(this.button);
     } else {
         this.button = 'seat1';
     }
@@ -177,10 +180,7 @@ Gs.prototype.newHand = function() {
     this.currentRound = 'preflop';
     this.seat1Hole = [];
     this.seat2Hole = [];
-    this.flop1 = null;
-    this.flop2 = null;
-    this.flop3 = null;
-    this.river = null;
+    this.boardCards = [];
     this.actionOn = this.button;
     this.availableActions = ['fold', 'call', 'raise'];
     this.currentBet = 0;
@@ -193,20 +193,20 @@ Gs.prototype.newHand = function() {
     // Post blinds.
     if (this.isButton('seat1')) {
         this.seat1Pot = this.smallBlind;
-        this.subtractChips('seat1', 'Chips', this.smallBlind);
+        this['seat1Chips'] -= this.smallBlind;
         this.seat2Pot = this.bigBlind;
-        this.subtractChips('seat2', 'Chips', this.bigBlind);
+        this['seat2Chips'] -= this.bigBlind;
     } else {
         this.seat1Pot = this.bigBlind;
-        this.subtractChips('seat1', 'Chips', this.bigBlind);
+        this['seat1Chips'] -= this.bigBlind;
         this.seat2Pot = this.smallBlind;
-        this.subtractChips('seat2', 'Chips', this.smallBlind);
+        this['seat2Chips'] -= this.smallBlind;
     }
 };
 Gs.prototype.filter = function(seat) {
     // Hide certain values based on seat (for security reasons so they can't
-    // snoop other player's hole cards.
-    var filterKeys = [otherPlayer(seat) + 'Hole', 'deck'];
+    // snoop other player's hole cards or next card in deck).
+    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
     var filteredGs = {}
     for(var keys = Object.keys(this), l = keys.length; l; --l) {
         if (filterKeys.indexOf(keys[l-1]) < 0) {
@@ -217,24 +217,28 @@ Gs.prototype.filter = function(seat) {
 };
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
-    this.actionOn = this.nextPlayer(this.actionOn);
+    this.actionOn = this.getNextPlayer(this.actionOn);
 };
 Gs.prototype.nextRound = function() {
     // Switch turn as well as switch round.
     switch (this.currentRound) {
         case 'preflop':
             this.currentRound = 'flop';
+            var flop = this.deck.draw(3);
+            this.boardCards = this.boardCards.concat(flop);
             break;
         case 'flop':
             this.currentRound = 'turn';
+            this.boardCards.push(this.deck.draw());
             break;
         case 'turn':
             this.currentRound = 'river';
+            this.boardCards.push(this.deck.draw());
             break;
     }
     this.seat1Pot = 0;
     this.seat2Pot = 0;
-    this.actionOn = this.nextPlayer(this.actionOn);
+    this.actionOn = this.getNextPlayer(this.actionOn);
 };
 Gs.prototype.hasGameWinner = function() {
     // Check if anyone has busted.
@@ -242,20 +246,14 @@ Gs.prototype.hasGameWinner = function() {
     else if (this.seat2Chips === 0) { return 'seat1'; }
     return false;
 }
-Gs.prototype.subtractChips = function(seat, attr, chips) {
-    this[seat + attr] -= chips;
-};
-Gs.prototype.addChips = function(seat, attr, chips) {
-    this[seat + attr] += chips;
-};
 Gs.prototype.isButton = function(seat) {
     return seat == this.button ? true : false;
 }
-Gs.prototype.nextPlayer = function() {
+Gs.prototype.getNextPlayer = function() {
     // Get next player.
     return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
 }
-function otherPlayer(seat) {
+function getOtherPlayer(seat) {
     // Get other player from seat.
     return seat == 'seat1' ? 'seat2' : 'seat1';
 }
