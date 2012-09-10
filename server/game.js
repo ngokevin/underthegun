@@ -54,7 +54,6 @@ io.sockets.on('connection', function(socket) {
 
         socket.on('action', function(data) {
             // TODO: verify game state
-            // Tell seat2 where game state is.
             if (!gs) { gs = gameStates[seat1Id]; }
 
             var handStatus = gs.applyAction(seat, data.action);
@@ -88,7 +87,9 @@ io.sockets.on('connection', function(socket) {
 
         function emitGsAll(eventName) {
             clients[gs.seat1Id].emit(eventName, gs.filter('seat1'));
-            clients[gs.seat2Id].emit(eventName, gs.filter('seat2'));
+            setTimeout(function() {
+                clients[gs.seat2Id].emit(eventName, gs.filter('seat2'));
+            }, 500);
         }
 
         // Getter and setters that pulls the correct gamestate keyed off of the

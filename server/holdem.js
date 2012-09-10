@@ -79,7 +79,7 @@ Gs.prototype.applyAction = function(seat, action) {
     // round to calculate how much to call a bet or raise.
     this[this.currentRound + 'Actions'].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
-        return { 'error': true }
+        return {'error': true}
     }
 
     switch (action.action) {
@@ -87,7 +87,7 @@ Gs.prototype.applyAction = function(seat, action) {
             // Next hand if a player folds.
             this.winner = this.getNextPlayer();
             this[this.winner + 'Chips'] += this.pot;
-            return { 'hand-complete': true };
+            return {'hand-complete': true};
             break;
 
         case 'check':
@@ -95,24 +95,24 @@ Gs.prototype.applyAction = function(seat, action) {
                 if (this.currentRound == 'river') {
                     // End hand if button checks back river.
                     this.calcWinner();
-                    return { 'hand-complete': true };
+                    return {'hand-complete': true};
                 } else {
                     // Next round if button checks back round.
                     this.nextRound();
                     this.availableActions = ['fold', 'check', 'bet'];
-                    return { 'next-round': true };
+                    return {'next-round': true};
                 }
             } else {
                 if (this.currentRound == 'preflop') {
                     // Next round if big blind checks.
                     this.nextRound();
                     this.availableActions = ['fold', 'check', 'bet'];
-                    return { 'next-round': true };
+                    return {'next-round': true};
                 } else {
                     // Next turn if big blind leads with check.
                     this.nextTurn();
                     this.availableActions = ['fold', 'check', 'bet'];
-                    return { 'next-turn': true };
+                    return {'next-turn': true};
                 }
             }
 
@@ -127,16 +127,16 @@ Gs.prototype.applyAction = function(seat, action) {
                 // If button limps preflop.
                 this.nextTurn();
                 this.availableActions = ['fold', 'check', 'raise'];
-                return { 'next-turn': true };
+                return {'next-turn': true};
             } else if (this.currentRound == 'river') {
                 // End hand if player calls river bet.
                 this.calcWinner();
-                return { 'hand-complete': true };
+                return {'hand-complete': true};
             } else {
                 // Next round if player calls bet.
                 this.nextRound();
                 this.availableActions = ['fold', 'check', 'bet'];
-                return { 'next-round': true };
+                return {'next-round': true};
             }
             break;
 
@@ -149,7 +149,7 @@ Gs.prototype.applyAction = function(seat, action) {
 
             this.nextTurn();
             this.availableActions = ['fold', 'call', 'raise'];
-            return { 'next-turn': true };
+            return {'next-turn': true};
             break;
 
         case 'raise':
@@ -162,12 +162,72 @@ Gs.prototype.applyAction = function(seat, action) {
 
             this.nextTurn();
             this.availableActions = ['fold', 'call', 'raise'];
-            return { 'next-turn': true };
+            return {'next-turn': true};
             break;
     }
 };
 Gs.prototype.calcWinner = function() {
+    var seat1Hand = this.getHand(this.seat1Hole);
+    var seat2Hand = this.getHand(this.seat2Hole);
     return;
+};
+Gs.prototype.getHand = function(hole) {
+    // Sort hand by rank.
+    var hand = this.boardCards.concat(hole);
+    hand.sort(function(a, b) { return a.rank - b.rank; });
+
+    function hasStraight(hand, checkStraightFlush) {
+        // Checks for straight sequentially.
+        var straightCounter = 0;
+        for (i = 0; i < hand.length; i++ ) {
+            if (i < hand.length - 1 && hand[i + 1].rank == hand[i].rank + 1) {
+                if (straightCounter == 5) {
+                    // Got a straight, but continue to see if the straight goes higher.
+                    continue;
+                }
+                if (!checkStraightFlush || hand[i + 1].suit == hand[i].suit) {
+                    // If we're looking for straight flush, check the suit too.
+                    straightCounter++;
+                } else {
+                    straightCounter = 0;
+                }
+                continue;
+            } else {
+                if (straightCounter == 5) {
+                    // Return high-card value of straight.
+                    return hand[i].rank;
+                }
+                if (i < hand.length - 1 && hand[i + 1].rank != hand[i].rank) {
+                    // Don't reset the counter if next card is same rank.
+                    straightCounter = 0;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    // Straight flush.
+
+    // Four-of-a-kind.
+
+    // Full house.
+
+    // Flush.
+
+    // Straight.
+    var straight = hasStraight(hand);
+    if (straight) {
+        return {'handTier': 4, 'rank': straight};
+    }
+
+    // Three-of-a-kind.
+
+    // Two-pair.
+
+    // One-pair.
+
+    // High card.
 };
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
