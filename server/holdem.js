@@ -3,12 +3,14 @@ var Deck = function() {
     this.deck = createDeck();
     this.shuffle();
 }
+
 Deck.prototype.draw = function(n) {
     if (!n || n == 1) {
         return this.deck.pop();
     }
     return this.deck.splice(0, n);
 }
+
 Deck.prototype.shuffle = function() {
     var tmp, current, top = this.deck.length;
 
@@ -21,6 +23,7 @@ Deck.prototype.shuffle = function() {
 
     return this.deck;
 }
+
 function createDeck() {
     // Returns a shuffled deck.
     var ranks = [[2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6'],
@@ -41,11 +44,11 @@ function createDeck() {
     }
     return deck;
 }
+
 exports.Deck = Deck;
 
 
 // Game State Stuff
-
 // Shared game state of a hand.
 var Gs = function() {
     this.gameId = null;
@@ -72,6 +75,7 @@ var Gs = function() {
     this.riverActions = [];
     this.winner = null;
 }
+
 Gs.prototype.applyAction = function(seat, action) {
     // Parses an action, manipulates the game state and tells the
     // players. Sort of like a finite state machine. Returns true if
@@ -166,69 +170,101 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
     }
 };
+
 Gs.prototype.calcWinner = function() {
     var seat1Hand = this.getHand(this.seat1Hole);
     var seat2Hand = this.getHand(this.seat2Hole);
     return;
 };
+
 Gs.prototype.getHand = function(hole) {
     // Sort hand by rank.
     var hand = this.boardCards.concat(hole);
     hand.sort(function(a, b) { return a.rank - b.rank; });
 
-    function hasStraight(hand, checkStraightFlush) {
-        // Checks for straight sequentially.
-        var straightCounter = 0;
-        for (i = 0; i < hand.length; i++ ) {
-            if (i < hand.length - 1 && hand[i + 1].rank == hand[i].rank + 1) {
-                if (straightCounter == 5) {
-                    // Got a straight, but continue to see if the straight goes higher.
-                    continue;
-                }
-                if (!checkStraightFlush || hand[i + 1].suit == hand[i].suit) {
-                    // If we're looking for straight flush, check the suit too.
-                    straightCounter++;
+    function calcHand(hand) {
+        // Iterates through hand, recursively removing a card until we get
+        // five-card hands. Determines the strength of hand, returns it, and
+        // the best hand will bubble up the stack.
+        var i;
+        if (hand.length == 5) {
+            // Get histogram of hand.
+            var cardinalities = {};
+            for (i = 0; i < hand.length; i++) {
+                if (hand[i].rank in cardinalities) {
+                    cardinalities[hand[i].rank]++;
                 } else {
-                    straightCounter = 0;
-                }
-                continue;
-            } else {
-                if (straightCounter == 5) {
-                    // Return high-card value of straight.
-                    return hand[i].rank;
-                }
-                if (i < hand.length - 1 && hand[i + 1].rank != hand[i].rank) {
-                    // Don't reset the counter if next card is same rank.
-                    straightCounter = 0;
-                } else {
-                    return false;
+                    cardinalities[hand[i].rank] = 1;
                 }
             }
+            var histogram = {};
+            for (rank in cardinalities) {
+                var cardinality = cardinalities[rank];
+                var bucketedCardinality = {};
+                bucketedCardinality[rank] = cardinality;
+                if (cardinality in histogram) {
+                    histogram[cardinality].push(bucketedCardinality);
+                } else {
+                    histogram[cardinality] = [bucketedCardinality];
+                }
+            }
+
+            // Calculate hand strength.
+            if ('4' in histogram) {
+                // Quads.
+                console.log('quads');
+            } else if ('3' in histogram && '2' in histogram) {
+                // Boat.
+                console.log('boat');
+            } else if ('3' in histogram) {
+                // Trips.
+                console.log('trips');
+            } else if ('2' in histogram && histogram['2'].length == 2) {
+                // Two-pair.
+                console.log('two-pair');
+            } else if ('2' in histogram) {
+                // Pair.
+                console.log('pair');
+            } else {
+                var hasFlush = true;
+                for (i=0; i < hand.length - 1; i++) {
+                    if (hand[i].suit != hand[i + 1].suit) {
+                        hasFlush = false;
+                        break;
+                    }
+                }
+                var hasStraight = (hand[4].rank - hand[1].rank == 4 ||
+                                   hand[4].rank == 13 && hand[3].rank == 5);
+
+                if (hasFlush && hasStraight) {
+                    console.log('straight flush');
+                } else if (hasFlush) {
+                    console.log('flush');
+                } else if (hasStraight) {
+                    console.log('straight');
+                } else {
+                    // High card.
+                    console.log('high card');
+                }
+            }
+            return;
         }
+
+        var bestHand;
+        for (i = 0; i < hand.length; i++) {
+            var slicedHand = hand.slice(0); slicedHand.remove(i);
+            calcHand(slicedHand);
+            continue;
+            if (!bestHand || compareHand(possibleBestHand, bestHand)) {
+                bestHand = possibleBestHand;
+            }
+        }
+        return bestHand;
     }
 
-    // Straight flush.
-
-    // Four-of-a-kind.
-
-    // Full house.
-
-    // Flush.
-
-    // Straight.
-    var straight = hasStraight(hand);
-    if (straight) {
-        return {'handTier': 4, 'rank': straight};
-    }
-
-    // Three-of-a-kind.
-
-    // Two-pair.
-
-    // One-pair.
-
-    // High card.
+    calcHand(hand);
 };
+
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
     if (this.button) {
@@ -263,6 +299,7 @@ Gs.prototype.newHand = function() {
         this['seat2Chips'] -= this.smallBlind;
     }
 };
+
 Gs.prototype.filter = function(seat) {
     // Hide certain values based on seat (for security reasons so they can't
     // snoop other player's hole cards or next card in deck).
@@ -275,10 +312,12 @@ Gs.prototype.filter = function(seat) {
     }
     return filteredGs;
 };
+
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
     this.actionOn = this.getNextPlayer(this.actionOn);
 };
+
 Gs.prototype.nextRound = function() {
     // Switch turn as well as switch round.
     switch (this.currentRound) {
@@ -300,21 +339,34 @@ Gs.prototype.nextRound = function() {
     this.seat2Pot = 0;
     this.actionOn = this.getNextPlayer(this.actionOn);
 };
+
 Gs.prototype.hasGameWinner = function() {
     // Check if anyone has busted.
     if (this.seat1Chips === 0) { return 'seat2'; }
     else if (this.seat2Chips === 0) { return 'seat1'; }
     return false;
 }
+
 Gs.prototype.isButton = function(seat) {
     return seat == this.button ? true : false;
 }
+
 Gs.prototype.getNextPlayer = function() {
     // Get next player.
     return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
 }
+
 function getOtherPlayer(seat) {
     // Get other player from seat.
     return seat == 'seat1' ? 'seat2' : 'seat1';
 }
+
 exports.Gs = Gs;
+
+
+// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function(from, to) {
+   var rest = this.slice((to || from) + 1 || this.length);
+   this.length = from < 0 ? this.length + from : from;
+   return this.push.apply(this, rest);
+};
