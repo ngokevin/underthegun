@@ -98,8 +98,17 @@ $(document).ready(function() {
                 updateValues(gs);
                 getAction(gs.currentRound, gs);  // Big blind.
             });
+
             socket.on('hand-complete', function(gs) {
+                if (gs.winner == seat) {
+                    notify('You won the hand and earned ' + gs.pot + ' chips.');
+                } else if (gs.winner) {
+                    notify('You lost the hand. Opponent won ' + gs.pot + 'chips.');
+                } else {
+                    notify('You both tied the hand. Split pot.');
+                }
                 updateValues(gs);
+                $('#boardCards').addClass('undealt');
                 socket.emit('hand-complete', {gs: gs})
             });
 

@@ -207,7 +207,6 @@ Gs.prototype.getHand = function(hole) {
     hand.sort(function(a, b) { return a.rank - b.rank; });
 
     var returnHand = calcHand(hand);
-    console.log(returnHand);
     return returnHand;
 
     function getHandStrength(hand) {
@@ -309,7 +308,7 @@ function compareHands(handA, handB) {
     if (handA.hand > handB.hand) {
         return 1;
     }
-    if (handA.hand > handB.hand) {
+    if (handA.hand < handB.hand) {
         return -1;
     }
     // If it's the same hand, compare the appropriate ranks.
@@ -322,7 +321,7 @@ function compareHands(handA, handB) {
             if (handA.ranks[cardinality][rank] > handB.ranks[cardinality][rank]) {
                 return 1;
             }
-            if (handA.ranks[cardinality][rank] > handB.ranks[cardinality][rank]) {
+            if (handA.ranks[cardinality][rank] < handB.ranks[cardinality][rank]) {
                 return -1;
             }
         }
@@ -402,7 +401,10 @@ Gs.prototype.nextRound = function() {
     }
     this.seat1Pot = 0;
     this.seat2Pot = 0;
-    this.actionOn = this.getNextPlayer(this.actionOn);
+
+    if (this.currentRound != 'flop') {
+        this.nextTurn();
+    }
 };
 
 Gs.prototype.hasGameWinner = function() {

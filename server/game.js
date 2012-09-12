@@ -72,7 +72,7 @@ io.sockets.on('connection', function(socket) {
             if (!gs) { gs = gameStates[seat1Id]; }
 
             if (gs.hasGameWinner() === false) {
-                setTimeout(newHand, 2000);
+                setTimeout(newHand, 4000);
             }
         });
 
