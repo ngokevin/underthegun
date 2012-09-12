@@ -6,6 +6,12 @@ $(document).ready(function() {
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
 
+    var notBar = $('#not-bar');
+    function notify(msg) {
+        notBar.text(msg);
+    }
+    notify('Welcome to Under the Gun!');
+
     // Connect to the match-making system.
     $('#find-game').click(function() {
         var socket = io.connect('http://localhost:3479');
@@ -15,50 +21,46 @@ $(document).ready(function() {
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
             heroId = data.heroId;
-            console.log('Your player id is ' + heroId);
         });
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
             seat = data.seat;
             villainId = data.villainId;
-            console.log('Player found (' + villainId + '), start game.');
             game();
         });
 
         socket.emit('find-match', { heroId: heroId });
-        console.log('Looking for match...');
+        notify('Searching for an opponent...');
 
         $(this).unbind('click');
     });
 
 
     function game() {
+        notify('Cards in the air!');
         $('#lobby').hide();
         $('#game').show();
 
         var socket = io.connect('http://localhost:8433');
 
-        console.log('Starting new game...');
         socket.emit('new-game', { heroId: heroId, villainId: villainId, seat: seat });
 
         // Start game.
         socket.on('new-game', function(gs) {
-            console.log('Game started!');
-
             // Initialize bet slider.
             var betAmount = gs.bigBlind;
             function updateBetAmount(amount) {
                 betAmount = amount;
-                $('#bet-amount').text('$' + amount);
+                $('#bet-amount').text(amount);
             }
             $('#bet-slider').slider({
-                min: gs.bigBlind, max: gs[seat + 'Chips'], value: gs.bigBlind, step: 1,
+                min: gs.pot + gs.bigBlind, max: gs[seat + 'Chips'], value: gs.bigBlind, step: 1,
                 slide: function(e, ui) { updateBetAmount(ui.value) },
                 change: function(e, ui) { updateBetAmount(ui.value) },
                 stop: function(e, ui) { updateBetAmount(ui.value) }
             });
-            updateBetAmount(gs.bigBlind);
+            updateBetAmount(gs.pot + gs.bigBlind);
 
             // Start hand.
             socket.on('new-hand', function(gs) {
@@ -67,21 +69,37 @@ $(document).ready(function() {
                 var hole2 = gs[seat + 'Hole'][1];
                 $('#hole1').html(hole1.card);
                 $('#hole2').html(hole2.card);
-                console.log('Starting new hand (' + hole1.card + hole2.card + ').');
 
+                notify('Dealt ' + hole1.card + hole2.card);
+                updateValues(gs);
                 getAction(gs.currentRound, gs);  // Button preflop.
             });
             // Betting rounds.
             socket.on('next-turn', function(gs) {
-                console.log('next-turn');
+                updateValues(gs);
                 getAction(gs.currentRound, gs);  // Big blind preflop, button post-flop.
             });
             socket.on('next-round', function(gs) {
-                console.log('next-round');
+                switch (gs.currentRound) {
+                    case 'flop':
+                        $('#flop1').text(gs.boardCards[0].card);
+                        $('#flop2').text(gs.boardCards[1].card);
+                        $('#flop3').text(gs.boardCards[2].card);
+                        $('.flop').removeClass('undealt');
+                        break;
+                    case 'turn':
+                        $('#turn').text(gs.boardCards[3].card).removeClass('undealt');
+                        break;
+                    case 'river':
+                        $('#river').text(gs.boardCards[4].card).removeClass('undealt');
+                        break;
+                }
+
+                updateValues(gs);
                 getAction(gs.currentRound, gs);  // Big blind.
             });
             socket.on('hand-complete', function(gs) {
-                console.log('hand complete');
+                updateValues(gs);
                 socket.emit('hand-complete', {gs: gs})
             });
 
@@ -121,6 +139,11 @@ $(document).ready(function() {
                     socket.emit('action', {action: action, gs: gs})
                     enabledButtons.addClass('inactive').unbind('click');
                 });
+            }
+
+            function updateValues(gs) {
+                $('#pot').text(gs.pot);
+                $('#round').text(gs.currentRound);
             }
         });
         // When game over, disconnect and redirect to lobby.

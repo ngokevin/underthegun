@@ -19,8 +19,17 @@ html, body {
 
 #wrap {
     background: $green;
-    padding: 32px 0 12px 0;
+    padding: 24px 0 12px 0;
     text-align: center;
+}
+
+#not-bar {
+    background: $dark-gray;
+    font-size: 13px;
+    margin-bottom: 12px;
+    height: 22px;
+    padding: 5px 0 0;
+    width: 100%;
 }
 
 span.button {
@@ -46,7 +55,7 @@ span.button {
     &.inactive {
         background: $dark-gray;
         color: $light-gray;
-        cursor: normal;
+        cursor: default;
         box-shadow: 0 0 0 0;
     }
 }

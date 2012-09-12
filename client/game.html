@@ -19,6 +19,8 @@
 
     <body>
       <div id='wrap'>
+        <div id='not-bar'></div>
+
         <div id='lobby'>
             <h1>Under the Gun</h1>
             <p>Heads-Up Hold'em</p>
@@ -30,22 +32,25 @@
             <span id='opponentHole2' class='card facedown'></span>
 
             <div id='board-cards'>
-                <span id='flop1' class='card undealt'></span>
-                <span id='flop2' class='card undealt'></span>
-                <span id='flop3' class='card undealt'></span>
+                <span id='flop1' class='flop card undealt'></span>
+                <span id='flop2' class='flop card undealt'></span>
+                <span id='flop3' class='flop card undealt'></span>
                 <span id='turn' class='card undealt'></span>
                 <span id='river' class='card undealt'></span>
+            </div>
+
+            <div id='hand-info'>
+                <span>Round: <span id='round'></span> / </span>
+                <span>Pot: <span id='pot'></span></span>
             </div>
 
             <span id='hole1' class='card'></span>
             <span id='hole2' class='card'></span>
 
             <div id='bet-slider' class='slider c'></div>
-
             <div id='actions'>
                 <span class='fold button inactive'>
                     <span class='action'>Fold</span>
-                    <span class='inner-button'></span>
                 </span>
                 <span class='check call button inactive'>
                     <span class='action c'>Check</span>

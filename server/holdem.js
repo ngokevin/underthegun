@@ -159,10 +159,10 @@ Gs.prototype.applyAction = function(seat, action) {
         case 'raise':
             // Raise the bet to the raise amount.
             var raiseTo = action.amount;
-            var raiseBy = raiseTo - this[this.getNextPlayer() + 'Pot'];
+            var raiseBy = raiseTo - this.pot;
             this[seat + 'Chips'] -= raiseBy;
-            this[seat + 'Pot'] += raiseBy;
-            this.pot += raiseBy;
+            this[seat + 'Pot'] += raiseTo;
+            this.pot = raiseTo;
 
             this.nextTurn();
             this.availableActions = ['fold', 'call', 'raise'];

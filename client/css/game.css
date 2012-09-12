@@ -1,12 +1,35 @@
 #game .card {
-  font-size: 32px; }
+  background: #d2d2d2;
+  color: #050505;
+  display: inline-block;
+  font-size: 32px;
+  margin: 6px 0 6px;
+  height: 70px;
+  width: 50px;
+  vertical-align: top; }
+  #game .card.undealt {
+    background: none;
+    border: 1px dashed #505050; }
+  #game .card.facedown {
+    background: #299283; }
+#game #bet-slider {
+  margin: auto;
+  margin-top: 24px;
+  width: 75%; }
+  #game #bet-slider:hover {
+    cursor: pointer; }
+#game #hand-info {
+  font-size: 14px;
+  margin-bottom: 3px; }
+  #game #hand-info span {
+    text-transform: capitalize; }
 #game #actions span.button {
-  display: inline;
-  width: 33.33%;
-  padding: 10px 20px 10px 20px;
+  display: inline-block;
+  width: 25%;
+  margin: 0 3px 0 3px;
+  padding: 10px 7px 15px 7px;
   top: 18px; }
-  #game #actions span.button.inactive {
-    background: #141414;
-    color: #505050;
-    cursor: normal;
-    box-shadow: 0 0 0 0; }
+  #game #actions span.button:first-child {
+    top: -4px; }
+  #game #actions span.button .inner-button {
+    display: inline; }

@@ -6,8 +6,10 @@
         color: $black;
         display: inline-block;
         font-size: 32px;
+        margin: 6px 0 6px;
         height: 70px;
         width: 50px;
+        vertical-align: top;
 
         &.undealt {
             background: none;
@@ -22,6 +24,17 @@
         margin: auto;
         margin-top: 24px;
         width: 75%;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    #hand-info {
+        font-size: 14px;
+        margin-bottom: 3px;
+        span {
+            text-transform: capitalize;
+        }
     }
 
     #actions span.button {
