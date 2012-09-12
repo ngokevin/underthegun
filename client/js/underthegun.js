@@ -64,6 +64,9 @@ $(document).ready(function() {
 
             // Start hand.
             socket.on('new-hand', function(gs) {
+                // Clear the board.
+                $('#board-cards .card').addClass('undealt').text('');
+
                 // Receive hole cards.
                 var hole1 = gs[seat + 'Hole'][0];
                 var hole2 = gs[seat + 'Hole'][1];
@@ -103,12 +106,11 @@ $(document).ready(function() {
                 if (gs.winner == seat) {
                     notify('You won the hand and earned ' + gs.pot + ' chips.');
                 } else if (gs.winner) {
-                    notify('You lost the hand. Opponent won ' + gs.pot + 'chips.');
+                    notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
                 } else {
                     notify('You both tied the hand. Split pot.');
                 }
                 updateValues(gs);
-                $('#boardCards').addClass('undealt');
                 socket.emit('hand-complete', {gs: gs})
             });
 

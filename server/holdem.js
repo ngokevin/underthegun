@@ -305,10 +305,10 @@ Gs.prototype.getHand = function(hole) {
 };
 
 function compareHands(handA, handB) {
-    if (handA.hand > handB.hand) {
+    if (handA.hand_strength > handB.hand_strength) {
         return 1;
     }
-    if (handA.hand < handB.hand) {
+    if (handA.hand_strength < handB.hand_strength) {
         return -1;
     }
     // If it's the same hand, compare the appropriate ranks.
@@ -316,8 +316,8 @@ function compareHands(handA, handB) {
     // for quads, then 1 for the kicker) and compare the ranks
     // e.g. 4444A vs 3333A: check the cardinality of 4 and compare 4444 vs 3333
     // e.g. 4444A vs 4444K: check the cardinality of 4, see it's same, then check cardinality of 1, the kicker
-    for (var cardinality=0; cardinality < handA.ranks; cardinality++) {
-        for (var rank=0; rank < handA.ranks[i]; rank++) {
+    for (var cardinality=0; cardinality < handA.ranks.length; cardinality++) {
+        for (var rank=0; rank < handA.ranks[cardinality].length; rank++) {
             if (handA.ranks[cardinality][rank] > handB.ranks[cardinality][rank]) {
                 return 1;
             }
