@@ -98,7 +98,7 @@ Gs.prototype.applyAction = function(seat, action) {
             if (this.isButton(seat)) {
                 if (this.currentRound == 'river') {
                     // End hand if button checks back river.
-                    this.calcWinner();
+                    this.calcHandWinner();
                     return {'hand-complete': true};
                 } else {
                     // Next round if button checks back round.
@@ -134,7 +134,7 @@ Gs.prototype.applyAction = function(seat, action) {
                 return {'next-turn': true};
             } else if (this.currentRound == 'river') {
                 // End hand if player calls river bet.
-                this.calcWinner();
+                this.calcHandWinner();
                 return {'hand-complete': true};
             } else {
                 // Next round if player calls bet.
@@ -171,16 +171,118 @@ Gs.prototype.applyAction = function(seat, action) {
     }
 };
 
-Gs.prototype.calcWinner = function() {
+Gs.prototype.calcHandWinner = function() {
+    // Calculate winner of hand and ship pot to winner.
     var seat1Hand = this.getHand(this.seat1Hole);
     var seat2Hand = this.getHand(this.seat2Hole);
-    return;
+    var winnerComp = compareHands(seat1Hand, seat2Hand);
+    if (winnerComp > 0) {
+        this.winner = 'seat1';
+        this.seat1Chips += this.pot;
+    } else if (winnerComp < 0 {
+        this.winner = 'seat2';
+        this.seat2Chips += this.pot;
+    } else {
+        // Split the pot. seat1 gets the odd chip.
+        this.seat1Chips += parseInt(this.pot / 2, 10);
+        this.pot - this.seat1Chips;
+        this.seat2Chips += this.pot;
+    }
 };
+
+// Hand strength constants.
+var HAND_HIGH_CARD = 0;
+var HAND_PAIR = 1;
+var HAND_TWO_PAIR = 2;
+var HAND_TRIPS = 3;
+var HAND_STRAIGHT = 4;
+var HAND_FLUSH = 5;
+var HAND_FULL_HOUSE = 6;
+var HAND_QUADS = 7;
+var HAND_STRAIGHT_FLUSH = 8;
 
 Gs.prototype.getHand = function(hole) {
     // Sort hand by rank.
     var hand = this.boardCards.concat(hole);
     hand.sort(function(a, b) { return a.rank - b.rank; });
+
+    var returnHand = calcHand(hand);
+    console.log(returnHand);
+    return returnHand;
+
+    function getHandStrength(hand) {
+        // Get cardinalities (e.g. {'5': 2, '13': 1})
+        var cardinalities = {};
+        for (i = 0; i < hand.length; i++) {
+            if (hand[i].rank in cardinalities) {
+                cardinalities[hand[i].rank]++;
+            } else {
+                cardinalities[hand[i].rank] = 1;
+            }
+        }
+        // Get histogram of hand (e.g. {'2': [{'5': 2}, {'13': 2}], '1': [{'1': 1}]}).
+        var histogram = {};
+        for (rank in cardinalities) {
+            var cardinality = cardinalities[rank];
+            if (cardinality in histogram) {
+                // Value of histogram is list of ranks that fall under the
+                // cardinality, sorted in reverse to make it easier to
+                // compare hands.
+                histogram[cardinality].push(rank);
+                histogram[cardinality].sort(function(a, b) { return b - a; });
+            } else {
+                histogram[cardinality] = [rank];
+            }
+        }
+
+        // Calculate hand strength.
+        if ('4' in histogram) {
+            // Quads.
+            return {hand_strength: HAND_QUADS, hand: hand,
+                    ranks: [histogram['4'], histogram['1']]}
+        } else if ('3' in histogram && '2' in histogram) {
+            // Boat.
+            return {hand_strength: HAND_FULL_HOUSE, hand: hand,
+                    ranks: [histogram['3'], histogram['2']]};
+        } else if ('3' in histogram) {
+            // Trips.
+            return {hand_strength: HAND_TRIPS, hand: hand,
+                    ranks: [histogram['3'], histogram['1']]};
+        } else if ('2' in histogram && histogram['2'].length == 2) {
+            // Two-pair.
+            return {hand_strength: HAND_TRIPS, hand: hand,
+                    ranks: [histogram['2'], histogram['1']]};
+        } else if ('2' in histogram) {
+            // Pair.
+            return {hand_strength: HAND_PAIR, hand: hand,
+                    ranks: [histogram['2'], histogram['1']]};
+        } else {
+            var hasFlush = true;
+            for (i=0; i < hand.length - 1; i++) {
+                if (hand[i].suit != hand[i + 1].suit) {
+                    hasFlush = false;
+                    break;
+                }
+            }
+            var hasStraight = (hand[4].rank - hand[1].rank == 4 ||
+                               hand[4].rank == 14 && hand[3].rank == 5);
+
+            if (hasFlush && hasStraight) {
+                return {hand_strength: HAND_STRAIGHT_FLUSH, hand: hand,
+                        ranks: [histogram['1']]}
+            } else if (hasFlush) {
+                return {hand_strength: HAND_FLUSH, hand: hand,
+                        ranks: [histogram['1']]}
+            } else if (hasStraight) {
+                return {hand_strength: HAND_STRAIGHT, hand: hand,
+                        ranks: [histogram['1']]}
+            } else {
+                // High card.
+                return {hand_strength: HAND_HIGH_CARD, hand: hand,
+                        ranks: [histogram['1']]}
+            }
+        }
+    }
 
     function calcHand(hand) {
         // Iterates through hand, recursively removing a card until we get
@@ -188,82 +290,45 @@ Gs.prototype.getHand = function(hole) {
         // the best hand will bubble up the stack.
         var i;
         if (hand.length == 5) {
-            // Get histogram of hand.
-            var cardinalities = {};
-            for (i = 0; i < hand.length; i++) {
-                if (hand[i].rank in cardinalities) {
-                    cardinalities[hand[i].rank]++;
-                } else {
-                    cardinalities[hand[i].rank] = 1;
-                }
-            }
-            var histogram = {};
-            for (rank in cardinalities) {
-                var cardinality = cardinalities[rank];
-                var bucketedCardinality = {};
-                bucketedCardinality[rank] = cardinality;
-                if (cardinality in histogram) {
-                    histogram[cardinality].push(bucketedCardinality);
-                } else {
-                    histogram[cardinality] = [bucketedCardinality];
-                }
-            }
-
-            // Calculate hand strength.
-            if ('4' in histogram) {
-                // Quads.
-                console.log('quads');
-            } else if ('3' in histogram && '2' in histogram) {
-                // Boat.
-                console.log('boat');
-            } else if ('3' in histogram) {
-                // Trips.
-                console.log('trips');
-            } else if ('2' in histogram && histogram['2'].length == 2) {
-                // Two-pair.
-                console.log('two-pair');
-            } else if ('2' in histogram) {
-                // Pair.
-                console.log('pair');
-            } else {
-                var hasFlush = true;
-                for (i=0; i < hand.length - 1; i++) {
-                    if (hand[i].suit != hand[i + 1].suit) {
-                        hasFlush = false;
-                        break;
-                    }
-                }
-                var hasStraight = (hand[4].rank - hand[1].rank == 4 ||
-                                   hand[4].rank == 13 && hand[3].rank == 5);
-
-                if (hasFlush && hasStraight) {
-                    console.log('straight flush');
-                } else if (hasFlush) {
-                    console.log('flush');
-                } else if (hasStraight) {
-                    console.log('straight');
-                } else {
-                    // High card.
-                    console.log('high card');
-                }
-            }
-            return;
+            return getHandStrength(hand);
         }
 
         var bestHand;
         for (i = 0; i < hand.length; i++) {
             var slicedHand = hand.slice(0); slicedHand.remove(i);
-            calcHand(slicedHand);
-            continue;
-            if (!bestHand || compareHand(possibleBestHand, bestHand)) {
+            var possibleBestHand = calcHand(slicedHand);
+            if (!bestHand || compareHands(possibleBestHand, bestHand)) {
                 bestHand = possibleBestHand;
             }
         }
         return bestHand;
     }
-
-    calcHand(hand);
 };
+
+function compareHands(handA, handB) {
+    if (handA.hand > handB.hand) {
+        return 1;
+    }
+    if (handA.hand > handB.hand) {
+        return -1;
+    }
+    // If it's the same hand, compare the appropriate ranks.
+    // Go through the cardinalities from most-to-least dominance (e.g. 4
+    // for quads, then 1 for the kicker) and compare the ranks
+    // e.g. 4444A vs 3333A: check the cardinality of 4 and compare 4444 vs 3333
+    // e.g. 4444A vs 4444K: check the cardinality of 4, see it's same, then check cardinality of 1, the kicker
+    for (var cardinality=0; cardinality < handA.ranks; cardinality++) {
+        for (var rank=0; rank < handA.ranks[i]; rank++) {
+            if (handA.ranks[cardinality][rank] > handB.ranks[cardinality][rank]) {
+                return 1;
+            }
+            if (handA.ranks[cardinality][rank] > handB.ranks[cardinality][rank]) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
 
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
