@@ -16,6 +16,7 @@
     </head>
 
     <body>
+      <div id='wrap'>
         <div id='lobby'>
             <h1>Under the Gun</h1>
             <p>Heads-Up Hold'em</p>
@@ -23,25 +24,23 @@
         </div>
 
         <div id='game'>
-            <div id='hole1'></div>
-            <div id='hole2'></div>
-            <div id='flop1'></div>
-            <div id='flop2'></div>
-            <div id='flop3'></div>
-            <div id='turn'></div>
-            <div id='river'></div>
+            <span id='hole1' class='card'></span>
+            <span id='hole2' class='card'></span>
+            <span id='flop1' class='card'></span>
+            <span id='flop2' class='card'></span>
+            <span id='flop3' class='card'></span>
+            <span id='turn' class='card'></span>
+            <span id='river' class='card'></span>
+
+            <span id='slider'></span>
 
             <div id='actions'>
-                <span id='fold' class='button inactive'>Fold</span>
-                <span id='check' class='button inactive'>Check</span>
-                <span id='call' class='button inactive'>Call</span>
-                <span id='bet' class='button inactive'>Bet</span>
-                <span id='raise' class='button inactive'>Raise</span>
+                <span class='fold button inactive'>Fold</span>
+                <span class='check call button inactive'>Check</span>
+                <span class='bet raise button inactive'>Raise</span>
             </div>
-
-            <span id='slider'>BET SLIDER</span>
-            <canvas id='c'></canvas>
         </div>
+     </div>
 
         <script src='js/underthegun.js'></script>
     </body>

@@ -1,5 +1,12 @@
-#actions span.inactive {
-  background: #141414;
-  color: #505050;
-  cursor: normal;
-  box-shadow: 0 0 0 0; }
+#game .card {
+  font-size: 32px; }
+#game #actions span.button {
+  display: inline;
+  width: 33.33%;
+  padding: 10px 20px 10px 20px;
+  top: 18px; }
+  #game #actions span.button.inactive {
+    background: #141414;
+    color: #505050;
+    cursor: normal;
+    box-shadow: 0 0 0 0; }

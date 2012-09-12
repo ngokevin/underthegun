@@ -2,9 +2,15 @@ html, body {
   color: #d2d2d2;
   margin: 0 auto;
   margin-top: -12px;
+  min-height: 240px;
   overflow: auto;
   padding: 0;
   width: 320px; }
+
+#wrap {
+  background: #0a3102;
+  padding: 32px 0;
+  text-align: center; }
 
 span.button {
   background: #490208;
@@ -16,9 +22,10 @@ span.button {
   width: 20%;
   margin: auto;
   padding: 10px 0 0;
+  position: relative;
   text-align: center;
-  width: 95%;
-  z-index: 2; }
+  text-transform: capitalize;
+  width: 95%; }
   span.button:hover {
     background: #470208; }
   span.button.clicked {

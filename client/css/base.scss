@@ -3,9 +3,16 @@ html, body {
     color: $white;
     margin: 0 auto;
     margin-top: -12px;
+    min-height: 240px;
     overflow: auto;
     padding: 0;
     width: 320px;
+}
+
+#wrap {
+    background: $green;
+    padding: 32px 0;
+    text-align: center;
 }
 
 span.button {
@@ -17,9 +24,10 @@ span.button {
     height: 35px; width: 20%;
     margin: auto;
     padding: 10px 0 0;
+    position: relative;
     text-align: center;
+    text-transform: capitalize;
     width: 95%;
-    z-index: 2;
 
     &:hover {
         background: darken($red, .5%);

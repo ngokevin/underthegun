@@ -77,11 +77,11 @@ $(document).ready(function() {
 
                 var enabledButtons = $();
                 $(gs.availableActions).each(function(index, action) {
-                    enabledButtons = enabledButtons.add($('#actions span#' + action));
+                    enabledButtons = enabledButtons.add($('#actions span.' + action).data('action', action).text(action));
                 });
 
                 enabledButtons.removeClass('inactive').bind('click', function() {
-                    switch (this.id) {
+                    switch ($(this).data('action')) {
                         case 'fold':
                             action = {action: 'fold', amount: 0};
                             break;
