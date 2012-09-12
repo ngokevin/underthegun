@@ -2,20 +2,39 @@
 
 #game {
     .card {
+        background: $white;
+        color: $black;
+        display: inline-block;
         font-size: 32px;
+        height: 70px;
+        width: 50px;
+
+        &.undealt {
+            background: none;
+            border: 1px dashed $light-gray;
+        }
+        &.facedown {
+            background: $light-blue;
+        }
+    }
+
+    #bet-slider {
+        margin: auto;
+        margin-top: 24px;
+        width: 75%;
     }
 
     #actions span.button {
-        display: inline;
-        width: 33.33%;
-        padding: 10px 20px 10px 20px;
+        display: inline-block;
+        width: 25%;
+        margin: 0 3px 0 3px;
+        padding: 10px 7px 15px 7px;
         top: 18px;
-
-        &.inactive {
-            background: $dark-gray;
-            color: $light-gray;
-            cursor: normal;
-            box-shadow: 0 0 0 0;
+        &:first-child {
+            top: -4px;
+        }
+        .inner-button {
+            display: inline;
         }
     }
 }

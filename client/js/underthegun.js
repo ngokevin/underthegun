@@ -7,8 +7,10 @@ $(document).ready(function() {
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
 
     // Connect to the match-making system.
-    $('#find-match').click(function() {
+    $('#find-game').click(function() {
         var socket = io.connect('http://localhost:3479');
+
+        $('#find-game').text('Finding game...').addClass('inactive');
 
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
@@ -44,6 +46,20 @@ $(document).ready(function() {
         socket.on('new-game', function(gs) {
             console.log('Game started!');
 
+            // Initialize bet slider.
+            var betAmount = gs.bigBlind;
+            function updateBetAmount(amount) {
+                betAmount = amount;
+                $('#bet-amount').text('$' + amount);
+            }
+            $('#bet-slider').slider({
+                min: gs.bigBlind, max: gs[seat + 'Chips'], value: gs.bigBlind, step: 1,
+                slide: function(e, ui) { updateBetAmount(ui.value) },
+                change: function(e, ui) { updateBetAmount(ui.value) },
+                stop: function(e, ui) { updateBetAmount(ui.value) }
+            });
+            updateBetAmount(gs.bigBlind);
+
             // Start hand.
             socket.on('new-hand', function(gs) {
                 // Receive hole cards.
@@ -77,7 +93,11 @@ $(document).ready(function() {
 
                 var enabledButtons = $();
                 $(gs.availableActions).each(function(index, action) {
-                    enabledButtons = enabledButtons.add($('#actions span.' + action).data('action', action).text(action));
+                    actionButton = $('#actions span.' + action);
+                    enabledButtons = enabledButtons.add(actionButton.data('action', action));
+
+                    if (action == 'raise') { action += ' to'; }
+                    actionButton.find('.action').text(action);
                 });
 
                 enabledButtons.removeClass('inactive').bind('click', function() {
@@ -92,10 +112,10 @@ $(document).ready(function() {
                             action = {action: 'call', amount: 0};
                             break;
                         case 'bet':
-                            action = {action: 'bet', amount: 10};
+                            action = {action: 'bet', amount: betAmount};
                             break;
                         case 'raise':
-                            action = {action: 'raise', amount: 10};
+                            action = {action: 'raise', amount: betAmount};
                             break;
                     }
                     socket.emit('action', {action: action, gs: gs})
