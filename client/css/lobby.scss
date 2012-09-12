@@ -1,90 +1,9 @@
 @import 'globals';
-html, body {
-    color: $white;
-    margin: 0; padding: 0;
-    height: 100%; width: 100%;
-}
-li {
-    list-style: none;
-    margin-left: -10%;
-}
-
-span.button {
-    background: $red;
-    border-radius: 10px;
-    box-shadow: 3px 3px 2px 0 black;
-    cursor: pointer;
-    float: left;
-    height: 35px; width: 20%;
-    margin-left: 7.5%; margin-top: 1%;
-    padding: 14px 8px 2px 8px;
-    text-align: center;
-    z-index: 2;
-
-    &:hover {
-        background: darken($red, .5%);
-    }
-    &.clicked {
-        box-shadow: 0px 0px 0px 0 black;
-    }
-}
 
 #lobby {
-    height: 100%; width: 100%;;
     background: $green;
-
-    #sidebar {
-        background: $dark-gray;
-        border-radius: 50px 50px 20px 20px;
-        bottom: 0; right: 0;
-        height: 90%; width: 25%;
-        min-width: 360px;
-        position: absolute;
-        text-align: center;
-        z-index: 1;
-
-        #rank-logo {
-            height: 8%;
-        }
-        #rank {
-            background: $medium-gray;
-            border-radius: 50px 50px 0 0;
-            height: 12%;
-            padding-top: 12px;
-
-            #league {
-                font-size: 24px;
-            }
-            #rank {
-                font-size: 36px;
-            }
-        }
-        #stats {
-            background: $medium-gray;
-            border-radius: 50px 50px 0 0;
-
-            #stats-header {
-                font-size: 36px;
-                padding-top: 12px;
-            }
-            li {
-                margin-top: 24px;
-            }
-        }
-        #ladder {
-            position: absolute;
-            left: 15%;
-            width: 50%;
-        }
-    }
-
-    #footer {
-        background: $dark-gray;
-        width: 80%; height: 8%;
-        position: absolute;
-        bottom: 0; left: 0;
-
-    }
+    padding: 24px 0;
+    text-align: center;
 }
 
 #game {

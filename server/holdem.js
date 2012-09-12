@@ -179,7 +179,7 @@ Gs.prototype.calcHandWinner = function() {
     if (winnerComp > 0) {
         this.winner = 'seat1';
         this.seat1Chips += this.pot;
-    } else if (winnerComp < 0 {
+    } else if (winnerComp < 0) {
         this.winner = 'seat2';
         this.seat2Chips += this.pot;
     } else {

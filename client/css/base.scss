@@ -1,15 +1,24 @@
 @import 'globals';
+html, body {
+    color: $white;
+    margin: 0 auto;
+    margin-top: -12px;
+    overflow: auto;
+    padding: 0;
+    width: 320px;
+}
 
 span.button {
     background: $red;
     border-radius: 10px;
     box-shadow: 3px 3px 2px 0 black;
     cursor: pointer;
-    float: left;
+    display: block;
     height: 35px; width: 20%;
-    margin-left: 7.5%; margin-top: 1%;
-    padding: 14px 8px 2px 8px;
+    margin: auto;
+    padding: 10px 0 0;
     text-align: center;
+    width: 95%;
     z-index: 2;
 
     &:hover {
