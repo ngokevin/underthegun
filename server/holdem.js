@@ -175,13 +175,20 @@ Gs.prototype.calcHandWinner = function() {
     // Calculate winner of hand and ship pot to winner.
     var seat1Hand = this.getHand(this.seat1Hole);
     var seat2Hand = this.getHand(this.seat2Hole);
+
     var winnerComp = compareHands(seat1Hand, seat2Hand);
     if (winnerComp > 0) {
         this.winner = 'seat1';
         this.seat1Chips += this.pot;
+        console.log('SEAT1');
+        console.log(seat1Hand);
+        console.log(seat2Hand);
     } else if (winnerComp < 0) {
         this.winner = 'seat2';
         this.seat2Chips += this.pot;
+        console.log('SEAT2');
+        console.log(seat1Hand);
+        console.log(seat2Hand);
     } else {
         // Split the pot. seat1 gets the odd chip.
         this.seat1Chips += parseInt(this.pot / 2, 10);
@@ -263,8 +270,8 @@ Gs.prototype.getHand = function(hole) {
                     break;
                 }
             }
-            var hasStraight = (hand[4].rank - hand[1].rank == 4 ||
-                               hand[4].rank == 14 && hand[3].rank == 5);
+            var hasStraight = (hand[0].rank - hand[4].rank == 4 ||
+                               hand[0].rank == 14 && hand[1].rank == 5);
 
             if (hasFlush && hasStraight) {
                 return {hand_strength: HAND_STRAIGHT_FLUSH, hand: hand,
