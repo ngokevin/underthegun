@@ -244,23 +244,23 @@ Gs.prototype.getHand = function(hole) {
         // Calculate hand strength.
         if ('4' in histogram) {
             // Quads.
-            return {hand_strength: HAND_QUADS, hand: hand,
+            return {handStrength: HAND_QUADS, hand: hand,
                     ranks: [histogram['4'], histogram['1']]}
         } else if ('3' in histogram && '2' in histogram) {
             // Boat.
-            return {hand_strength: HAND_FULL_HOUSE, hand: hand,
+            return {handStrength: HAND_FULL_HOUSE, hand: hand,
                     ranks: [histogram['3'], histogram['2']]};
         } else if ('3' in histogram) {
             // Trips.
-            return {hand_strength: HAND_TRIPS, hand: hand,
+            return {handStrength: HAND_TRIPS, hand: hand,
                     ranks: [histogram['3'], histogram['1']]};
         } else if ('2' in histogram && histogram['2'].length == 2) {
             // Two-pair.
-            return {hand_strength: HAND_TRIPS, hand: hand,
+            return {handStrength: HAND_TRIPS, hand: hand,
                     ranks: [histogram['2'], histogram['1']]};
         } else if ('2' in histogram) {
             // Pair.
-            return {hand_strength: HAND_PAIR, hand: hand,
+            return {handStrength: HAND_PAIR, hand: hand,
                     ranks: [histogram['2'], histogram['1']]};
         } else {
             var hasFlush = true;
@@ -270,21 +270,21 @@ Gs.prototype.getHand = function(hole) {
                     break;
                 }
             }
-            var hasStraight = (hand[0].rank - hand[4].rank == 4 ||
-                               hand[0].rank == 14 && hand[1].rank == 5);
+            var hasStraight = (hand[4].rank - hand[0].rank == 4 ||
+                               hand[4].rank == 14 && hand[3].rank == 5);
 
             if (hasFlush && hasStraight) {
-                return {hand_strength: HAND_STRAIGHT_FLUSH, hand: hand,
+                return {handStrength: HAND_STRAIGHT_FLUSH, hand: hand,
                         ranks: [histogram['1']]}
             } else if (hasFlush) {
-                return {hand_strength: HAND_FLUSH, hand: hand,
+                return {handStrength: HAND_FLUSH, hand: hand,
                         ranks: [histogram['1']]}
             } else if (hasStraight) {
-                return {hand_strength: HAND_STRAIGHT, hand: hand,
+                return {handStrength: HAND_STRAIGHT, hand: hand,
                         ranks: [histogram['1']]}
             } else {
                 // High card.
-                return {hand_strength: HAND_HIGH_CARD, hand: hand,
+                return {handStrength: HAND_HIGH_CARD, hand: hand,
                         ranks: [histogram['1']]}
             }
         }
@@ -294,6 +294,7 @@ Gs.prototype.getHand = function(hole) {
         // Iterates through hand, recursively removing a card until we get
         // five-card hands. Determines the strength of hand, returns it, and
         // the best hand will bubble up the stack.
+
         var i;
         if (hand.length == 5) {
             return getHandStrength(hand);
@@ -301,9 +302,10 @@ Gs.prototype.getHand = function(hole) {
 
         var bestHand;
         for (i = 0; i < hand.length; i++) {
-            var slicedHand = hand.slice(0); slicedHand.remove(i);
+            var slicedHand = hand.slice(0);
+            slicedHand.remove(i);
             var possibleBestHand = calcHand(slicedHand);
-            if (!bestHand || compareHands(possibleBestHand, bestHand)) {
+            if (!bestHand || compareHands(possibleBestHand, bestHand) == 1) {
                 bestHand = possibleBestHand;
             }
         }
@@ -312,10 +314,11 @@ Gs.prototype.getHand = function(hole) {
 };
 
 function compareHands(handA, handB) {
-    if (handA.hand_strength > handB.hand_strength) {
+    console.log(prettyHand(handA));
+    if (handA.handStrength > handB.handStrength) {
         return 1;
     }
-    if (handA.hand_strength < handB.hand_strength) {
+    if (handA.handStrength < handB.handStrength) {
         return -1;
     }
     // If it's the same hand, compare the appropriate ranks.
@@ -433,6 +436,15 @@ Gs.prototype.getNextPlayer = function() {
 function getOtherPlayer(seat) {
     // Get other player from seat.
     return seat == 'seat1' ? 'seat2' : 'seat1';
+}
+
+
+function prettyHand(hand) {
+    var pretty = '';
+    for (var i=0; i < hand.hand.length; i++) {
+        pretty += hand.hand[i].card + ' ';
+    }
+    return pretty;
 }
 
 exports.Gs = Gs;
