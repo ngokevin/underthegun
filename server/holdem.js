@@ -1,4 +1,6 @@
-// Deck Stuff
+/*
+DECK AND CARDS
+*/
 var Deck = function() {
     this.deck = createDeck();
     this.shuffle();
@@ -32,9 +34,10 @@ function createDeck() {
     var suits = ['c', 'd', 'h', 's'];
 
     var deck = [];
-    for (var i=0; i<ranks.length; i++) {
-        for (var j=0; j<suits.length; j++) {
+    for (var i = 0; i < ranks.length; i++) {
+        for (var j = 0; j < suits.length; j++) {
             deck.push({
+                // Card.
                 card: ranks[i][1] + suits[j],
                 rank: ranks[i][0],
                 suit: suits[j],
@@ -45,11 +48,9 @@ function createDeck() {
     return deck;
 }
 
-exports.Deck = Deck;
-
-
-// Game State Stuff
-// Shared game state of a hand.
+/*
+GAME STATE
+*/
 var Gs = function() {
     this.gameId = null;
     this.seat1Id = null;
@@ -76,6 +77,57 @@ var Gs = function() {
     this.winner = null;
 }
 
+Gs.prototype.newHand = function() {
+    this.deck.shuffle();
+    if (this.button) {
+        this.button = this.getNextPlayer(this.button);
+    } else {
+        this.button = 'seat1';
+    }
+    this.pot = this.smallBlind + this.bigBlind;
+    this.currentRound = 'preflop';
+    this.seat1Hole = [];
+    this.seat2Hole = [];
+    this.boardCards = [];
+    this.actionOn = this.button;
+    this.availableActions = ['fold', 'call', 'raise'];
+    this.currentBet = 0;
+    this.preflopActions = [];
+    this.flopActions = [];
+    this.turnActions = [];
+    this.riverActions = [];
+    this.winner = null;
+
+    // Post blinds.
+    if (this.isButton('seat1')) {
+        this.seat1Pot = this.smallBlind;
+        this['seat1Chips'] -= this.smallBlind;
+        this.seat2Pot = this.bigBlind;
+        this['seat2Chips'] -= this.bigBlind;
+    } else {
+        this.seat1Pot = this.bigBlind;
+        this['seat1Chips'] -= this.bigBlind;
+        this.seat2Pot = this.smallBlind;
+        this['seat2Chips'] -= this.smallBlind;
+    }
+};
+
+Gs.prototype.filter = function(seat) {
+    // Hide certain values based on seat (for security reasons so they can't
+    // snoop other player's hole cards or next card in deck).
+    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
+    var filteredGs = {}
+    for(var keys = Object.keys(this), l = keys.length; l; --l) {
+        if (filterKeys.indexOf(keys[l-1]) < 0) {
+            filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
+        }
+    }
+    return filteredGs;
+};
+
+/*
+HOLD'EM LOGIC
+*/
 Gs.prototype.applyAction = function(seat, action) {
     // Parses an action, manipulates the game state and tells the
     // players. Sort of like a finite state machine. Returns true if
@@ -171,6 +223,9 @@ Gs.prototype.applyAction = function(seat, action) {
     }
 };
 
+/*
+POKER LOGIC
+*/
 Gs.prototype.calcHandWinner = function() {
     // Calculate winner of hand and ship pot to winner.
     var seat1Hand = this.getHand(this.seat1Hole);
@@ -339,53 +394,22 @@ function compareHands(handA, handB) {
     return 0;
 }
 
-Gs.prototype.newHand = function() {
-    this.deck.shuffle();
-    if (this.button) {
-        this.button = this.getNextPlayer(this.button);
-    } else {
-        this.button = 'seat1';
-    }
-    this.pot = this.smallBlind + this.bigBlind;
-    this.currentRound = 'preflop';
-    this.seat1Hole = [];
-    this.seat2Hole = [];
-    this.boardCards = [];
-    this.actionOn = this.button;
-    this.availableActions = ['fold', 'call', 'raise'];
-    this.currentBet = 0;
-    this.preflopActions = [];
-    this.flopActions = [];
-    this.turnActions = [];
-    this.riverActions = [];
-    this.winner = null;
+/*
+BASIC GAME LOGIC
+*/
+Gs.prototype.isButton = function(seat) {
+    return seat == this.button ? true : false;
+}
 
-    // Post blinds.
-    if (this.isButton('seat1')) {
-        this.seat1Pot = this.smallBlind;
-        this['seat1Chips'] -= this.smallBlind;
-        this.seat2Pot = this.bigBlind;
-        this['seat2Chips'] -= this.bigBlind;
-    } else {
-        this.seat1Pot = this.bigBlind;
-        this['seat1Chips'] -= this.bigBlind;
-        this.seat2Pot = this.smallBlind;
-        this['seat2Chips'] -= this.smallBlind;
-    }
-};
+Gs.prototype.getNextPlayer = function() {
+    // Get next player.
+    return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
+}
 
-Gs.prototype.filter = function(seat) {
-    // Hide certain values based on seat (for security reasons so they can't
-    // snoop other player's hole cards or next card in deck).
-    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
-    var filteredGs = {}
-    for(var keys = Object.keys(this), l = keys.length; l; --l) {
-        if (filterKeys.indexOf(keys[l-1]) < 0) {
-            filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
-        }
-    }
-    return filteredGs;
-};
+function getOtherPlayer(seat) {
+    // Get other player from seat.
+    return seat == 'seat1' ? 'seat2' : 'seat1';
+}
 
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
@@ -424,21 +448,10 @@ Gs.prototype.hasGameWinner = function() {
     return false;
 }
 
-Gs.prototype.isButton = function(seat) {
-    return seat == this.button ? true : false;
-}
 
-Gs.prototype.getNextPlayer = function() {
-    // Get next player.
-    return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
-}
-
-function getOtherPlayer(seat) {
-    // Get other player from seat.
-    return seat == 'seat1' ? 'seat2' : 'seat1';
-}
-
-
+/*
+UTILS
+*/
 function prettyHand(hand) {
     var pretty = '';
     for (var i=0; i < hand.hand.length; i++) {
@@ -447,12 +460,14 @@ function prettyHand(hand) {
     return pretty;
 }
 
-exports.Gs = Gs;
 
-
-// Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function(from, to) {
+    // Array Remove - By John Resig (MIT Licensed)
    var rest = this.slice((to || from) + 1 || this.length);
    this.length = from < 0 ? this.length + from : from;
    return this.push.apply(this, rest);
 };
+
+
+exports.Deck = Deck;
+exports.Gs = Gs;
