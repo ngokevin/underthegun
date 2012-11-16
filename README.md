@@ -12,3 +12,5 @@ Dependencies
 
 Neat Tools
 - supervisor
+- inspector
+- unit

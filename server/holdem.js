@@ -253,15 +253,17 @@ Gs.prototype.calcHandWinner = function() {
 };
 
 // Hand strength constants.
-var HAND_HIGH_CARD = 0;
-var HAND_PAIR = 1;
-var HAND_TWO_PAIR = 2;
-var HAND_TRIPS = 3;
-var HAND_STRAIGHT = 4;
-var HAND_FLUSH = 5;
-var HAND_FULL_HOUSE = 6;
-var HAND_QUADS = 7;
-var HAND_STRAIGHT_FLUSH = 8;
+var hs = {
+    HIGH_CARD: 0,
+    PAIR: 1,
+    TWO_PAIR: 2,
+    TRIPS: 3,
+    STRAIGHT: 4,
+    FLUSH: 5,
+    FULL_HOUSE: 6,
+    QUADS: 7,
+    STRAIGHT_FLUSH: 8
+}
 
 Gs.prototype.getHand = function(hole) {
     // Sort hand by rank.
@@ -270,110 +272,109 @@ Gs.prototype.getHand = function(hole) {
 
     var returnHand = calcHand(hand);
     return returnHand;
-
-    function getHandStrength(hand) {
-        // Get cardinalities (e.g. {'5': 2, '13': 1})
-        var cardinalities = {};
-        for (i = 0; i < hand.length; i++) {
-            if (hand[i].rank in cardinalities) {
-                cardinalities[hand[i].rank]++;
-            } else {
-                cardinalities[hand[i].rank] = 1;
-            }
-        }
-        // Get histogram of hand (e.g. {'2': [{'5': 2}, {'13': 2}], '1': [{'1': 1}]}).
-        var histogram = {};
-        for (rank in cardinalities) {
-            var cardinality = cardinalities[rank];
-            if (cardinality in histogram) {
-                // Value of histogram is list of ranks that fall under the
-                // cardinality, sorted in reverse to make it easier to
-                // compare hands.
-                histogram[cardinality].push(rank);
-                histogram[cardinality].sort(function(a, b) { return b - a; });
-            } else {
-                histogram[cardinality] = [rank];
-            }
-        }
-
-        // Calculate hand strength.
-        if ('4' in histogram) {
-            // Quads.
-            return {handStrength: HAND_QUADS, hand: hand,
-                    ranks: [histogram['4'], histogram['1']]}
-        } else if ('3' in histogram && '2' in histogram) {
-            // Boat.
-            return {handStrength: HAND_FULL_HOUSE, hand: hand,
-                    ranks: [histogram['3'], histogram['2']]};
-        } else if ('3' in histogram) {
-            // Trips.
-            return {handStrength: HAND_TRIPS, hand: hand,
-                    ranks: [histogram['3'], histogram['1']]};
-        } else if ('2' in histogram && histogram['2'].length == 2) {
-            // Two-pair.
-            return {handStrength: HAND_TRIPS, hand: hand,
-                    ranks: [histogram['2'], histogram['1']]};
-        } else if ('2' in histogram) {
-            // Pair.
-            return {handStrength: HAND_PAIR, hand: hand,
-                    ranks: [histogram['2'], histogram['1']]};
-        } else {
-            var hasFlush = true;
-            for (i=0; i < hand.length - 1; i++) {
-                if (hand[i].suit != hand[i + 1].suit) {
-                    hasFlush = false;
-                    break;
-                }
-            }
-            var hasStraight = (hand[4].rank - hand[0].rank == 4 ||
-                               hand[4].rank == 14 && hand[3].rank == 5);
-
-            if (hasFlush && hasStraight) {
-                return {handStrength: HAND_STRAIGHT_FLUSH, hand: hand,
-                        ranks: [histogram['1']]}
-            } else if (hasFlush) {
-                return {handStrength: HAND_FLUSH, hand: hand,
-                        ranks: [histogram['1']]}
-            } else if (hasStraight) {
-                return {handStrength: HAND_STRAIGHT, hand: hand,
-                        ranks: [histogram['1']]}
-            } else {
-                // High card.
-                return {handStrength: HAND_HIGH_CARD, hand: hand,
-                        ranks: [histogram['1']]}
-            }
-        }
-    }
-
-    function calcHand(hand) {
-        // Iterates through hand, recursively removing a card until we get
-        // five-card hands. Determines the strength of hand, returns it, and
-        // the best hand will bubble up the stack.
-
-        var i;
-        if (hand.length == 5) {
-            return getHandStrength(hand);
-        }
-
-        var bestHand;
-        for (i = 0; i < hand.length; i++) {
-            var slicedHand = hand.slice(0);
-            slicedHand.remove(i);
-            var possibleBestHand = calcHand(slicedHand);
-            if (!bestHand || compareHands(possibleBestHand, bestHand) == 1) {
-                bestHand = possibleBestHand;
-            }
-        }
-        return bestHand;
-    }
 };
 
+function calcHand(hand) {
+    // Iterates through hand, recursively removing a card until we get
+    // five-card hands. Determines the strength of hand, returns it, and
+    // the best hand will bubble up the stack.
+
+    var i;
+    if (hand.length == 5) {
+        return getHandStrength(hand);
+    }
+
+    var bestHand;
+    for (i = 0; i < hand.length; i++) {
+        var slicedHand = hand.slice(0);
+        slicedHand.remove(i);
+        var possibleBestHand = calcHand(slicedHand);
+        if (!bestHand || compareHands(possibleBestHand, bestHand) == 1) {
+            bestHand = possibleBestHand;
+        }
+    }
+    return bestHand;
+}
+
+function getHandStrength(hand) {
+    // Get cardinalities (e.g. {'5': 2, '13': 1})
+    var cardinalities = {};
+    for (i = 0; i < hand.length; i++) {
+        if (hand[i].rank in cardinalities) {
+            cardinalities[hand[i].rank]++;
+        } else {
+            cardinalities[hand[i].rank] = 1;
+        }
+    }
+    // Get histogram of hand (e.g. {'2': [{'5': 2}, {'13': 2}], '1': [{'1': 1}]}).
+    var histogram = {};
+    for (rank in cardinalities) {
+        var cardinality = cardinalities[rank];
+        if (cardinality in histogram) {
+            // Value of histogram is list of ranks that fall under the
+            // cardinality, sorted in reverse to make it easier to
+            // compare hands.
+            histogram[cardinality].push(rank);
+            histogram[cardinality].sort(function(a, b) { return b - a; });
+        } else {
+            histogram[cardinality] = [rank];
+        }
+    }
+
+    // Calculate hand strength.
+    if ('4' in histogram) {
+        // Quads.
+        return {strength: hs.QUADS, hand: hand,
+                ranks: [histogram['4'], histogram['1']]}
+    } else if ('3' in histogram && '2' in histogram) {
+        // Boat.
+        return {strength: hs.FULL_HOUSE, hand: hand,
+                ranks: [histogram['3'], histogram['2']]};
+    } else if ('3' in histogram) {
+        // Trips.
+        return {strength: hs.TRIPS, hand: hand,
+                ranks: [histogram['3'], histogram['1']]};
+    } else if ('2' in histogram && histogram['2'].length == 2) {
+        // Two-pair.
+        return {strength: hs.TWO_PAIR, hand: hand,
+                ranks: [histogram['2'], histogram['1']]};
+    } else if ('2' in histogram) {
+        // Pair.
+        return {strength: hs.PAIR, hand: hand,
+                ranks: [histogram['2'], histogram['1']]};
+    } else {
+        var hasFlush = true;
+        for (i=0; i < hand.length - 1; i++) {
+            if (hand[i].suit != hand[i + 1].suit) {
+                hasFlush = false;
+                break;
+            }
+        }
+        var hasStraight = (hand[4].rank - hand[0].rank == 4 ||
+                           (hand[0].rank == 14 && hand[4].rank == 5));
+
+        if (hasFlush && hasStraight) {
+            return {strength: hs.STRAIGHT_FLUSH, hand: hand,
+                    ranks: [histogram['1']]}
+        } else if (hasFlush) {
+            return {strength: hs.FLUSH, hand: hand,
+                    ranks: [histogram['1']]}
+        } else if (hasStraight) {
+            return {strength: hs.STRAIGHT, hand: hand,
+                    ranks: [histogram['1']]}
+        } else {
+            // High card.
+            return {strength: hs.HIGH_CARD, hand: hand,
+                    ranks: [histogram['1']]}
+        }
+    }
+}
+
 function compareHands(handA, handB) {
-    console.log(prettyHand(handA));
-    if (handA.handStrength > handB.handStrength) {
+    if (handA.strength > handB.strength) {
         return 1;
     }
-    if (handA.handStrength < handB.handStrength) {
+    if (handA.strength < handB.strength) {
         return -1;
     }
     // If it's the same hand, compare the appropriate ranks.
@@ -471,3 +472,9 @@ Array.prototype.remove = function(from, to) {
 
 exports.Deck = Deck;
 exports.Gs = Gs;
+exports.Holdem = {
+    hs: hs,
+    calcHand: calcHand,
+    getHandStrength: getHandStrength,
+    compareHands: compareHands,
+}
