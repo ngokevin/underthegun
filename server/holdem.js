@@ -297,29 +297,7 @@ function calcHand(hand) {
 }
 
 function getHandStrength(hand) {
-    // Get cardinalities (e.g. {'5': 2, '13': 1})
-    var cardinalities = {};
-    for (i = 0; i < hand.length; i++) {
-        if (hand[i].rank in cardinalities) {
-            cardinalities[hand[i].rank]++;
-        } else {
-            cardinalities[hand[i].rank] = 1;
-        }
-    }
-    // Get histogram of hand (e.g. {'2': [{'5': 2}, {'13': 2}], '1': [{'1': 1}]}).
-    var histogram = {};
-    for (rank in cardinalities) {
-        var cardinality = cardinalities[rank];
-        if (cardinality in histogram) {
-            // Value of histogram is list of ranks that fall under the
-            // cardinality, sorted in reverse to make it easier to
-            // compare hands.
-            histogram[cardinality].push(rank);
-            histogram[cardinality].sort(function(a, b) { return b - a; });
-        } else {
-            histogram[cardinality] = [rank];
-        }
-    }
+    var histogram = getHandHistogram(hand);
 
     // Calculate hand strength.
     if ('4' in histogram) {
@@ -368,6 +346,35 @@ function getHandStrength(hand) {
                     ranks: [histogram['1']]}
         }
     }
+}
+
+function getHandHistogram(hand) {
+    // Get cardinalities (e.g. {'5': 2, '13': 1})
+    var cardinalities = {};
+    for (i = 0; i < hand.length; i++) {
+        if (hand[i].rank in cardinalities) {
+            cardinalities[hand[i].rank]++;
+        } else {
+            cardinalities[hand[i].rank] = 1;
+        }
+    }
+
+    // Get histogram of hand (e.g. {'2': [{'5': 2}, {'13': 2}], '1': [{'1': 1}]}).
+    var histogram = {};
+    for (rank in cardinalities) {
+        var cardinality = cardinalities[rank];
+        if (cardinality in histogram) {
+            // Value of histogram is list of ranks that fall under the
+            // cardinality, sorted in reverse to make it easier to
+            // compare hands.
+            histogram[cardinality].push(parseInt(rank, 10));
+            histogram[cardinality].sort(function(a, b) { return b - a; });
+        } else {
+            histogram[cardinality] = [parseInt(rank, 10)];
+        }
+    }
+
+    return histogram;
 }
 
 function compareHands(handA, handB) {

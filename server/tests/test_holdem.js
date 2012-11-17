@@ -1,6 +1,6 @@
 var h = require('../holdem').Holdem;
 
-module.exports = {
+var testCalcHand = {
     setUp: function(callback) {
         callback();
     },
@@ -83,7 +83,6 @@ module.exports = {
         // Wheel.
         var hand = createHand(['Ad', '2d', '3d', '4d', '5d', 'Th', 'Ts']);
         var hand = h.calcHand(hand);
-        console.log(hand);
         test.equal(hand.strength, h.hs.STRAIGHT_FLUSH);
 
         // Broadway.
@@ -94,7 +93,24 @@ module.exports = {
     },
 };
 
-function createHand(cards) {
+var testCompareHands = {
+    setUp: function(callback) {
+        callback();
+    },
+
+    tearDown: function(callback) {
+        callback();
+    },
+
+    testHighCard: function(test) {
+        var handA = createHand(['Ac', 'Td', '7h', '5s', '3c'], true);
+        var handB = createHand(['As', '9h', '7d', '5c', '3s'], true);
+        test.equal(h.compareHands(handA, handB), 1);
+        test.done()
+    },
+};
+
+function createHand(cards, withStrength) {
     // List of rank-suits (['4s', 'Kd']) to list of Cards.
     var ranks = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8,
                  '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14};
@@ -104,9 +120,23 @@ function createHand(cards) {
         hand.push({
             card: cards[i],
             rank: ranks[cards[i][0]],
-            suit: cards[i][1],
-            strRank: cards[i][0]
+            suit: cards[i][1], strRank: cards[i][0]
         });
     }
-    return hand;
+
+    // Also calculate handStrength if specified, five-card hand only.
+    if (withStrength) {
+        return h.getHandStrength(hand);
+    } else {
+        return hand;
+    }
+}
+
+// Decide what tests to run.
+var tests = {
+    testCalcHand: testCalcHand,
+    testCompareHands: testCompareHands
+};
+for (var i in tests) {
+    exports[i] = tests[i];
 }
