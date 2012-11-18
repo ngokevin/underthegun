@@ -1,45 +1,50 @@
 (function(exports) {
+    // Action constants.
     exports.ACTION_FOLD = 0;
     exports.ACTION_CHECK = 1;
     exports.ACTION_CALL = 2;
     exports.ACTION_BET = 3;
     exports.ACTION_RAISE = 4;
 
-    exports.action = {
-        // Action constants.
-        FOLD: 0,
-        CHECK: 1,
-        CALL: 2,
-        BET: 3,
-        RAISE: 4,
-    };
+    exports.actions = {};
+    exports.actions[exports.ACTION_FOLD] = 'fold';
+    exports.actions[exports.ACTION_CHECK] = 'check';
+    exports.actions[exports.ACTION_CALL] = 'call';
+    exports.actions[exports.ACTION_BET] = 'bet';
+    exports.actions[exports.ACTION_RAISE] = 'raise';
 
-    exports.actions = {
-        0: 'fold',
-        1: 'check',
-        2: 'call',
-        3: 'bet',
-        4: 'raise',
-    }
+    // Round constants.
+    exports.ROUND_PREFLOP = 0;
+    exports.ROUND_FLOP = 1;
+    exports.ROUND_TURN = 2;
+    exports.ROUND_RIVER = 3;
 
-    exports.round = {
-        // Action constants.
-        PREFLOP: 0,
-        FLOP: 1,
-        TURN: 2,
-        RIVER: 3,
-    };
+    exports.rounds = {};
+    exports.rounds[exports.ROUND_PREFLOP] = 'Preflop';
+    exports.rounds[exports.ROUND_FLOP] = 'Flop';
+    exports.rounds[exports.ROUND_TURN] = 'Turn';
+    exports.rounds[exports.ROUND_RIVER] = 'River';
 
-    exports.hs = {
-        // Hand strength constants.
-        HIGH_CARD: 0,
-        PAIR: 1,
-        TWO_PAIR: 2,
-        TRIPS: 3,
-        STRAIGHT: 4,
-        FLUSH: 5,
-        FULL_HOUSE: 6,
-        QUADS: 7,
-        STRAIGHT_FLUSH: 8
-    };
+    // Hand strength constants.
+    exports.HAND_HIGH = 0;
+    exports.HAND_PAIR = 1;
+    exports.HAND_TWO_PAIR = 2;
+    exports.HAND_TRIPS = 3;
+    exports.HAND_STRAIGHT = 4;
+    exports.HAND_FLUSH = 5;
+    exports.HAND_BOAT = 6;
+    exports.HAND_QUADS = 7;
+    exports.HAND_STR_FLUSH = 8;
+
+    exports.hands = {};
+    exports.hands[exports.HAND_HIGH] = 'High Card';
+    exports.hands[exports.HAND_PAIR] = 'Pair';
+    exports.hands[exports.HAND_TWO_PAIR] = 'Two Pair';
+    exports.hands[exports.HAND_TRIPS] = 'Three-of-a-kind';
+    exports.hands[exports.HAND_STRAIGHT] = 'Straight';
+    exports.hands[exports.HAND_FLUSH] = 'Flush';
+    exports.hands[exports.HAND_BOAT] = 'Full House';
+    exports.hands[exports.HAND_QUADS] = 'Four-of-a-kind';
+    exports.hands[exports.HAND_STR_FLUSH] = 'Straight Flush';
+
 })(typeof exports === 'undefined' ? this['c'] = {} : exports);

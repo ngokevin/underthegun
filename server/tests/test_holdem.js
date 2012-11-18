@@ -17,24 +17,24 @@ var testApplyAction = {
         gs.newHand();
 
         test.equal(gs.currentRound, 'preflop');
-        gs.applyAction(gs.button, {action: c.action.CALL, amount: 0});
+        gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
         test.equal(gs.currentRound, 'preflop');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'flop');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, 'flop');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'turn');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, 'turn');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'river');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, 'river');
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         test.done();
     },
@@ -42,18 +42,18 @@ var testApplyAction = {
     testBetAndCall: function(test) {
         var gs  = new holdem.Gs();
         gs.newHand();
-        gs.applyAction(gs.button, {action: c.action.CALL, amount: 0});
-        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
+        gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         // Bet subtracts from chip stack.
         var better = gs.actionOn;
         var betterStack = gs[better + 'Chips'];
-        gs.applyAction(gs.actionOn, {action: c.action.BET, amount: 100});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_BET, amount: 100});
 
         // Call subtracts from chip stack.
         var caller= gs.actionOn;
         var callerStack = gs[caller + 'Chips'];
-        gs.applyAction(gs.actionOn, {action: c.action.CALL, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CALL, amount: 0});
 
         test.equal(gs[better + 'Chips'], betterStack - 100);
         test.equal(gs[caller + 'Chips'], callerStack - 100);
@@ -73,83 +73,83 @@ var testCalcHand = {
     testHighCard: function(test) {
         var hand = createHand(['Ac', '3d', '5h', '7s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.HIGH_CARD);
+        test.equal(hand.strength, c.HAND_HIGH);
         test.done()
     },
 
     testPair: function(test) {
         var hand = createHand(['Ac', 'Ad', '5h', '7s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.PAIR);
+        test.equal(hand.strength, c.HAND_PAIR);
         test.done()
     },
 
     testTwoPair: function(test) {
         var hand = createHand(['Ac', 'Ad', '5h', '5s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.TWO_PAIR);
+        test.equal(hand.strength, c.HAND_TWO_PAIR);
         test.done()
     },
 
     testTrips: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', '5s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.TRIPS);
+        test.equal(hand.strength, c.HAND_TRIPS);
         test.done()
     },
 
     testStraight: function(test) {
         var hand = createHand(['2c', '3d', '4h', '5s', '6c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT);
+        test.equal(hand.strength, c.HAND_STRAIGHT);
 
         // Wheel.
         var hand = createHand(['Ac', '2d', '3h', '4s', '5c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT);
+        test.equal(hand.strength, c.HAND_STRAIGHT);
 
         // Broadway.
         var hand = createHand(['Tc', 'Jd', 'Qh', 'Ks', 'Ac', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT);
+        test.equal(hand.strength, c.HAND_STRAIGHT);
         test.done()
     },
 
     testFlush: function(test) {
         var hand = createHand(['Ac', '3c', '5c', '7c', '9c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.FLUSH);
+        test.equal(hand.strength, c.HAND_FLUSH);
         test.done()
     },
 
     testFullHouse: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', '5s', '5c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.FULL_HOUSE);
+        test.equal(hand.strength, c.HAND_BOAT);
         test.done()
     },
 
     testQuads: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', 'As', '5c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.QUADS);
+        test.equal(hand.strength, c.HAND_QUADS);
         test.done()
     },
 
     testStraightFlush: function(test) {
         var hand = createHand(['2c', '3c', '4c', '5c', '6c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.HAND_STR_FLUSH);
 
         // Wheel.
         var hand = createHand(['Ad', '2d', '3d', '4d', '5d', 'Th', 'Ts']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.HAND_STR_FLUSH);
 
         // Broadway.
         var hand = createHand(['Th', 'Jh', 'Qh', 'Kh', 'Ah', 'Ts', 'Tc']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.HAND_STR_FLUSH);
         test.done()
     },
 };
