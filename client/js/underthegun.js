@@ -122,29 +122,31 @@ $(document).ready(function() {
 
                 var enabledButtons = $();
                 $(gs.availableActions).each(function(index, action) {
-                    actionButton = $('#actions span.' + action);
-                    enabledButtons = enabledButtons.add(actionButton.data('action', action));
+                    // From available actions, enable the respective buttons.
+                    actionButtons = $('#actions span.' + c.actions[action]);
+                    enabledButtons = enabledButtons.add(actionButtons.data('action', action));
 
-                    if (action == 'raise') { action += ' to'; }
-                    actionButton.find('.action').text(action);
+                    var buttonText = c.actions[action];
+                    if (action == c.action.RAISE) { buttonText += ' to'; }
+                    actionButtons.find('.action').text(buttonText);
                 });
 
                 enabledButtons.removeClass('inactive').bind('click', function() {
                     switch ($(this).data('action')) {
-                        case 'fold':
-                            action = {action: 'fold', amount: 0};
+                        case c.action.FOLD:
+                            action = {action: c.action.FOLD, amount: 0};
                             break;
-                        case 'check':
-                            action = {action: 'check', amount: 0};
+                        case c.action.CHECK:
+                            action = {action: c.action.CHECK, amount: 0};
                             break;
-                        case 'call':
-                            action = {action: 'call', amount: 0};
+                        case c.action.CALL:
+                            action = {action: c.action.CALL, amount: 0};
                             break;
-                        case 'bet':
-                            action = {action: 'bet', amount: betAmount};
+                        case c.action.BET:
+                            action = {action: c.action.BET, amount: betAmount};
                             break;
-                        case 'raise':
-                            action = {action: 'raise', amount: betAmount};
+                        case c.action.RAISE:
+                            action = {action: c.action.RAISE, amount: betAmount};
                             break;
                     }
                     socket.emit('action', {action: action, gs: gs})
@@ -157,6 +159,7 @@ $(document).ready(function() {
                 $('#round').text(gs.currentRound);
             }
         });
+
         // When game over, disconnect and redirect to lobby.
     }
 });

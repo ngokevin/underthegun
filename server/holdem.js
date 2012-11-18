@@ -1,6 +1,4 @@
 var c = require('./constants');
-var action = c.action;
-var hs = c.hs;
 
 
 /*
@@ -95,7 +93,7 @@ Gs.prototype.newHand = function() {
     this.seat2Hole = [];
     this.boardCards = [];
     this.actionOn = this.button;
-    this.availableActions = ['fold', 'call', 'raise'];
+    this.availableActions = [c.action.FOLD, c.action.CALL, c.action.RAISE];
     this.currentBet = 0;
     this.preflopActions = [];
     this.flopActions = [];
@@ -181,7 +179,7 @@ Gs.prototype.hasGameWinner = function() {
 }
 
 Gs.prototype.applyAction = function(seat, action) {
-    // Parses an action (.e.g {action: 'call', amount: 0}).
+    // Parses an action (.e.g {action: c.action.CALL, amount: 0}).
     // Manipulates the game state and tells the
     // players. Like a finite state machine.
     this[this.currentRound + 'Actions'].push(action);
@@ -190,14 +188,14 @@ Gs.prototype.applyAction = function(seat, action) {
     }
 
     switch (action.action) {
-        case 'fold':
+        case c.action.FOLD:
             // Next hand if a player folds.
             this.winner = this.getNextPlayer();
             this[this.winner + 'Chips'] += this.pot;
             return {'hand-complete': true};
             break;
 
-        case 'check':
+        case c.action.CHECK:
             if (this.isButton(seat)) {
                 if (this.currentRound == 'river') {
                     // End hand if button checks back river.
@@ -206,24 +204,24 @@ Gs.prototype.applyAction = function(seat, action) {
                 } else {
                     // Next round if button checks back round.
                     this.nextRound();
-                    this.availableActions = ['fold', 'check', 'bet'];
+                    this.availableActions = [c.action.FOLD, c.action.CHECK, c.action.BET];
                     return {'next-round': true};
                 }
             } else {
                 if (this.currentRound == 'preflop') {
                     // Next round if big blind checks.
                     this.nextRound();
-                    this.availableActions = ['fold', 'check', 'bet'];
+                    this.availableActions = [c.action.FOLD, c.action.CHECK, c.action.BET];
                     return {'next-round': true};
                 } else {
                     // Next turn if big blind leads with check.
                     this.nextTurn();
-                    this.availableActions = ['fold', 'check', 'bet'];
+                    this.availableActions = [c.action.FOLD, c.action.CHECK, c.action.BET];
                     return {'next-turn': true};
                 }
             }
 
-        case 'call':
+        case c.action.CALL:
             // Add the call to the pot.
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
@@ -235,7 +233,7 @@ Gs.prototype.applyAction = function(seat, action) {
             if (this.currentRound == 'preflop' && this.isButton(seat) && this[seat + 'Pot'] == this.bigBlind) {
                 // If button limps preflop.
                 this.nextTurn();
-                this.availableActions = ['fold', 'check', 'raise'];
+                this.availableActions = [c.action.FOLD, c.action.CHECK, c.action.RAISE];
                 return {'next-turn': true};
             } else if (this.currentRound == 'river') {
                 // End hand if player calls river bet.
@@ -244,12 +242,12 @@ Gs.prototype.applyAction = function(seat, action) {
             } else {
                 // Next round if player calls bet.
                 this.nextRound();
-                this.availableActions = ['fold', 'check', 'bet'];
+                this.availableActions = [c.action.FOLD, c.action.CHECK, c.action.BET];
                 return {'next-round': true};
             }
             break;
 
-        case 'bet':
+        case c.action.BET:
             // Add the bet to the pot.
             var bet = action.amount;
             this[seat + 'Chips'] -= bet;
@@ -257,11 +255,11 @@ Gs.prototype.applyAction = function(seat, action) {
             this.pot += bet;
 
             this.nextTurn();
-            this.availableActions = ['fold', 'call', 'raise'];
+            this.availableActions = [c.action.FOLD, c.action.CALL, c.action.RAISE];
             return {'next-turn': true};
             break;
 
-        case 'raise':
+        case c.action.RAISE:
             // Raise the bet to the raise amount.
             var raiseTo = action.amount;
             var raiseBy = raiseTo - this.pot;
@@ -270,7 +268,7 @@ Gs.prototype.applyAction = function(seat, action) {
             this.pot = raiseTo;
 
             this.nextTurn();
-            this.availableActions = ['fold', 'call', 'raise'];
+            this.availableActions = [c.action.FOLD, c.action.CALL, c.action.RAISE];
             return {'next-turn': true};
             break;
     }
@@ -335,23 +333,23 @@ function getHandStrength(hand) {
     // Calculate hand strength.
     if ('4' in histogram) {
         // Quads.
-        return {strength: hs.QUADS, hand: hand,
+        return {strength: c.hs.QUADS, hand: hand,
                 ranks: [histogram['4'], histogram['1']]}
     } else if ('3' in histogram && '2' in histogram) {
         // Boat.
-        return {strength: hs.FULL_HOUSE, hand: hand,
+        return {strength: c.hs.FULL_HOUSE, hand: hand,
                 ranks: [histogram['3'], histogram['2']]};
     } else if ('3' in histogram) {
         // Trips.
-        return {strength: hs.TRIPS, hand: hand,
+        return {strength: c.hs.TRIPS, hand: hand,
                 ranks: [histogram['3'], histogram['1']]};
     } else if ('2' in histogram && histogram['2'].length == 2) {
         // Two-pair.
-        return {strength: hs.TWO_PAIR, hand: hand,
+        return {strength: c.hs.TWO_PAIR, hand: hand,
                 ranks: [histogram['2'], histogram['1']]};
     } else if ('2' in histogram) {
         // Pair.
-        return {strength: hs.PAIR, hand: hand,
+        return {strength: c.hs.PAIR, hand: hand,
                 ranks: [histogram['2'], histogram['1']]};
     } else {
         var hasFlush = true;
@@ -365,17 +363,17 @@ function getHandStrength(hand) {
                            (hand[0].rank == 14 && hand[4].rank == 5));
 
         if (hasFlush && hasStraight) {
-            return {strength: hs.STRAIGHT_FLUSH, hand: hand,
+            return {strength: c.hs.STRAIGHT_FLUSH, hand: hand,
                     ranks: [histogram['1']]}
         } else if (hasFlush) {
-            return {strength: hs.FLUSH, hand: hand,
+            return {strength: c.hs.FLUSH, hand: hand,
                     ranks: [histogram['1']]}
         } else if (hasStraight) {
-            return {strength: hs.STRAIGHT, hand: hand,
+            return {strength: c.hs.STRAIGHT, hand: hand,
                     ranks: [histogram['1']]}
         } else {
             // High card.
-            return {strength: hs.HIGH_CARD, hand: hand,
+            return {strength: c.hs.HIGH_CARD, hand: hand,
                     ranks: [histogram['1']]}
         }
     }

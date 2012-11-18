@@ -17,24 +17,24 @@ var testApplyAction = {
         gs.newHand();
 
         test.equal(gs.currentRound, 'preflop');
-        gs.applyAction(gs.button, {action: 'call', amount: 0});
+        gs.applyAction(gs.button, {action: c.action.CALL, amount: 0});
         test.equal(gs.currentRound, 'preflop');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'flop');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
         test.equal(gs.currentRound, 'flop');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'turn');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
         test.equal(gs.currentRound, 'turn');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
 
         test.equal(gs.currentRound, 'river');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
         test.equal(gs.currentRound, 'river');
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
 
         test.done();
     },
@@ -42,18 +42,18 @@ var testApplyAction = {
     testBetAndCall: function(test) {
         var gs  = new holdem.Gs();
         gs.newHand();
-        gs.applyAction(gs.button, {action: 'call', amount: 0});
-        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        gs.applyAction(gs.button, {action: c.action.CALL, amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CHECK, amount: 0});
 
         // Bet subtracts from chip stack.
         var better = gs.actionOn;
         var betterStack = gs[better + 'Chips'];
-        gs.applyAction(gs.actionOn, {action: 'bet', amount: 100});
+        gs.applyAction(gs.actionOn, {action: c.action.BET, amount: 100});
 
         // Call subtracts from chip stack.
         var caller= gs.actionOn;
         var callerStack = gs[caller + 'Chips'];
-        gs.applyAction(gs.actionOn, {action: 'call', amount: 0});
+        gs.applyAction(gs.actionOn, {action: c.action.CALL, amount: 0});
 
         test.equal(gs[better + 'Chips'], betterStack - 100);
         test.equal(gs[caller + 'Chips'], callerStack - 100);
