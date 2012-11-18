@@ -79,8 +79,6 @@ io.sockets.on('connection', function(socket) {
         function newHand() {
             if (seat == 'seat1') {
                 gameStates[seat1Id].newHand();
-                gsSet('seat1Hole', gsGet('deck').draw(2));
-                gsSet('seat2Hole', gsGet('deck').draw(2));
                 emitGsAll('new-hand');
             }
         }

@@ -1,4 +1,64 @@
-var h = require('../holdem').Holdem;
+var holdem = require('../holdem');
+var h = holdem.Holdem;
+
+
+var testApplyAction = {
+    setUp: function(callback) {
+        callback();
+    },
+
+    tearDown: function(callback) {
+        callback();
+    },
+
+    testNextRounds: function(test) {
+        var gs  = new holdem.Gs();
+        gs.newHand();
+
+        test.equal(gs.currentRound, 'preflop');
+        gs.applyAction(gs.button, {action: 'call', amount: 0});
+        test.equal(gs.currentRound, 'preflop');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+
+        test.equal(gs.currentRound, 'flop');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        test.equal(gs.currentRound, 'flop');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+
+        test.equal(gs.currentRound, 'turn');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        test.equal(gs.currentRound, 'turn');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+
+        test.equal(gs.currentRound, 'river');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+        test.equal(gs.currentRound, 'river');
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+
+        test.done();
+    },
+
+    testBetAndCall: function(test) {
+        var gs  = new holdem.Gs();
+        gs.newHand();
+        gs.applyAction(gs.button, {action: 'call', amount: 0});
+        gs.applyAction(gs.actionOn, {action: 'check', amount: 0});
+
+        // Bet subtracts from chip stack.
+        var better = gs.actionOn;
+        var betterStack = gs[better + 'Chips'];
+        gs.applyAction(gs.actionOn, {action: 'bet', amount: 100});
+
+        // Call subtracts from chip stack.
+        var caller= gs.actionOn;
+        var callerStack = gs[caller + 'Chips'];
+        gs.applyAction(gs.actionOn, {action: 'call', amount: 0});
+
+        test.equal(gs[better + 'Chips'], betterStack - 100);
+        test.equal(gs[caller + 'Chips'], callerStack - 100);
+        test.done();
+    }
+};
 
 var testCalcHand = {
     setUp: function(callback) {
@@ -235,6 +295,7 @@ function createHand(cards, withStrength) {
 
 // Decide what tests to run.
 var tests = {
+    testApplyAction: testApplyAction,
     testCalcHand: testCalcHand,
     testCompareHands: testCompareHands
 };
