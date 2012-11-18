@@ -27,40 +27,37 @@ var numGames = 0;
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
-    var seat, seat1Id, playerId, gameId, gs;
+    var seat, gs;
 
     socket.on('new-game', function(data) {
         // Set up game.
         seat = data.seat;
-        seat1Id = seat == 'seat1' ? data.heroId : data.villainId;
-        playerId = data.heroId;
-        clients[playerId] = socket;
+        clients[data.playerId] = socket;
 
-        // Have only one player's socket initialize the game state into the
-        // global object.
-        if (seat == 'seat1') {
-            gs = new holdem.Gs();
-            gs.gameId = numGames++;
-            gs.seat1Id = data.heroId;
-            gs.seat2Id = data.villainId;
+        if (!(data.gameId in gameStates)) {
+            // First player's socket to get here sets up the game state.
+            gs = new holdem.Gs(data.gameId);
+            gs.addPlayer(new holdem.Player(data.playerId));
+            gs.addPlayer(new holdem.Player(data.opponentId));
 
             // Store it in a global object so both sockets can access it via
-            // the game id (which will be handed out soon).
-            gameStates[seat1Id] = gs;
+            // the gameId.
+            gameStates[data.gameId] = gs;
 
             emitGsAll('new-game');
             newHand();
+        } else {
+            // Other player's socket already set up game state.
+            gs = gameStates[data.gameId];
         }
 
         socket.on('action', function(data) {
             // TODO: verify game state
-            if (!gs) { gs = gameStates[seat1Id]; }
-
             var handStatus = gs.applyAction(seat, data.action);
             if ('next-turn' in handStatus) {
                 emitGsAll('next-turn');
             } else if ('next-round' in handStatus) {
-                emitGsAll('next-round');
+                emitGsll('next-round');
             } else if ('hand-complete' in handStatus) {
                 emitGsAll('hand-complete');
             }
@@ -68,35 +65,24 @@ io.sockets.on('connection', function(socket) {
 
         socket.on('hand-complete', function(data) {
             // TODO: verify game state
-            // Tell seat2 where game state is.
-            if (!gs) { gs = gameStates[seat1Id]; }
-
             if (gs.hasGameWinner() === false) {
-                setTimeout(newHand, 12000);
+
+                // Only one player's socket needs to initiate new hand.
+                if (seat == 0) {
+                    setTimeout(newHand, 12000);
+                }
             }
         });
 
         function newHand() {
-            if (seat == 'seat1') {
-                gameStates[seat1Id].newHand();
-                emitGsAll('new-hand');
-            }
+            gs.newHand();
+            emitGsAll('new-hand');
         }
 
         function emitGsAll(eventName) {
-            clients[gs.seat1Id].emit(eventName, gs.filter('seat1'));
-            setTimeout(function() {
-                clients[gs.seat2Id].emit(eventName, gs.filter('seat2'));
-            }, 500);
-        }
-
-        // Getter and setters that pulls the correct gamestate keyed off of the
-        // first seat's player ID.
-        function gsGet(k) {
-            return gameStates[seat1Id][k];
-        }
-        function gsSet(k, v) {
-            gameStates[seat1Id][k] = v;
+            for (var i = 0; i < gs.players.length; i++) {
+                clients[gs.players[i]].emit(eventName, gs.filter(i));
+            }
         }
     });
 });

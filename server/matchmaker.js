@@ -18,7 +18,9 @@ new mysql.Database({
 });
 
 // Global vars.
-var numPlayers = 0, clients = [];
+var numPlayers = 0;
+var numGames = 0;
+var clients = [];
 
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
@@ -30,7 +32,7 @@ io.sockets.on('connection', function(socket) {
         if (!('playerId' in data)) {
             playerId = numPlayers;
             socket.set('playerId', playerId, f);
-            socket.emit('assign-player-id', { heroId: playerId });
+            socket.emit('assign-player-id', { playerId: playerId });
             numPlayers++;
         } else {
             playerId = data.playerId;
@@ -48,14 +50,15 @@ io.sockets.on('connection', function(socket) {
     function findMatch(playerId) {
         // Match a player if there's already player waiting.
         if (clients.length > 0) {
-            var matchSocket = clients.shift();
-            matchSocket.get('playerId', function(err, playerId) {
-                socket.emit('match-found', { villainId: playerId, seat: 'seat2' })
+            var waitingPlayer = clients.shift();  // Pop a player from the queue.
+
+            var gameId = numGames++;
+            waitingPlayer.get('playerId', function(err, waitingPlayerId) {
+                socket.emit('match-found', { gameId: gameId, opponentId: waitingPlayerId, seat: 1 })
             });
-            matchSocket.emit('match-found', { villainId: playerId, seat: 'seat1' });
-        // Else, store our socket in the waiting list (with playerId attached
-        // to it).
+            waitingPlayer.emit('match-found', { gameId: gameId, opponentId: playerId, seat: 0 });
         } else {
+            // Store our socket in the waiting list (with playerId attached to it).
             clients.push(socket);
         }
     }

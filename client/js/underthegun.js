@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    var heroId = null;
-    var villainId = null;
+    var playerId = null;
+    var opponentId = null;
     var seat = null;
 
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
@@ -20,17 +20,17 @@ $(document).ready(function() {
 
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
-            heroId = data.heroId;
+            playerId = data.playerId;
         });
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
             seat = data.seat;
-            villainId = data.villainId;
+            opponentId = data.opponentId;
             game();
         });
 
-        socket.emit('find-match', { heroId: heroId });
+        socket.emit('find-match', { playerId: playerId });
         notify('Searching for an opponent...');
 
         $(this).unbind('click');
@@ -44,7 +44,7 @@ $(document).ready(function() {
 
         var socket = io.connect('http://localhost:8433');
 
-        socket.emit('new-game', { heroId: heroId, villainId: villainId, seat: seat });
+        socket.emit('new-game', { playerId: playerId, opponentId: opponentId, seat: seat });
 
         // Start game.
         socket.on('new-game', function(gs) {

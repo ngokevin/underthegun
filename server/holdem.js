@@ -51,24 +51,25 @@ function createDeck() {
     return deck;
 }
 
+var Player = function(id) {
+    this.id = id;
+    this.seat = null;
+    this.chips = null;
+    this.hole = [];
+    this.pot = 0;
+}
+
 /*
 GAME STATE
 */
-var Gs = function() {
-    this.gameId = null;
-    this.seat1Id = null;
-    this.seat2Id = null;
+var Gs = function(gameId) {
+    this.gameId = gameId;
     this.deck = new Deck();
     this.button = null;
     this.smallBlind = 10;
     this.bigBlind = 20;
-    this.seat1Chips = 1500;
-    this.seat2Chips = 1500;
-    this.seat1Hole = [];
-    this.seat2Hole = [];
+    this.startingChips = 1500;
     this.pot = 30;
-    this.seat1Pot = 0;
-    this.seat2Pot = 0;
     this.currentRound = null;
     this.boardCards = [];
     this.actionOn = null;
@@ -78,6 +79,23 @@ var Gs = function() {
     this.turnActions = [];
     this.riverActions = [];
     this.winner = null;
+
+    this.seat1Id = null;
+    this.seat2Id = null;
+    this.seat1Chips = 1500;
+    this.seat2Chips = 1500;
+    this.seat1Hole = [];
+    this.seat2Hole = [];
+    this.seat1Pot = 0;
+    this.seat2Pot = 0;
+
+    this.players = [];
+}
+
+Gs.prototype.addPlayer = function(player) {
+    player.seat = this.players.length;
+    this.players.push(player);
+    player.chips = 1500;
 }
 
 Gs.prototype.newHand = function() {
