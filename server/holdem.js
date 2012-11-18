@@ -88,7 +88,7 @@ Gs.prototype.newHand = function() {
         this.button = 'seat1';
     }
     this.pot = this.smallBlind + this.bigBlind;
-    this.currentRound = 'preflop';
+    this.currentRound = c.ROUND_PREFLOP;
     this.seat1Hole = [];
     this.seat2Hole = [];
     this.boardCards = [];
@@ -149,24 +149,24 @@ Gs.prototype.nextTurn = function() {
 Gs.prototype.nextRound = function() {
     // Switch turn as well as switch round.
     switch (this.currentRound) {
-        case 'preflop':
-            this.currentRound = 'flop';
+        case c.ROUND_PREFLOP:
+            this.currentRound = c.ROUND_FLOP;
             var flop = this.deck.draw(3);
             this.boardCards = this.boardCards.concat(flop);
             break;
-        case 'flop':
-            this.currentRound = 'turn';
+        case c.ROUND_FLOP:
+            this.currentRound = c.ROUND_TURN;
             this.boardCards.push(this.deck.draw());
             break;
-        case 'turn':
-            this.currentRound = 'river';
+        case c.ROUND_TURN:
+            this.currentRound = c.ROUND_RIVER;
             this.boardCards.push(this.deck.draw());
             break;
     }
     this.seat1Pot = 0;
     this.seat2Pot = 0;
 
-    if (this.currentRound != 'flop') {
+    if (this.currentRound != c.ROUND_FLOP) {
         this.nextTurn();
     }
 };
@@ -182,7 +182,7 @@ Gs.prototype.applyAction = function(seat, action) {
     // Parses an action (.e.g {action: c.ACTION_CALL, amount: 0}).
     // Manipulates the game state and tells the
     // players. Like a finite state machine.
-    this[this.currentRound + 'Actions'].push(action);
+    this[c.rounds[this.currentRound] + 'Actions'].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
         return {'error': true}
     }
@@ -197,7 +197,7 @@ Gs.prototype.applyAction = function(seat, action) {
 
         case c.ACTION_CHECK:
             if (this.isButton(seat)) {
-                if (this.currentRound == 'river') {
+                if (this.currentRound == c.ROUND_RIVER) {
                     // End hand if button checks back river.
                     this.calcHandWinner();
                     return {'hand-complete': true};
@@ -208,7 +208,7 @@ Gs.prototype.applyAction = function(seat, action) {
                     return {'next-round': true};
                 }
             } else {
-                if (this.currentRound == 'preflop') {
+                if (this.currentRound == c.ROUND_PREFLOP) {
                     // Next round if big blind checks.
                     this.nextRound();
                     this.availableActions = [c.ACTION_FOLD, c.ACTION_CHECK, c.ACTION_BET];
@@ -230,12 +230,13 @@ Gs.prototype.applyAction = function(seat, action) {
             this[seat + 'Pot'] += toCall;
             this.pot += toCall;
 
-            if (this.currentRound == 'preflop' && this.isButton(seat) && this[seat + 'Pot'] == this.bigBlind) {
+            if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat)
+                && this[seat + 'Pot'] == this.bigBlind) {
                 // If button limps preflop.
                 this.nextTurn();
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CHECK, c.ACTION_RAISE];
                 return {'next-turn': true};
-            } else if (this.currentRound == 'river') {
+            } else if (this.currentRound == c.ROUND_RIVER) {
                 // End hand if player calls river bet.
                 this.calcHandWinner();
                 return {'hand-complete': true};

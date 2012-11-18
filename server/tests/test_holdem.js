@@ -16,24 +16,24 @@ var testApplyAction = {
         var gs  = new holdem.Gs();
         gs.newHand();
 
-        test.equal(gs.currentRound, 'preflop');
+        test.equal(gs.currentRound, c.ROUND_PREFLOP);
         gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
-        test.equal(gs.currentRound, 'preflop');
+        test.equal(gs.currentRound, c.ROUND_PREFLOP);
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
-        test.equal(gs.currentRound, 'flop');
+        test.equal(gs.currentRound, c.ROUND_FLOP);
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
-        test.equal(gs.currentRound, 'flop');
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
-
-        test.equal(gs.currentRound, 'turn');
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
-        test.equal(gs.currentRound, 'turn');
+        test.equal(gs.currentRound, c.ROUND_FLOP);
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
-        test.equal(gs.currentRound, 'river');
+        test.equal(gs.currentRound, c.ROUND_TURN);
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
-        test.equal(gs.currentRound, 'river');
+        test.equal(gs.currentRound, c.ROUND_TURN);
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+
+        test.equal(gs.currentRound, c.ROUND_RIVER);
+        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        test.equal(gs.currentRound, c.ROUND_RIVER);
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         test.done();

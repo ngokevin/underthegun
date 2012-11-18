@@ -84,16 +84,16 @@ $(document).ready(function() {
             });
             socket.on('next-round', function(gs) {
                 switch (gs.currentRound) {
-                    case 'flop':
+                    case c.ROUND_FLOP:
                         $('#flop1').text(gs.boardCards[0].card);
                         $('#flop2').text(gs.boardCards[1].card);
                         $('#flop3').text(gs.boardCards[2].card);
                         $('.flop').removeClass('undealt');
                         break;
-                    case 'turn':
+                    case c.ROUND_TURN:
                         $('#turn').text(gs.boardCards[3].card).removeClass('undealt');
                         break;
-                    case 'river':
+                    case c.ROUND_RIVER:
                         $('#river').text(gs.boardCards[4].card).removeClass('undealt');
                         break;
                 }
@@ -127,26 +127,26 @@ $(document).ready(function() {
                     enabledButtons = enabledButtons.add(actionButtons.data('action', action));
 
                     var buttonText = c.actions[action];
-                    if (action == c.action.RAISE) { buttonText += ' to'; }
+                    if (action == c.ACTION_RAISE) { buttonText += ' to'; }
                     actionButtons.find('.action').text(buttonText);
                 });
 
                 enabledButtons.removeClass('inactive').bind('click', function() {
                     switch ($(this).data('action')) {
-                        case c.action.FOLD:
-                            action = {action: c.action.FOLD, amount: 0};
+                        case c.ACTION_FOLD:
+                            action = {action: c.ACTION_FOLD, amount: 0};
                             break;
-                        case c.action.CHECK:
-                            action = {action: c.action.CHECK, amount: 0};
+                        case c.ACTION_CHECK:
+                            action = {action: c.ACTION_CHECK, amount: 0};
                             break;
-                        case c.action.CALL:
-                            action = {action: c.action.CALL, amount: 0};
+                        case c.ACTION_CALL:
+                            action = {action: c.ACTION_CALL, amount: 0};
                             break;
-                        case c.action.BET:
-                            action = {action: c.action.BET, amount: betAmount};
+                        case c.ACTION_BET:
+                            action = {action: c.ACTION_BET, amount: betAmount};
                             break;
-                        case c.action.RAISE:
-                            action = {action: c.action.RAISE, amount: betAmount};
+                        case c.ACTION_RAISE:
+                            action = {action: c.ACTION_RAISE, amount: betAmount};
                             break;
                     }
                     socket.emit('action', {action: action, gs: gs})

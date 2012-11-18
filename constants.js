@@ -20,10 +20,10 @@
     exports.ROUND_RIVER = 3;
 
     exports.rounds = {};
-    exports.rounds[exports.ROUND_PREFLOP] = 'Preflop';
-    exports.rounds[exports.ROUND_FLOP] = 'Flop';
-    exports.rounds[exports.ROUND_TURN] = 'Turn';
-    exports.rounds[exports.ROUND_RIVER] = 'River';
+    exports.rounds[exports.ROUND_PREFLOP] = 'preflop';
+    exports.rounds[exports.ROUND_FLOP] = 'flop';
+    exports.rounds[exports.ROUND_TURN] = 'turn';
+    exports.rounds[exports.ROUND_RIVER] = 'river';
 
     // Hand strength constants.
     exports.HAND_HIGH = 0;
