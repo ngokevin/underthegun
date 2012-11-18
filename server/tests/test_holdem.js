@@ -1,4 +1,5 @@
 var holdem = require('../holdem');
+var c = require('../constants');
 var h = holdem.Holdem;
 
 
@@ -72,83 +73,83 @@ var testCalcHand = {
     testHighCard: function(test) {
         var hand = createHand(['Ac', '3d', '5h', '7s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.HIGH_CARD);
+        test.equal(hand.strength, c.hs.HIGH_CARD);
         test.done()
     },
 
     testPair: function(test) {
         var hand = createHand(['Ac', 'Ad', '5h', '7s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.PAIR);
+        test.equal(hand.strength, c.hs.PAIR);
         test.done()
     },
 
     testTwoPair: function(test) {
         var hand = createHand(['Ac', 'Ad', '5h', '5s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.TWO_PAIR);
+        test.equal(hand.strength, c.hs.TWO_PAIR);
         test.done()
     },
 
     testTrips: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', '5s', '9c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.TRIPS);
+        test.equal(hand.strength, c.hs.TRIPS);
         test.done()
     },
 
     testStraight: function(test) {
         var hand = createHand(['2c', '3d', '4h', '5s', '6c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT);
+        test.equal(hand.strength, c.hs.STRAIGHT);
 
         // Wheel.
         var hand = createHand(['Ac', '2d', '3h', '4s', '5c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT);
+        test.equal(hand.strength, c.hs.STRAIGHT);
 
         // Broadway.
         var hand = createHand(['Tc', 'Jd', 'Qh', 'Ks', 'Ac', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT);
+        test.equal(hand.strength, c.hs.STRAIGHT);
         test.done()
     },
 
     testFlush: function(test) {
         var hand = createHand(['Ac', '3c', '5c', '7c', '9c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.FLUSH);
+        test.equal(hand.strength, c.hs.FLUSH);
         test.done()
     },
 
     testFullHouse: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', '5s', '5c', 'Td', 'Qh']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.FULL_HOUSE);
+        test.equal(hand.strength, c.hs.FULL_HOUSE);
         test.done()
     },
 
     testQuads: function(test) {
         var hand = createHand(['Ac', 'Ad', 'Ah', 'As', '5c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.QUADS);
+        test.equal(hand.strength, c.hs.QUADS);
         test.done()
     },
 
     testStraightFlush: function(test) {
         var hand = createHand(['2c', '3c', '4c', '5c', '6c', 'Td', 'Th']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
 
         // Wheel.
         var hand = createHand(['Ad', '2d', '3d', '4d', '5d', 'Th', 'Ts']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
 
         // Broadway.
         var hand = createHand(['Th', 'Jh', 'Qh', 'Kh', 'Ah', 'Ts', 'Tc']);
         var hand = h.calcHand(hand);
-        test.equal(hand.strength, h.hs.STRAIGHT_FLUSH);
+        test.equal(hand.strength, c.hs.STRAIGHT_FLUSH);
         test.done()
     },
 };

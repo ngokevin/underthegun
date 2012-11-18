@@ -1,3 +1,8 @@
+var c = require('./constants');
+var action = c.action;
+var hs = c.hs;
+
+
 /*
 DECK AND CARDS
 */
@@ -301,20 +306,6 @@ Gs.prototype.getHand = function(hole) {
 };
 
 
-var hs = {
-    // Hand strength constants.
-    HIGH_CARD: 0,
-    PAIR: 1,
-    TWO_PAIR: 2,
-    TRIPS: 3,
-    STRAIGHT: 4,
-    FLUSH: 5,
-    FULL_HOUSE: 6,
-    QUADS: 7,
-    STRAIGHT_FLUSH: 8
-}
-
-
 function calcHand(hand) {
     // Iterates through hand, recursively removing a card until we get
     // five-card hands. Determines the strength of hand, returns it, and
@@ -473,7 +464,6 @@ Array.prototype.remove = function(from, to) {
 exports.Deck = Deck;
 exports.Gs = Gs;
 exports.Holdem = {
-    hs: hs,
     calcHand: calcHand,
     getHandStrength: getHandStrength,
     compareHands: compareHands,
