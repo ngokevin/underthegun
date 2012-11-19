@@ -14,6 +14,8 @@ var testApplyAction = {
 
     testNextRounds: function(test) {
         var gs  = new holdem.Gs();
+        gs.addPlayer(0);
+        gs.addPlayer(1);
         gs.newHand();
 
         test.equal(gs.currentRound, c.ROUND_PREFLOP);
@@ -41,22 +43,24 @@ var testApplyAction = {
 
     testBetAndCall: function(test) {
         var gs  = new holdem.Gs();
+        gs.addPlayer(0);
+        gs.addPlayer(1);
         gs.newHand();
         gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
         gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
 
         // Bet subtracts from chip stack.
         var better = gs.actionOn;
-        var betterStack = gs[better + 'Chips'];
+        var betterStack = gs.players[better].chips;
         gs.applyAction(gs.actionOn, {action: c.ACTION_BET, amount: 100});
 
         // Call subtracts from chip stack.
-        var caller= gs.actionOn;
-        var callerStack = gs[caller + 'Chips'];
+        var caller = gs.actionOn;
+        var callerStack = gs.players[caller].chips;
         gs.applyAction(gs.actionOn, {action: c.ACTION_CALL, amount: 0});
 
-        test.equal(gs[better + 'Chips'], betterStack - 100);
-        test.equal(gs[caller + 'Chips'], callerStack - 100);
+        test.equal(gs.players[better].chips, betterStack - 100);
+        test.equal(gs.players[caller].chips, callerStack - 100);
         test.done();
     }
 };

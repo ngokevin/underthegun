@@ -31,24 +31,37 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('new-game', function(data) {
         // Set up game.
-        seat = data.seat;
         clients[data.playerId] = socket;
 
         if (!(data.gameId in gameStates)) {
             // First player's socket to get here sets up the game state.
             gs = new holdem.Gs(data.gameId);
-            gs.addPlayer(new holdem.Player(data.playerId));
-            gs.addPlayer(new holdem.Player(data.opponentId));
+            gs.addPlayer(data.playerId);
+            gs.addPlayer(data.opponentId);
+
+            for (var i = 0; i < gs.players.length; i++) {
+                if (gs.players[i].id == data.playerId) {
+                    seat = i;
+                    socket.emit('assign-seat', {seat: seat});
+                }
+            }
 
             // Store it in a global object so both sockets can access it via
             // the gameId.
             gameStates[data.gameId] = gs;
+        } else {
+            // Second player's socket initiates the game.
+            gs = gameStates[data.gameId];
+
+            for (var i = 0; i < gs.players.length; i++) {
+                if (gs.players[i].id == data.playerId) {
+                    seat = i;
+                    socket.emit('assign-seat', {seat: seat});
+                }
+            }
 
             emitGsAll('new-game');
             newHand();
-        } else {
-            // Other player's socket already set up game state.
-            gs = gameStates[data.gameId];
         }
 
         socket.on('action', function(data) {
@@ -57,7 +70,7 @@ io.sockets.on('connection', function(socket) {
             if ('next-turn' in handStatus) {
                 emitGsAll('next-turn');
             } else if ('next-round' in handStatus) {
-                emitGsll('next-round');
+                emitGsAll('next-round');
             } else if ('hand-complete' in handStatus) {
                 emitGsAll('hand-complete');
             }
@@ -81,7 +94,7 @@ io.sockets.on('connection', function(socket) {
 
         function emitGsAll(eventName) {
             for (var i = 0; i < gs.players.length; i++) {
-                clients[gs.players[i]].emit(eventName, gs.filter(i));
+                clients[gs.players[i].id].emit(eventName, gs.filter(i));
             }
         }
     });

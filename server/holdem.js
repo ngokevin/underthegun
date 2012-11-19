@@ -56,7 +56,7 @@ var Player = function(id) {
     this.seat = null;
     this.chips = null;
     this.hole = [];
-    this.pot = 0;
+    this.roundPIP = 0;  // How much player has put into pot for current round.
 }
 
 /*
@@ -65,14 +65,14 @@ GAME STATE
 var Gs = function(gameId) {
     this.gameId = gameId;
     this.deck = new Deck();
-    this.button = null;
+    this.button = 0;
     this.smallBlind = 10;
     this.bigBlind = 20;
     this.startingChips = 1500;
     this.pot = 30;
     this.currentRound = null;
     this.boardCards = [];
-    this.actionOn = null;
+    this.actionOn = 0;
     this.availableActions = [];
     this.preflopActions = [];
     this.flopActions = [];
@@ -80,19 +80,11 @@ var Gs = function(gameId) {
     this.riverActions = [];
     this.winner = null;
 
-    this.seat1Id = null;
-    this.seat2Id = null;
-    this.seat1Chips = 1500;
-    this.seat2Chips = 1500;
-    this.seat1Hole = [];
-    this.seat2Hole = [];
-    this.seat1Pot = 0;
-    this.seat2Pot = 0;
-
     this.players = [];
 }
 
-Gs.prototype.addPlayer = function(player) {
+Gs.prototype.addPlayer = function(id) {
+    var player = new Player(id);
     player.seat = this.players.length;
     this.players.push(player);
     player.chips = 1500;
@@ -100,15 +92,9 @@ Gs.prototype.addPlayer = function(player) {
 
 Gs.prototype.newHand = function() {
     this.deck.shuffle();
-    if (this.button) {
-        this.button = this.getNextPlayer(this.button);
-    } else {
-        this.button = 'seat1';
-    }
+    this.button = this.getNextPlayer(this.button);
     this.pot = this.smallBlind + this.bigBlind;
     this.currentRound = c.ROUND_PREFLOP;
-    this.seat1Hole = [];
-    this.seat2Hole = [];
     this.boardCards = [];
     this.actionOn = this.button;
     this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
@@ -120,33 +106,51 @@ Gs.prototype.newHand = function() {
     this.winner = null;
 
     // Post blinds.
-    if (this.isButton('seat1')) {
-        this.seat1Pot = this.smallBlind;
-        this['seat1Chips'] -= this.smallBlind;
-        this.seat2Pot = this.bigBlind;
-        this['seat2Chips'] -= this.bigBlind;
+    if (this.isButton(0)) {
+        this.players[0].roundPIP = this.smallBlind;
+        this.players[0].chips -= this.smallBlind;
+        this.players[1].roundPIP = this.bigBlind;
+        this.players[1].chips -= this.bigBlind;
     } else {
-        this.seat1Pot = this.bigBlind;
-        this['seat1Chips'] -= this.bigBlind;
-        this.seat2Pot = this.smallBlind;
-        this['seat2Chips'] -= this.smallBlind;
+        this.players[0].roundPIP = this.bigBlind;
+        this.players[0].chips -= this.bigBlind;
+        this.players[1].roundPIP = this.smallBlind;
+        this.players[1].chips -= this.smallBlind;
     }
 
     // Draw cards.
-    this.seat1Hole = this.deck.draw(2);
-    this.seat2Hole = this.deck.draw(2);
+    for (var i = 0; i < this.players.length; i++) {
+        this.players[i].hole = this.deck.draw(2);
+    }
 };
 
 Gs.prototype.filter = function(seat) {
     // Hide certain values based on seat (for security reasons so they can't
     // snoop other player's hole cards or next card in deck).
-    var filterKeys = [getOtherPlayer(seat) + 'Hole', 'deck'];
+    var filterKeys = ['players', 'deck'];
     var filteredGs = {}
-    for(var keys = Object.keys(this), l = keys.length; l; --l) {
-        if (filterKeys.indexOf(keys[l-1]) < 0) {
-            filteredGs[ keys[l-1] ] = this[ keys[l-1] ];
+    for (var keys = Object.keys(this), l = keys.length; l; --l) {
+        if (filterKeys.indexOf(keys[l - 1]) < 0) {
+            filteredGs[keys[l - 1]] = this[keys[l - 1]];
         }
     }
+
+    var players = [];
+    for (var i = 0; i < this.players.length; i++) {
+        if (i != seat) {
+            var player = {};
+            var filterKeys = ['hole'];
+            for (var keys = Object.keys(this.players[i]), l = keys.length; l; --l) {
+                if (filterKeys.indexOf(keys[l - 1]) < 0) {
+                    player[keys[l - 1]] = this.players[i][keys[l - 1]];
+                }
+            }
+            players.push(player);
+        } else {
+            players.push(this.players[i]);
+        }
+    }
+    filteredGs.players = players;
     return filteredGs;
 };
 
@@ -156,7 +160,11 @@ Gs.prototype.isButton = function(seat) {
 
 Gs.prototype.getNextPlayer = function() {
     // Get next player.
-    return this.actionOn == 'seat1' ? 'seat2' : 'seat1';
+    if (this.actionOn == this.players.length - 1) {
+        return 0;
+    } else {
+        return this.actionOn + 1;
+    }
 }
 
 Gs.prototype.nextTurn = function() {
@@ -181,8 +189,11 @@ Gs.prototype.nextRound = function() {
             this.boardCards.push(this.deck.draw());
             break;
     }
-    this.seat1Pot = 0;
-    this.seat2Pot = 0;
+
+    // Reset round VPIP.
+    for (var i = 0; i < this.players.length; i++) {
+        this.players[i].roundPIP = 0;
+    }
 
     if (this.currentRound != c.ROUND_FLOP) {
         this.nextTurn();
@@ -191,8 +202,8 @@ Gs.prototype.nextRound = function() {
 
 Gs.prototype.hasGameWinner = function() {
     // Check if anyone has busted.
-    if (this.seat1Chips === 0) { return 'seat2'; }
-    else if (this.seat2Chips === 0) { return 'seat1'; }
+    if (this.players[0].chips === 0) { return 1; }
+    if (this.players[1].chips === 0) { return 0; }
     return false;
 }
 
@@ -209,7 +220,7 @@ Gs.prototype.applyAction = function(seat, action) {
         case c.ACTION_FOLD:
             // Next hand if a player folds.
             this.winner = this.getNextPlayer();
-            this[this.winner + 'Chips'] += this.pot;
+            this.players.length[this.winner].chips += this.pot;
             return {'hand-complete': true};
             break;
 
@@ -243,13 +254,13 @@ Gs.prototype.applyAction = function(seat, action) {
             // Add the call to the pot.
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
-            var toCall = this[this.getNextPlayer() + 'Pot'] - this[seat + 'Pot'];
-            this[seat + 'Chips'] -= toCall;
-            this[seat + 'Pot'] += toCall;
+            var toCall = this.players[this.getNextPlayer()].roundPIP - this.players[seat].roundPIP;
+            this.players[seat].chips -= toCall;
+            this.players[seat].roundPIP += toCall;
             this.pot += toCall;
 
             if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat)
-                && this[seat + 'Pot'] == this.bigBlind) {
+                && this.players[seat].roundPIP == this.bigBlind) {
                 // If button limps preflop.
                 this.nextTurn();
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CHECK, c.ACTION_RAISE];
@@ -269,8 +280,8 @@ Gs.prototype.applyAction = function(seat, action) {
         case c.ACTION_BET:
             // Add the bet to the pot.
             var bet = action.amount;
-            this[seat + 'Chips'] -= bet;
-            this[seat + 'Pot'] += bet;
+            this.players[seat].chips -= bet;
+            this.players[seat].roundPIP += bet;
             this.pot += bet;
 
             this.nextTurn();
@@ -282,8 +293,8 @@ Gs.prototype.applyAction = function(seat, action) {
             // Raise the bet to the raise amount.
             var raiseTo = action.amount;
             var raiseBy = raiseTo - this.pot;
-            this[seat + 'Chips'] -= raiseBy;
-            this[seat + 'Pot'] += raiseTo;
+            this.players[seat].chips -= raiseBy;
+            this.players[seat].roundPIP += raiseTo;
             this.pot = raiseTo;
 
             this.nextTurn();
@@ -295,21 +306,22 @@ Gs.prototype.applyAction = function(seat, action) {
 
 Gs.prototype.calcHandWinner = function() {
     // Calculate winner of hand and ship pot to winner.
-    var seat1Hand = this.getHand(this.seat1Hole);
-    var seat2Hand = this.getHand(this.seat2Hole);
+    var player0Hand = this.getHand(this.players[0].hole);
+    var player1Hand = this.getHand(this.players[1].hole);
 
-    var winnerComp = compareHands(seat1Hand, seat2Hand);
+    var winnerComp = compareHands(player0Hand, player1Hand);
     if (winnerComp > 0) {
-        this.winner = 'seat1';
-        this.seat1Chips += this.pot;
+        this.winner = 0;
+        this.players[this.winner].chips += this.pot;
     } else if (winnerComp < 0) {
-        this.winner = 'seat2';
-        this.seat2Chips += this.pot;
+        this.winner = 1;
+        this.players[this.winner].chips += this.pot;
     } else {
-        // Split the pot. seat1 gets the odd chip.
-        this.seat1Chips += parseInt(this.pot / 2, 10);
-        this.pot - this.seat1Chips;
-        this.seat2Chips += this.pot;
+        // Split the pot. seat0 gets the odd chip.
+        var splitPot = parseInt(this.pot / 2, 10);
+        this.players[0].chips += splitPot;
+        this.pot -= splitPot;
+        this.players[1].chips += this.pot;
     }
 };
 
@@ -452,12 +464,6 @@ function compareHands(handA, handB) {
         }
     }
     return 0;
-}
-
-
-function getOtherPlayer(seat) {
-    // Get other player from seat.
-    return seat == 'seat1' ? 'seat2' : 'seat1';
 }
 
 

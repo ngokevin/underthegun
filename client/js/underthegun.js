@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    var gameId = null
     var playerId = null;
     var opponentId = null;
     var seat = null;
@@ -44,7 +45,11 @@ $(document).ready(function() {
 
         var socket = io.connect('http://localhost:8433');
 
-        socket.emit('new-game', { playerId: playerId, opponentId: opponentId, seat: seat });
+        socket.on('assign-seat', function(data) {
+            seat = data.seat;
+        });
+
+        socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId, seat: seat });
 
         // Start game.
         socket.on('new-game', function(gs) {
@@ -55,7 +60,7 @@ $(document).ready(function() {
                 $('#bet-amount').text(amount);
             }
             $('#bet-slider').slider({
-                min: gs.pot + gs.bigBlind, max: gs[seat + 'Chips'], value: gs.bigBlind, step: 1,
+                min: gs.pot + gs.bigBlind, max: gs.players[seat].chips, value: gs.bigBlind, step: 1,
                 slide: function(e, ui) { updateBetAmount(ui.value) },
                 change: function(e, ui) { updateBetAmount(ui.value) },
                 stop: function(e, ui) { updateBetAmount(ui.value) }
@@ -64,12 +69,15 @@ $(document).ready(function() {
 
             // Start hand.
             socket.on('new-hand', function(gs) {
+                console.log(gs);
+                console.log(seat);
+
                 // Clear the board.
                 $('#board-cards .card').addClass('undealt').text('');
 
                 // Receive hole cards.
-                var hole1 = gs[seat + 'Hole'][0];
-                var hole2 = gs[seat + 'Hole'][1];
+                var hole1 = gs.players[seat].hole[0];
+                var hole2 = gs.players[seat].hole[1];
                 $('#hole1').html(hole1.card);
                 $('#hole2').html(hole2.card);
 
@@ -90,9 +98,7 @@ $(document).ready(function() {
                         $('#flop3').text(gs.boardCards[2].card);
                         $('.flop').removeClass('undealt');
                         break;
-                    case c.ROUND_TURN:
-                        $('#turn').text(gs.boardCards[3].card).removeClass('undealt');
-                        break;
+                    case c.ROUND_TURN: $('#turn').text(gs.boardCards[3].card).removeClass('undealt'); break;
                     case c.ROUND_RIVER:
                         $('#river').text(gs.boardCards[4].card).removeClass('undealt');
                         break;
