@@ -18,11 +18,17 @@
   width: 75%; }
   #game #bet-slider:hover {
     cursor: pointer; }
+#game .info {
+  font-size: 14px; }
+#game #opponent-info {
+  margin: 5px 0; }
 #game #hand-info {
-  font-size: 14px;
   margin-bottom: 3px; }
   #game #hand-info span {
     text-transform: capitalize; }
+#game #player-info {
+  position: relative;
+  top: 8px; }
 #game #actions span.button {
   display: inline-block;
   width: 25%;
@@ -30,6 +36,6 @@
   padding: 10px 7px 15px 7px;
   top: 18px; }
   #game #actions span.button:first-child {
-    top: -4px; }
+    top: -2px; }
   #game #actions span.button .inner-button {
     display: inline; }

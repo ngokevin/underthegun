@@ -29,12 +29,24 @@
         }
     }
 
-    #hand-info {
+    .info {
         font-size: 14px;
+    }
+
+    #opponent-info {
+        margin: 5px 0;
+    }
+
+    #hand-info {
         margin-bottom: 3px;
         span {
             text-transform: capitalize;
         }
+    }
+
+    #player-info {
+        position: relative;
+        top: 8px;
     }
 
     #actions span.button {
@@ -44,7 +56,7 @@
         padding: 10px 7px 15px 7px;
         top: 18px;
         &:first-child {
-            top: -4px;
+            top: -2px;
         }
         .inner-button {
             display: inline;

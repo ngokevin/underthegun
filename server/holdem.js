@@ -158,12 +158,14 @@ Gs.prototype.isButton = function(seat) {
     return seat == this.button ? true : false;
 }
 
-Gs.prototype.getNextPlayer = function() {
+Gs.prototype.getNextPlayer = function(seat) {
+    if (!seat) { seat = this.actionOn; }
+
     // Get next player.
-    if (this.actionOn == this.players.length - 1) {
+    if (seat == this.players.length - 1) {
         return 0;
     } else {
-        return this.actionOn + 1;
+        return seat + 1;
     }
 }
 

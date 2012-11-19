@@ -159,8 +159,17 @@ $(document).ready(function() {
             }
 
             function updateValues(gs) {
+                // Update DOM values according to game state.
+                $('#opponent-chips').text(gs.players[seat == 0 ? 1 : 0].chips);
+                $('#opponent-position').text(gs.button == seat ? 'Big Blind' : 'Button');
                 $('#pot').text(gs.pot);
                 $('#round').text(c.rounds[gs.currentRound].capitalize());
+                $('#chips').text(gs.players[seat].chips);
+                $('#position').text(gs.button == seat ? 'Button' : 'Big Blind');
+                $('#bet-slider').slider({
+                    min: gs.bigBlind,
+                    max: gs.players[seat].chips
+                });
             }
         });
 
@@ -170,5 +179,7 @@ $(document).ready(function() {
 
 
 String.prototype.capitalize = function() {
-    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+    return this.replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+    });
 };
