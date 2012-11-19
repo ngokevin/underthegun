@@ -43,7 +43,6 @@ io.sockets.on('connection', function(socket) {
             var waitingPlayer = clients.shift();  // Pop a player from the queue.
 
             var gameId = numGames++;
-            waitingPlayer.get('playerId', function(err, waitingPlayerId) {
                 socket.emit('match-found', { gameId: gameId, opponentId: waitingPlayerId })
             });
             waitingPlayer.emit('match-found', { gameId: gameId, opponentId: playerId });

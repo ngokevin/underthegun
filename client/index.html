@@ -1,69 +1,71 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml'>
-    <head>
-        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-        <title>Under the Gun</title>
-        <link rel='stylesheet' href='css/base.css'>
-        <link rel='stylesheet' href='css/lobby.css'>
-        <link rel='stylesheet' href='css/game.css'>
-        <link rel='stylesheet' href='css/jquery-ui.custom.css'>
-        <link rel='stylesheet' href='css/font-awesome.css'>
-        <link rel='icon' type='image/x-icon' href='img/favicon.ico'/>
-        <script src='js/lib/jquery.min.js'></script>
-        <script src='js/lib/jquery-ui.custom.min.js'></script>
-        <script src='js/lib/socket.io.js'></script>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Under the Gun</title>
+    <link rel='stylesheet' href='css/base.css'>
+    <link rel='stylesheet' href='css/lobby.css'>
+    <link rel='stylesheet' href='css/game.css'>
+    <link rel='stylesheet' href='css/jquery-ui.custom.css'>
+    <link rel='stylesheet' href='css/font-awesome.css'>
+    <link rel='icon' type='image/x-icon' href='img/favicon.ico'/>
+    <script src='js/constants.js'></script>
+    <script src='js/lib/jquery.min.js'></script>
+    <script src='js/lib/jquery-ui.custom.min.js'></script>
+    <script src='js/lib/socket.io.js'></script>
 
-        <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
-    </head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+  </head>
 
-    <body>
-      <div id='wrap'>
-        <div id='not-bar'></div>
+  <body>
+    <div id='wrap'>
+      <div id='not-bar'></div>
 
-        <div id='lobby'>
-            <h1>Under the Gun</h1>
-            <p>Heads-Up Hold'em</p>
-            <span id='find-game' class='button'>Find Game</span>
+      <div id='lobby'>
+        <h1>Under the Gun</h1>
+        <p>Heads-Up Hold'em</p>
+        <span id='find-game' class='button'>Find Game</span>
+      </div>
+
+      <div id='game'>
+        <span id='opponentHole1' class='card facedown'></span>
+        <span id='opponentHole2' class='card facedown'></span>
+
+        <div id='board-cards'>
+          <span id='flop1' class='flop card undealt'></span>
+          <span id='flop2' class='flop card undealt'></span>
+          <span id='flop3' class='flop card undealt'></span>
+          <span id='turn' class='card undealt'></span>
+          <span id='river' class='card undealt'></span>
         </div>
 
-        <div id='game'>
-            <span id='opponentHole1' class='card facedown'></span>
-            <span id='opponentHole2' class='card facedown'></span>
-
-            <div id='board-cards'>
-                <span id='flop1' class='flop card undealt'></span>
-                <span id='flop2' class='flop card undealt'></span>
-                <span id='flop3' class='flop card undealt'></span>
-                <span id='turn' class='card undealt'></span>
-                <span id='river' class='card undealt'></span>
-            </div>
-
-            <div id='hand-info'>
-                <span>Round: <span id='round'></span> / </span>
-                <span>Pot: <span id='pot'></span></span>
-            </div>
-
-            <span id='hole1' class='card'></span>
-            <span id='hole2' class='card'></span>
-
-            <div id='bet-slider' class='slider c'></div>
-            <div id='actions'>
-                <span class='fold button inactive'>
-                    <span class='action'>Fold</span>
-                </span>
-                <span class='check call button inactive'>
-                    <span class='action c'>Check</span>
-                    <span class='inner-button' id='call-amount'></span>
-                </span>
-                <span class='bet raise button inactive'>
-                    <span class='action c'>Raise to</span>
-                    <span class='inner-button' id='bet-amount'></span>
-                </span>
-            </div>
+        <div id='hand-info'>
+          <span>Round: <span id='round'></span> / </span>
+          <span>Pot: <span id='pot'></span></span>
         </div>
-     </div>
 
-        <script src='js/underthegun.js'></script>
-    </body>
+        <span id='hole1' class='card'></span>
+        <span id='hole2' class='card'></span>
+
+        <div id='bet-slider' class='slider c'></div>
+        <div id='actions'>
+          <span class='fold button inactive'>
+            <span class='action'>Fold</span>
+          </span>
+          <span class='check call button inactive'>
+            <span class='action c'>Check</span>
+            <span class='inner-button' id='call-amount'></span>
+          </span>
+          <span class='bet raise button inactive'>
+            <span class='action c'>Raise to</span>
+            <span class='inner-button' id='bet-amount'></span>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <script src='js/underthegun.js'></script>
+  </body>
 </html>

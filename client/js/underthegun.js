@@ -26,6 +26,7 @@ $(document).ready(function() {
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
+            gameId = data.gameId;
             seat = data.seat;
             opponentId = data.opponentId;
             game();
@@ -45,11 +46,11 @@ $(document).ready(function() {
 
         var socket = io.connect('http://localhost:8433');
 
+        socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
+
         socket.on('assign-seat', function(data) {
             seat = data.seat;
         });
-
-        socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId, seat: seat });
 
         // Start game.
         socket.on('new-game', function(gs) {
@@ -69,9 +70,6 @@ $(document).ready(function() {
 
             // Start hand.
             socket.on('new-hand', function(gs) {
-                console.log(gs);
-                console.log(seat);
-
                 // Clear the board.
                 $('#board-cards .card').addClass('undealt').text('');
 

@@ -28,6 +28,7 @@ var numGames = 0;
 var io = require('socket.io').listen(http);
 io.sockets.on('connection', function(socket) {
     var seat, gs;
+    console.log(gameStates);
 
     socket.on('new-game', function(data) {
         // Set up game.
