@@ -160,10 +160,15 @@ $(document).ready(function() {
 
             function updateValues(gs) {
                 $('#pot').text(gs.pot);
-                $('#round').text(gs.currentRound);
+                $('#round').text(c.rounds[gs.currentRound].capitalize());
             }
         });
 
         // When game over, disconnect and redirect to lobby.
     }
 });
+
+
+String.prototype.capitalize = function() {
+    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
