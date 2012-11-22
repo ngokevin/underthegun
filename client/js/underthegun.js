@@ -109,7 +109,7 @@ $(document).ready(function() {
             socket.on('hand-complete', function(gs) {
                 if (gs.winner == seat) {
                     notify('You won the hand and earned ' + gs.pot + ' chips.');
-                } else if (gs.winner) {
+                } else if (gs.winner !== null) {
                     notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
                 } else {
                     notify('You both tied the hand. Split pot.');
@@ -138,19 +138,19 @@ $(document).ready(function() {
                 enabledButtons.removeClass('inactive').bind('click', function() {
                     switch ($(this).data('action')) {
                         case c.ACTION_FOLD:
-                            action = {action: c.ACTION_FOLD, amount: 0};
+                            action = {seat: seat, action: c.ACTION_FOLD, amount: 0};
                             break;
                         case c.ACTION_CHECK:
-                            action = {action: c.ACTION_CHECK, amount: 0};
+                            action = {seat: seat, action: c.ACTION_CHECK, amount: 0};
                             break;
                         case c.ACTION_CALL:
-                            action = {action: c.ACTION_CALL, amount: 0};
+                            action = {seat: seat, action: c.ACTION_CALL, amount: 0};
                             break;
                         case c.ACTION_BET:
-                            action = {action: c.ACTION_BET, amount: betAmount};
+                            action = {seat: seat, action: c.ACTION_BET, amount: betAmount};
                             break;
                         case c.ACTION_RAISE:
-                            action = {action: c.ACTION_RAISE, amount: betAmount};
+                            action = {seat: seat, action: c.ACTION_RAISE, amount: betAmount};
                             break;
                     }
                     socket.emit('action', {action: action, gs: gs})
@@ -170,6 +170,12 @@ $(document).ready(function() {
                     min: gs.bigBlind,
                     max: gs.players[seat].chips
                 });
+
+                if (gs.availableActions.indexOf(c.ACTION_CALL) > -1 && gs.actionOn == seat) {
+                    $('#call-amount').text(gs.toCall);
+                } else {
+                    $('#call-amount').empty();
+                }
             }
         });
 

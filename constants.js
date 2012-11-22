@@ -18,6 +18,8 @@
     exports.ROUND_FLOP = 1;
     exports.ROUND_TURN = 2;
     exports.ROUND_RIVER = 3;
+    exports.roundList = [exports.ROUND_PREFLOP, exports.ROUND_FLOP,
+                         exports.ROUND_TURN, exports.ROUND_RIVER];
 
     exports.rounds = {};
     exports.rounds[exports.ROUND_PREFLOP] = 'preflop';

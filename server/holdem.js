@@ -70,16 +70,18 @@ var Gs = function(gameId) {
     this.bigBlind = 20;
     this.startingChips = 1500;
     this.pot = 30;
+    this.winner = null;
     this.currentRound = null;
     this.boardCards = [];
     this.actionOn = 0;
     this.availableActions = [];
-    this.preflopActions = [];
-    this.flopActions = [];
-    this.turnActions = [];
-    this.riverActions = [];
-    this.winner = null;
+    this.toCall= 0;
 
+    // Hand history.
+    this.history = {};
+    for (var i = 0; i < c.roundList.length; i++) {
+        this.history[i] = [];
+    }
     this.players = [];
 }
 
@@ -98,11 +100,12 @@ Gs.prototype.newHand = function() {
     this.boardCards = [];
     this.actionOn = this.button;
     this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
-    this.currentBet = 0;
-    this.preflopActions = [];
-    this.flopActions = [];
-    this.turnActions = [];
-    this.riverActions = [];
+    this.toCall= this.pot - this.players[this.actionOn].roundPIP;
+
+    this.history = {};
+    for (var i = 0; i < c.roundList.length; i++) {
+        this.history[i] = [];
+    }
     this.winner = null;
 
     // Post blinds.
@@ -169,6 +172,17 @@ Gs.prototype.getNextPlayer = function(seat) {
     }
 }
 
+Gs.prototype.getPrevPlayer = function(seat) {
+    if (!seat) { seat = this.actionOn; }
+
+    // Get prev player.
+    if (seat == 0) {
+        return this.players.length - 1;
+    } else {
+        return seat - 1;
+    }
+}
+
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
     this.actionOn = this.getNextPlayer(this.actionOn);
@@ -213,7 +227,7 @@ Gs.prototype.applyAction = function(seat, action) {
     // Parses an action (.e.g {action: c.ACTION_CALL, amount: 0}).
     // Manipulates the game state and tells the
     // players. Like a finite state machine.
-    this[c.rounds[this.currentRound] + 'Actions'].push(action);
+    this.history[this.currentRound].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
         return {'error': true}
     }
@@ -256,7 +270,7 @@ Gs.prototype.applyAction = function(seat, action) {
             // Add the call to the pot.
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
-            var toCall = this.players[this.getNextPlayer()].roundPIP - this.players[seat].roundPIP;
+            var toCall = this.players[this.getPrevPlayer()].roundPIP - this.players[seat].roundPIP;
             this.players[seat].chips -= toCall;
             this.players[seat].roundPIP += toCall;
             this.pot += toCall;
@@ -286,12 +300,16 @@ Gs.prototype.applyAction = function(seat, action) {
             this.players[seat].roundPIP += bet;
             this.pot += bet;
 
+            this.updateToCall();
+
             this.nextTurn();
             this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
             return {'next-turn': true};
             break;
 
         case c.ACTION_RAISE:
+            this.aggressor = this.actionOn;
+
             // Raise the bet to the raise amount.
             var raiseTo = action.amount;
             var raiseBy = raiseTo - this.pot;
@@ -299,10 +317,20 @@ Gs.prototype.applyAction = function(seat, action) {
             this.players[seat].roundPIP += raiseTo;
             this.pot = raiseTo;
 
+            this.updateToCall();
+
             this.nextTurn();
             this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
             return {'next-turn': true};
             break;
+    }
+};
+
+Gs.prototype.updateToCall = function() {
+    this.toCall = (this.players[this.actionOn].roundPIP -
+                   this.players[this.getNextPlayer()].roundPIP);
+    if (this.toCall < 0) {
+        this.toCall = this.players[this.getNextPlayer()].chips;
     }
 };
 
