@@ -75,6 +75,8 @@ var Gs = function(gameId) {
     this.boardCards = [];
     this.actionOn = 0;
     this.availableActions = [];
+    this.minRaiseTo = this.bigBlind * 2;
+    this.lastBetOrRaise = 0;
     this.toCall= 0;
 
     // Hand history.
@@ -100,6 +102,7 @@ Gs.prototype.newHand = function() {
     this.boardCards = [];
     this.actionOn = this.button;
     this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
+    this.minRaiseTo = this.bigBlind * 2;
     this.toCall= this.pot - this.players[this.actionOn].roundPIP;
 
     this.history = {};
@@ -206,6 +209,9 @@ Gs.prototype.nextRound = function() {
             break;
     }
 
+    // Reset minRaiseTo
+    this.minRaiseTo = this.bigBlind;
+
     // Reset round VPIP.
     for (var i = 0; i < this.players.length; i++) {
         this.players[i].roundPIP = 0;
@@ -294,8 +300,11 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
 
         case c.ACTION_BET:
-            // Add the bet to the pot.
             var bet = action.amount;
+
+            this.minRaiseTo = 2 * bet;
+
+            // Add the bet to the pot.
             this.players[seat].chips -= bet;
             this.players[seat].roundPIP += bet;
             this.pot += bet;
@@ -308,11 +317,16 @@ Gs.prototype.applyAction = function(seat, action) {
             break;
 
         case c.ACTION_RAISE:
-            this.aggressor = this.actionOn;
-
-            // Raise the bet to the raise amount.
             var raiseTo = action.amount;
             var raiseBy = raiseTo - this.pot;
+
+            this.minRaiseTo = 2 * raiseTo;
+            // Treat preflop raise as a bet.
+            if (this.currentRound == c.ROUND_PREFLOP) {
+                this.minRaiseTo -= this.bigBlind;
+            }
+
+            // Raise the bet to the raise amount.
             this.players[seat].chips -= raiseBy;
             this.players[seat].roundPIP += raiseTo;
             this.pot = raiseTo;

@@ -167,7 +167,8 @@ $(document).ready(function() {
                 $('#chips').text(gs.players[seat].chips);
                 $('#position').text(gs.button == seat ? 'Button' : 'Big Blind');
                 $('#bet-slider').slider({
-                    min: gs.bigBlind,
+                    min: gs.minRaiseTo,
+                    value: gs.minRaiseTo,
                     max: gs.players[seat].chips
                 });
 
