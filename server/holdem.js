@@ -277,6 +277,10 @@ Gs.prototype.applyAction = function(seat, action) {
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
             var toCall = this.players[this.getPrevPlayer()].roundPIP - this.players[seat].roundPIP;
+            if (this.currentRound == c.ROUND_PREFLOP) {
+                toCall -= this.smallBlind + this.bigBlind;
+            }
+
             this.players[seat].chips -= toCall;
             this.players[seat].roundPIP += toCall;
             this.pot += toCall;
@@ -332,6 +336,9 @@ Gs.prototype.applyAction = function(seat, action) {
             this.pot = raiseTo;
 
             this.updateToCall();
+            if (this.currentRound == c.ROUND_PREFLOP) {
+                this.toCall -= this.smallBlind + this.bigBlind;
+            }
 
             this.nextTurn();
             this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];

@@ -169,7 +169,7 @@ $(document).ready(function() {
                 $('#bet-slider').slider({
                     min: gs.minRaiseTo,
                     value: gs.minRaiseTo,
-                    max: gs.players[seat].chips
+                    max: gs.players[seat].chips + gs.pot
                 });
 
                 if (gs.availableActions.indexOf(c.ACTION_CALL) > -1 && gs.actionOn == seat) {
