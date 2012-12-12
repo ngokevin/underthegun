@@ -76,7 +76,6 @@ var Gs = function(gameId) {
     this.actionOn = 0;
     this.availableActions = [];
     this.minRaiseTo = this.bigBlind * 2;
-    this.lastBetOrRaise = 0;
     this.toCall= 0;
 
     // Hand history.
@@ -229,10 +228,12 @@ Gs.prototype.hasGameWinner = function() {
     return false;
 }
 
-Gs.prototype.applyAction = function(seat, action) {
+Gs.prototype.applyAction = function(action) {
     // Parses an action (.e.g {action: c.ACTION_CALL, amount: 0}).
     // Manipulates the game state and tells the
     // players. Like a finite state machine.
+    var seat = this.actionOn;
+
     this.history[this.currentRound].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
         return {'error': true}
@@ -277,9 +278,6 @@ Gs.prototype.applyAction = function(seat, action) {
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
             var toCall = this.players[this.getPrevPlayer()].roundPIP - this.players[seat].roundPIP;
-            if (this.currentRound == c.ROUND_PREFLOP) {
-                toCall -= this.smallBlind + this.bigBlind;
-            }
 
             this.players[seat].chips -= toCall;
             this.players[seat].roundPIP += toCall;

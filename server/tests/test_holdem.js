@@ -3,6 +3,55 @@ var c = require('../constants');
 var h = holdem.Holdem;
 
 
+var testBetRaise = {
+    setUp: function(callback) {
+        callback()
+    },
+
+    tearDown: function(callback) {
+        callback()
+    },
+
+    testPreflop: function(test) {
+        var gs  = new holdem.Gs();
+        gs.addPlayer(0);
+        gs.addPlayer(1);
+        gs.newHand();
+
+        // Button raise.
+        gs.bigBlind = 20;
+        test.equal(gs.minRaiseTo, 30);
+        gs.applyAction({action: c.ACTION_RAISE, amount: 30});
+        test.equal(gs.pot, 50);
+        test.equal(gs.toCall, 10);
+
+        // BB reraise.
+        test.equal(gs.minRaiseTo, 60);
+        test.done()
+    },
+
+    testPostflop: function(test) {
+        var gs  = new holdem.Gs();
+        gs.addPlayer(0);
+        gs.addPlayer(1);
+        gs.newHand();
+        gs.applyAction({action: c.ACTION_CALL});
+        gs.applyAction({action: c.ACTION_CHECK});
+
+        // Small blind bet.
+        gs.bigBlind = 20;
+        test.equal(gs.minRaiseTo, 20);
+        gs.applyAction({action: c.ACTION_BET, amount: 20});
+        test.equal(gs.pot, 50);
+        test.equal(gs.toCall, 20);
+
+        // BB reraise.
+        test.equal(gs.minRaiseTo, 40);
+        test.done()
+    }
+}
+
+
 var testApplyAction = {
     setUp: function(callback) {
         callback();
@@ -19,24 +68,24 @@ var testApplyAction = {
         gs.newHand();
 
         test.equal(gs.currentRound, c.ROUND_PREFLOP);
-        gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
+        gs.applyAction({action: c.ACTION_CALL, amount: 0});
         test.equal(gs.currentRound, c.ROUND_PREFLOP);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, c.ROUND_FLOP);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, c.ROUND_FLOP);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, c.ROUND_TURN);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, c.ROUND_TURN);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
         test.equal(gs.currentRound, c.ROUND_RIVER);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
         test.equal(gs.currentRound, c.ROUND_RIVER);
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
         test.done();
     },
@@ -46,18 +95,18 @@ var testApplyAction = {
         gs.addPlayer(0);
         gs.addPlayer(1);
         gs.newHand();
-        gs.applyAction(gs.button, {action: c.ACTION_CALL, amount: 0});
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CHECK, amount: 0});
+        gs.applyAction({action: c.ACTION_CALL, amount: 0});
+        gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
         // Bet subtracts from chip stack.
         var better = gs.actionOn;
         var betterStack = gs.players[better].chips;
-        gs.applyAction(gs.actionOn, {action: c.ACTION_BET, amount: 100});
+        gs.applyAction({action: c.ACTION_BET, amount: 100});
 
         // Call subtracts from chip stack.
         var caller = gs.actionOn;
         var callerStack = gs.players[caller].chips;
-        gs.applyAction(gs.actionOn, {action: c.ACTION_CALL, amount: 0});
+        gs.applyAction({action: c.ACTION_CALL, amount: 0});
 
         test.equal(gs.players[better].chips, betterStack - 100);
         test.equal(gs.players[caller].chips, callerStack - 100);
@@ -302,7 +351,8 @@ function createHand(cards, withStrength) {
 var tests = {
     testApplyAction: testApplyAction,
     testCalcHand: testCalcHand,
-    testCompareHands: testCompareHands
+    testCompareHands: testCompareHands,
+    testBetRaise: testBetRaise
 };
 for (var i in tests) {
     exports[i] = tests[i];

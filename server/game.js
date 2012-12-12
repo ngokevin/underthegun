@@ -66,7 +66,7 @@ io.sockets.on('connection', function(socket) {
 
         socket.on('action', function(data) {
             // TODO: verify game state
-            var handStatus = gs.applyAction(seat, data.action);
+            var handStatus = gs.applyAction(data.action);
             if ('next-turn' in handStatus) {
                 emitGsAll('next-turn');
             } else if ('next-round' in handStatus) {
