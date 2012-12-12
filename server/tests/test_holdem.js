@@ -37,12 +37,13 @@ var testBetRaise = {
         gs.newHand();
         gs.applyAction({action: c.ACTION_CALL});
         gs.applyAction({action: c.ACTION_CHECK});
+        test.equal(gs.pot, 40);
 
         // Small blind bet.
         gs.bigBlind = 20;
         test.equal(gs.minRaiseTo, 20);
         gs.applyAction({action: c.ACTION_BET, amount: 20});
-        test.equal(gs.pot, 50);
+        test.equal(gs.pot, 60);
         test.equal(gs.toCall, 20);
 
         // BB reraise.

@@ -69,20 +69,6 @@ var Gs = function(gameId) {
     this.smallBlind = 10;
     this.bigBlind = 20;
     this.startingChips = 1500;
-    this.pot = 30;
-    this.winner = null;
-    this.currentRound = null;
-    this.boardCards = [];
-    this.actionOn = 0;
-    this.availableActions = [];
-    this.minRaiseTo = this.bigBlind * 2;
-    this.toCall= 0;
-
-    // Hand history.
-    this.history = {};
-    for (var i = 0; i < c.roundList.length; i++) {
-        this.history[i] = [];
-    }
     this.players = [];
 }
 
@@ -90,7 +76,7 @@ Gs.prototype.addPlayer = function(id) {
     var player = new Player(id);
     player.seat = this.players.length;
     this.players.push(player);
-    player.chips = 1500;
+    player.chips = this.startingChips;
 }
 
 Gs.prototype.newHand = function() {
@@ -101,8 +87,6 @@ Gs.prototype.newHand = function() {
     this.boardCards = [];
     this.actionOn = this.button;
     this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
-    this.minRaiseTo = this.bigBlind * 2;
-    this.toCall= this.pot - this.players[this.actionOn].roundPIP;
 
     this.history = {};
     for (var i = 0; i < c.roundList.length; i++) {
@@ -122,6 +106,10 @@ Gs.prototype.newHand = function() {
         this.players[1].roundPIP = this.smallBlind;
         this.players[1].chips -= this.smallBlind;
     }
+
+    this.currentBet = this.bigBlind;
+    this.toCall = this.currentBet - this.players[this.actionOn].roundPIP;
+    this.minRaiseTo = this.players[this.actionOn].roundPIP + this.bigBlind;
 
     // Draw cards.
     for (var i = 0; i < this.players.length; i++) {
@@ -164,7 +152,7 @@ Gs.prototype.isButton = function(seat) {
 }
 
 Gs.prototype.getNextPlayer = function(seat) {
-    if (!seat) { seat = this.actionOn; }
+    if (!(seat >= 0)) { seat = this.actionOn; }
 
     // Get next player.
     if (seat == this.players.length - 1) {
@@ -233,6 +221,7 @@ Gs.prototype.applyAction = function(action) {
     // Manipulates the game state and tells the
     // players. Like a finite state machine.
     var seat = this.actionOn;
+    var player = this.players[seat];
 
     this.history[this.currentRound].push(action);
     if (this.availableActions.indexOf(action.action) < 0) {
@@ -277,14 +266,14 @@ Gs.prototype.applyAction = function(action) {
             // Add the call to the pot.
             // We store each player's VPIP for the current
             // round to calculate how much to call a bet or raise.
-            var toCall = this.players[this.getPrevPlayer()].roundPIP - this.players[seat].roundPIP;
+            var toCall = this.currentBet - player.roundPIP;
 
-            this.players[seat].chips -= toCall;
-            this.players[seat].roundPIP += toCall;
+            player.chips -= toCall;
+            player.roundPIP += toCall;
             this.pot += toCall;
 
-            if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat)
-                && this.players[seat].roundPIP == this.bigBlind) {
+            if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat) &&
+                player.roundPIP == this.bigBlind) {
                 // If button limps preflop.
                 this.nextTurn();
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CHECK, c.ACTION_RAISE];
@@ -301,42 +290,19 @@ Gs.prototype.applyAction = function(action) {
             }
             break;
 
-        case c.ACTION_BET:
-            var bet = action.amount;
 
-            this.minRaiseTo = 2 * bet;
-
-            // Add the bet to the pot.
-            this.players[seat].chips -= bet;
-            this.players[seat].roundPIP += bet;
-            this.pot += bet;
-
-            this.updateToCall();
-
-            this.nextTurn();
-            this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
-            return {'next-turn': true};
-            break;
-
-        case c.ACTION_RAISE:
+        case c.ACTION_BET: case c.ACTION_RAISE:
             var raiseTo = action.amount;
-            var raiseBy = raiseTo - this.pot;
+            this.currentBet = raiseTo;
 
-            this.minRaiseTo = 2 * raiseTo;
-            // Treat preflop raise as a bet.
-            if (this.currentRound == c.ROUND_PREFLOP) {
-                this.minRaiseTo -= this.bigBlind;
-            }
+            this.minRaiseTo = 2 * this.currentBet;
 
             // Raise the bet to the raise amount.
-            this.players[seat].chips -= raiseBy;
-            this.players[seat].roundPIP += raiseTo;
-            this.pot = raiseTo;
+            player.chips -= raiseTo - player.roundPIP;
+            this.pot += raiseTo - player.roundPIP;
+            player.roundPIP = raiseTo;
 
             this.updateToCall();
-            if (this.currentRound == c.ROUND_PREFLOP) {
-                this.toCall -= this.smallBlind + this.bigBlind;
-            }
 
             this.nextTurn();
             this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
@@ -346,10 +312,10 @@ Gs.prototype.applyAction = function(action) {
 };
 
 Gs.prototype.updateToCall = function() {
-    this.toCall = (this.players[this.actionOn].roundPIP -
-                   this.players[this.getNextPlayer()].roundPIP);
+    var nextPlayer = this.players[this.getNextPlayer()];
+    this.toCall = this.currentBet - nextPlayer.roundPIP;
     if (this.toCall < 0) {
-        this.toCall = this.players[this.getNextPlayer()].chips;
+        this.toCall = nextPlayer.chips;
     }
 };
 
