@@ -18,7 +18,7 @@ var testBetRaise = {
         gs.addPlayer(1);
         gs.newHand();
 
-        // Button raise.
+        // Button min-raise.
         gs.bigBlind = 20;
         test.equal(gs.minRaiseTo, 30);
         gs.applyAction({action: c.ACTION_RAISE, amount: 30});
@@ -27,6 +27,9 @@ var testBetRaise = {
 
         // BB reraise.
         test.equal(gs.minRaiseTo, 60);
+        gs.applyAction({action: c.ACTION_RAISE, amount: 60});
+        test.equal(gs.pot, 90);
+        test.equal(gs.toCall, 30);
         test.done()
     },
 
@@ -39,15 +42,32 @@ var testBetRaise = {
         gs.applyAction({action: c.ACTION_CHECK});
         test.equal(gs.pot, 40);
 
-        // Small blind bet.
+        // BB min-bet.
         gs.bigBlind = 20;
         test.equal(gs.minRaiseTo, 20);
         gs.applyAction({action: c.ACTION_BET, amount: 20});
         test.equal(gs.pot, 60);
         test.equal(gs.toCall, 20);
 
-        // BB reraise.
+        // Button min-raise.
         test.equal(gs.minRaiseTo, 40);
+        gs.applyAction({action: c.ACTION_RAISE, amount: 40});
+        test.equal(gs.pot, 100);
+        test.equal(gs.toCall, 20);
+
+        // BB reraise.
+        test.equal(gs.minRaiseTo, 80);
+        gs.applyAction({action: c.ACTION_RAISE, amount: 200});
+        test.equal(gs.pot, 280);
+        test.equal(gs.toCall, 160);
+
+        // BB bet.
+        gs.applyAction({action: c.ACTION_CALL});
+        test.equal(gs.pot, 440);
+        gs.applyAction({action: c.ACTION_BET, amount: 145});
+        test.equal(gs.pot, 585);
+        test.equal(gs.minRaiseTo, 290);
+
         test.done()
     }
 }
