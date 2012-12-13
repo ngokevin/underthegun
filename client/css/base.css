@@ -1,5 +1,5 @@
 html, body {
-  color: #d2d2d2;
+  color: #dcdcdc;
   margin: 0 auto;
   margin-top: -12px;
   min-height: 240px;
@@ -16,6 +16,12 @@ html, body {
 
 #wrap {
   background: #0a3102;
+  background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(#0f4a03), to(#0a3102));
+  background: -webkit-radial-gradient(#0f4a03, #0a3102);
+  background: -moz-radial-gradient(#0f4a03, #0a3102);
+  background: -ms-radial-gradient(#0f4a03, #0a3102);
+  background: -o-radial-gradient(#0f4a03, #0a3102);
+  background: radial-gradient(#0f4a03, #0a3102);
   padding: 24px 0 12px 0;
   text-align: center; }
 

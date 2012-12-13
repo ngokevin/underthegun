@@ -35,8 +35,8 @@ function game(gameId, playerId, opponentId, seat) {
             // Receive hole cards.
             var hole1 = gs.players[seat].hole[0];
             var hole2 = gs.players[seat].hole[1];
-            $('#hole1').html(hole1.card);
-            $('#hole2').html(hole2.card);
+            $('#hole1').html(prettyCard(hole1.card));
+            $('#hole2').html(prettyCard(hole2.card));
 
             notify('Dealt ' + hole1.card + hole2.card);
             updateValues(gs);
@@ -123,7 +123,6 @@ function game(gameId, playerId, opponentId, seat) {
             // Update DOM values according to game state.
             $('#opponent-chips').text(gs.players[seat == 0 ? 1 : 0].chips);
             $('#pot').text(gs.pot);
-            $('#round').text(c.rounds[gs.currentRound].capitalize());
             $('#chips').text(gs.players[seat].chips);
             $('#bet-slider').slider({
                 min: gs.minRaiseTo,
@@ -146,6 +145,25 @@ function game(gameId, playerId, opponentId, seat) {
             }
         }
     });
+
+    function prettyCard(cardStr) {
+        var card = '<span class="rank">' + cardStr[0] + '</span>';
+        switch (cardStr[1]) {
+            case 'c':
+                card += '<span class="black-suit">&clubs;</span>';
+                break;
+            case 'd':
+                card += '<span class="red-suit">&diams;</span>';
+                break;
+            case 'h':
+                card += '<span class="red-suit">&hearts;</span>';
+                break;
+            case 's':
+                card += '<span class="black-suit">&spades;</span>';
+                break;
+        }
+        return card;
+    }
 
     // When game over, disconnect and redirect to lobby.
 }

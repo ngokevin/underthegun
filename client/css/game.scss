@@ -3,20 +3,37 @@
 #game {
     .card {
         background: $white;
+        border-radius: 2px;
         color: $black;
         display: inline-block;
         font-size: 32px;
         margin: 6px 0 6px;
         height: 70px;
+        position: relative;
         width: 50px;
         vertical-align: top;
-
         &.undealt {
             background: none;
             border: 1px dashed $light-gray;
         }
         &.facedown {
             background: $light-blue;
+        }
+        .rank {
+            position: absolute;
+            left: 3px;
+            top: 0;
+        }
+        .black-suit, .red-suit {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        .black-suit {
+            color: black;
+        }
+        .red-suit {
+            color: lighten($red, 30%);
         }
     }
 

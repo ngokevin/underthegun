@@ -18,7 +18,7 @@ html, body {
 }
 
 #wrap {
-    background: $green;
+    @include radial-gradient(lighten($green, 5%), $green);
     padding: 24px 0 12px 0;
     text-align: center;
 }
