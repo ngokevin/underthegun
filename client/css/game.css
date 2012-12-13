@@ -12,6 +12,8 @@
     border: 1px dashed #505050; }
   #game .card.facedown {
     background: #299283; }
+#game #board-cards {
+  margin-top: 12px; }
 #game #bet-slider {
   margin: auto;
   margin-top: 24px;
@@ -19,9 +21,10 @@
   #game #bet-slider:hover {
     cursor: pointer; }
 #game .info {
-  font-size: 14px; }
+  font-size: 14px;
+  margin-bottom: 12px; }
 #game #opponent-info {
-  margin: 5px 0; }
+  margin: 12px 0; }
 #game #hand-info {
   margin-bottom: 3px; }
   #game #hand-info span {
@@ -29,6 +32,25 @@
 #game #player-info {
   position: relative;
   top: 8px; }
+#game .pkr-button {
+  -moz-box-shadow: 3px 3px 2px 0 #050505;
+  -webkit-box-shadow: 3px 3px 2px 0 #050505;
+  box-shadow: 3px 3px 2px 0 #050505;
+  background: #d2d2d2;
+  border-radius: 15px;
+  color: #161414;
+  display: block;
+  height: 25px;
+  left: 50%;
+  margin: -3px 0 0 -70px;
+  position: absolute;
+  width: 25px; }
+  #game .pkr-button span {
+    font-size: 14px;
+    font-weight: bold;
+    position: relative;
+    left: 1px;
+    top: 4px; }
 #game #actions span.button {
   display: inline-block;
   width: 25%;

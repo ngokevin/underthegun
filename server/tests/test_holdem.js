@@ -132,7 +132,24 @@ var testApplyAction = {
         test.equal(gs.players[better].chips, betterStack - 100);
         test.equal(gs.players[caller].chips, callerStack - 100);
         test.done();
-    }
+    },
+
+    testFold: function(test) {
+        var gs  = new holdem.Gs();
+        gs.addPlayer(0);
+        gs.addPlayer(1);
+
+        var buttonChips = gs.players[gs.button].chips;
+
+        gs.newHand();
+
+        // Blind steal.
+        gs.applyAction({action: c.ACTION_RAISE, amount: 50});
+        gs.applyAction({action: c.ACTION_FOLD});
+        test.equal(gs.players[gs.button].chips, buttonChips + 20);
+
+        test.done();
+    },
 };
 
 var testCalcHand = {

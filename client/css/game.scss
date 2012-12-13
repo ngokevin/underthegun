@@ -20,6 +20,10 @@
         }
     }
 
+    #board-cards {
+        margin-top: 12px;
+    }
+
     #bet-slider {
         margin: auto;
         margin-top: 24px;
@@ -31,10 +35,11 @@
 
     .info {
         font-size: 14px;
+        margin-bottom: 12px;
     }
 
     #opponent-info {
-        margin: 5px 0;
+        margin: 12px 0;
     }
 
     #hand-info {
@@ -47,6 +52,26 @@
     #player-info {
         position: relative;
         top: 8px;
+    }
+
+    .pkr-button {
+        @include default-box-shadow();
+        background: $white;
+        border-radius: 15px;
+        color: $dark-gray;
+        display: block;
+        height: 25px;
+        left: 50%;
+        margin: -3px 0 0 -70px;
+        position: absolute;
+        width: 25px;
+        span {
+            font-size: 14px;
+            font-weight: bold;
+            position: relative;
+            left: 1px;
+            top: 4px;
+        }
     }
 
     #actions span.button {

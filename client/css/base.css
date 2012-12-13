@@ -28,11 +28,13 @@ html, body {
   width: 100%; }
 
 span.button {
+  -moz-box-shadow: 3px 3px 2px 0 #050505;
+  -webkit-box-shadow: 3px 3px 2px 0 #050505;
+  box-shadow: 3px 3px 2px 0 #050505;
   background: #390208;
   border-radius: 10px;
-  box-shadow: 3px 3px 2px 0 black;
   cursor: pointer;
-  display: block;
+  display: inline-block;
   height: 35px;
   width: 20%;
   margin: auto;
@@ -44,7 +46,7 @@ span.button {
   span.button:hover {
     background: #370208; }
   span.button.clicked {
-    box-shadow: 0px 0px 0px 0 black; }
+    box-shadow: 0 0 0 0; }
   span.button.inactive {
     background: #161414;
     color: #505050;

@@ -8,3 +8,23 @@ $black: rgb(5, 5, 5);
 $dark-gray: rgb(22, 20, 20);
 $medium-gray: rgb(40, 40, 40);
 $light-gray: rgb(80, 80, 80);
+
+@mixin box-shadow($shadow) {
+    -moz-box-shadow: $shadow;
+    -webkit-box-shadow: $shadow;
+    box-shadow: $shadow;
+}
+
+@mixin default-box-shadow() {
+    @include box-shadow(3px 3px 2px 0 $black);
+}
+
+@mixin gradient($color1, $color2) {
+    background-color: $color2;
+    background-image: -webkit-gradient(linear, left bottom, left top, from($color1), to($color2));
+    background-image: -webkit-linear-gradient($color1, $color2);
+    background-image:    -moz-linear-gradient($color1, $color2);
+    background-image:     -ms-linear-gradient($color1, $color2);
+    background-image:      -o-linear-gradient($color1, $color2);
+    background-image:         linear-gradient($color1, $color2);
+}

@@ -232,7 +232,7 @@ Gs.prototype.applyAction = function(action) {
         case c.ACTION_FOLD:
             // Next hand if a player folds.
             this.winner = this.getNextPlayer();
-            this.players.length[this.winner].chips += this.pot;
+            this.players[this.winner].chips += this.pot;
             return {'hand-complete': true};
             break;
 

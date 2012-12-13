@@ -21,11 +21,13 @@
   <body>
     <div id='wrap'>
       <div id='not-bar'></div>
+      <script src='js/utils.js'></script>
 
       <div id='lobby'>
         <h1>Under the Gun</h1>
         <p>Heads-Up Hold'em</p>
         <span id='find-game' class='button'>Find Game</span>
+        <script src='js/lobby.js'></script>
       </div>
 
       <div id='game'>
@@ -33,8 +35,10 @@
         <span id='opponentHole2' class='card facedown'></span>
 
         <div id='opponent-info' class='info'>
-            <span>Chips: <span id='opponent-chips'></span> / </span>
-            <span>Position: <span id='opponent-position'></span></span>
+          <span>
+            <div class='pkr-button' id='opponent-button'><span>D</span></div>
+            Chips: <span id='opponent-chips'></span>
+          </span>
         </div>
 
         <div id='board-cards'>
@@ -54,10 +58,14 @@
         <span id='hole2' class='card'></span>
 
         <div id='player-info' class='info'>
-            <span>Chips: <span id='chips'></span> / </span>
-            <span>Position: <span id='position'></span></span>
+          <span>
+            <div class='pkr-button' id='button'><span>D</span></div>
+            Chips: <span id='chips'></span>
+          </span>
         </div>
+
         <div id='bet-slider' class='slider c'></div>
+
         <div id='actions'>
           <span class='fold button inactive'>
             <span class='action'>Fold</span>
@@ -73,8 +81,8 @@
         </div>
 
       </div>
+      <script src='js/game.js'></script>
     </div>
 
-    <script src='js/underthegun.js'></script>
   </body>
 </html>
