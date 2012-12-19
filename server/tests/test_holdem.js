@@ -5,6 +5,10 @@ var h = holdem.Holdem;
 
 var testBetRaise = {
     setUp: function(callback) {
+        this.gs  = new holdem.Gs();
+        this.gs.addPlayer(0);
+        this.gs.addPlayer(1);
+        this.gs.newHand();
         callback()
     },
 
@@ -13,10 +17,7 @@ var testBetRaise = {
     },
 
     testPreflop: function(test) {
-        var gs  = new holdem.Gs();
-        gs.addPlayer(0);
-        gs.addPlayer(1);
-        gs.newHand();
+        var gs = this.gs;
 
         // Button min-raise.
         gs.bigBlind = 20;
@@ -34,10 +35,8 @@ var testBetRaise = {
     },
 
     testPostflop: function(test) {
-        var gs  = new holdem.Gs();
-        gs.addPlayer(0);
-        gs.addPlayer(1);
-        gs.newHand();
+        var gs = this.gs;
+
         gs.applyAction({action: c.ACTION_CALL});
         gs.applyAction({action: c.ACTION_CHECK});
         test.equal(gs.pot, 40);
@@ -69,12 +68,41 @@ var testBetRaise = {
         test.equal(gs.minRaiseTo, 290);
 
         test.done()
-    }
+    },
+
+    testCallAllIn: function(test) {
+        var gs = this.gs;
+        var bb = gs.getNextPlayer(gs.button);
+
+        gs.players[gs.button].chips = 1990;
+        gs.players[bb].chips = 980;
+
+        gs.players[gs.button].hole = createHand(['Ad', 'Ac']);
+        gs.players[bb].hole = createHand(['2d', '7c']);
+
+        gs.applyAction({action: c.ACTION_CALL});
+        gs.applyAction({action: c.ACTION_CHECK});
+
+        gs.boardCards = createHand(['Ad', 'Ac', 'Kd']);
+        gs.applyAction({action: c.ACTION_CHECK});
+        gs.applyAction({action: c.ACTION_BET, amount: 1990});
+        gs.applyAction({action: c.ACTION_CALL});
+
+        test.equal(gs.players[gs.button].chips, 3000);
+        test.equal(gs.players[bb].chips, 0);
+
+        test.done();
+    },
 }
 
 
 var testApplyAction = {
     setUp: function(callback) {
+        this.gs  = new holdem.Gs();
+        this.gs.addPlayer(0);
+        this.gs.addPlayer(1);
+        this.gs.newHand();
+
         callback();
     },
 
@@ -83,10 +111,7 @@ var testApplyAction = {
     },
 
     testNextRounds: function(test) {
-        var gs  = new holdem.Gs();
-        gs.addPlayer(0);
-        gs.addPlayer(1);
-        gs.newHand();
+        var gs = this.gs;
 
         test.equal(gs.currentRound, c.ROUND_PREFLOP);
         gs.applyAction({action: c.ACTION_CALL, amount: 0});
@@ -112,10 +137,8 @@ var testApplyAction = {
     },
 
     testBetAndCall: function(test) {
-        var gs  = new holdem.Gs();
-        gs.addPlayer(0);
-        gs.addPlayer(1);
-        gs.newHand();
+        var gs = this.gs;
+
         gs.applyAction({action: c.ACTION_CALL, amount: 0});
         gs.applyAction({action: c.ACTION_CHECK, amount: 0});
 
@@ -135,13 +158,8 @@ var testApplyAction = {
     },
 
     testFold: function(test) {
-        var gs  = new holdem.Gs();
-        gs.addPlayer(0);
-        gs.addPlayer(1);
-
-        var buttonChips = gs.players[gs.button].chips;
-
-        gs.newHand();
+        var gs = this.gs;
+        var buttonChips = gs.players[gs.button].chips + gs.smallBlind;
 
         // Blind steal.
         gs.applyAction({action: c.ACTION_RAISE, amount: 50});

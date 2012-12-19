@@ -78,11 +78,10 @@ io.sockets.on('connection', function(socket) {
 
         socket.on('hand-complete', function(data) {
             // TODO: verify game state
-            if (gs.hasGameWinner() === false) {
-
+            if (seat == 0) {
                 // Only one player's socket needs to initiate new hand.
-                if (seat == 0) {
-                    setTimeout(newHand, 12000);
+                if (gs.hasGameWinner() === false) {
+                    setTimeout(newHand, 6000);
                 }
             }
         });

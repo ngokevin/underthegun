@@ -29,6 +29,8 @@ function game(gameId, playerId, opponentId, seat) {
 
         // Start hand.
         socket.on('new-hand', function(gs) {
+            updateValues(gs);
+
             // Clear the board.
             $('#board-cards .card').addClass('undealt').text('');
 
@@ -39,7 +41,6 @@ function game(gameId, playerId, opponentId, seat) {
             $('#hole2').html(prettyCard(hole2.card));
 
             notify('Dealt ' + hole1.card + hole2.card);
-            updateValues(gs);
             getAction(gs.currentRound, gs);  // Button preflop.
         });
 
@@ -50,33 +51,15 @@ function game(gameId, playerId, opponentId, seat) {
         });
 
         socket.on('next-round', function(gs) {
-            switch (gs.currentRound) {
-                case c.ROUND_FLOP:
-                    $('#flop1').text(gs.boardCards[0].card);
-                    $('#flop2').text(gs.boardCards[1].card);
-                    $('#flop3').text(gs.boardCards[2].card);
-                    $('.flop').removeClass('undealt');
-                    break;
-                case c.ROUND_TURN: $('#turn').text(gs.boardCards[3].card).removeClass('undealt'); break;
-                case c.ROUND_RIVER:
-                    $('#river').text(gs.boardCards[4].card).removeClass('undealt');
-                    break;
-            }
-
             updateValues(gs);
-            getAction(gs.currentRound, gs);  // Big blind.
+            getAction(gs.currentRound, gs);
         });
 
         socket.on('hand-complete', function(gs) {
-            if (gs.winner == seat) {
-                notify('You won the hand and earned ' + gs.pot + ' chips.');
-            } else if (gs.winner !== null) {
-                notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
-            } else {
-                notify('You both tied the hand. Split pot.');
-            }
-            updateValues(gs);
-            socket.emit('hand-complete', {gs: gs})
+            var wait = updateValues(gs);
+            setTimeout(function() {
+                socket.emit('hand-complete', {gs: gs})
+            }, wait || 0);
         });
 
         function getAction(round, gs) {
@@ -121,15 +104,13 @@ function game(gameId, playerId, opponentId, seat) {
 
         function updateValues(gs) {
             // Update DOM values according to game state.
-            $('#opponent-chips').text(gs.players[seat == 0 ? 1 : 0].chips);
-            $('#pot').text(gs.pot);
-            $('#chips').text(gs.players[seat].chips);
             $('#bet-slider').slider({
                 min: gs.minRaiseTo,
                 value: gs.minRaiseTo,
                 max: gs.players[seat].chips + gs.pot
             });
-            // Move button.
+
+            // Button position.
             if (gs.button == seat) {
                 $('.pkr-button').hide();
                 $('#button').show();
@@ -138,11 +119,66 @@ function game(gameId, playerId, opponentId, seat) {
                 $('#opponent-button').show();
             }
 
+            // Call amount.
             if (gs.availableActions.indexOf(c.ACTION_CALL) > -1 && gs.actionOn == seat) {
                 $('#call-amount').text(gs.toCall);
             } else {
                 $('#call-amount').empty();
             }
+
+            // Opponent hole cards.
+            for (var i = 0; i < gs.players.length; i++) {
+                if (i != seat && 'hole' in gs.players[i]) {
+                    var hole = gs.players[i].hole;
+                    $('#opponentHole1').html(prettyCard(hole[0].card)).removeClass('facedown');
+                    $('#opponentHole2').html(prettyCard(hole[1].card)).removeClass('facedown');
+                }
+            }
+
+            // Board cards.
+            var delayInterval = 3000;
+            var delay = 0;  // Set delays for all-in sequence.
+            if ($('.flop').hasClass('undealt') && gs.boardCards.length >= 3) {
+                $('#flop1').html(prettyCard(gs.boardCards[0].card));
+                $('#flop2').html(prettyCard(gs.boardCards[1].card));
+                $('#flop3').html(prettyCard(gs.boardCards[2].card));
+                $('.flop').removeClass('undealt');
+                delay += delayInterval;
+            }
+            if ($('#turn').hasClass('undealt') && gs.boardCards.length >= 4) {
+                setTimeout(function() {
+                    $('#turn').html(prettyCard(gs.boardCards[3].card)).removeClass('undealt');
+                }, delay);
+                delay += delayInterval;
+            }
+            if ($('#river').hasClass('undealt') && gs.boardCards.length == 5) {
+                setTimeout(function() {
+                    $('#river').html(prettyCard(gs.boardCards[4].card)).removeClass('undealt');
+                }, delay);
+                delay += delayInterval;
+            }
+
+            // Don't update chip counts if until the all-in sequence is finish.
+            setTimeout(function() {
+                $('#opponent-chips').text(gs.players[seat == 0 ? 1 : 0].chips);
+                $('#pot').text(gs.pot);
+                $('#chips').text(gs.players[seat].chips);
+            }, gs.winner !== null ? delay: 0);
+
+            // Display winner.
+            if (gs.winner !== null) {
+                setTimeout(function() {
+                    if (gs.winner == seat) {
+                        notify('You won the hand and earned ' + gs.pot + ' chips.');
+                    } else if (gs.winner !== null) {
+                        notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
+                    } else {
+                        notify('You both tied the hand. Split pot.');
+                    }
+                }, delay);
+            }
+
+            return delay;
         }
     });
 

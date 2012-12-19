@@ -130,17 +130,23 @@ Gs.prototype.filter = function(seat) {
 
     var players = [];
     for (var i = 0; i < this.players.length; i++) {
-        if (i != seat) {
+        if (i == seat) {
+            players.push(this.players[i]);
+        } else {
             var player = {};
-            var filterKeys = ['hole'];
+            var filterKeys = [];
+
+            if (this.winner === null) {
+                // Show cards on showdown.
+                filterKeys.push('hole');
+            }
+
             for (var keys = Object.keys(this.players[i]), l = keys.length; l; --l) {
                 if (filterKeys.indexOf(keys[l - 1]) < 0) {
                     player[keys[l - 1]] = this.players[i][keys[l - 1]];
                 }
             }
             players.push(player);
-        } else {
-            players.push(this.players[i]);
         }
     }
     filteredGs.players = players;
@@ -152,7 +158,9 @@ Gs.prototype.isButton = function(seat) {
 }
 
 Gs.prototype.getNextPlayer = function(seat) {
-    if (!(seat >= 0)) { seat = this.actionOn; }
+    if (!(seat >= 0)) {
+        seat = this.actionOn;
+    }
 
     // Get next player.
     if (seat == this.players.length - 1) {
@@ -268,12 +276,31 @@ Gs.prototype.applyAction = function(action) {
             // round to calculate how much to call a bet or raise.
             var toCall = this.currentBet - player.roundPIP;
 
-            player.chips -= toCall;
-            player.roundPIP += toCall;
-            this.pot += toCall;
+            if (toCall <= player.chips) {
+                player.chips -= toCall;
+                player.roundPIP += toCall;
+                this.pot += toCall;
+            } else {
+                // Call all-in.
+                this.pot += player.chips;
+                player.roundPIP += player.chips
+
+                // Refund other player. TODO: side-pots
+                var refund = toCall - player.chips;
+                this.players[this.getNextPlayer()].chips += refund;
+                this.pot -= refund;
+
+                player.chips = 0;
+                while (this.boardCards.length < 5) {
+                    this.boardCards.push(this.deck.draw());
+                }
+                this.currentRound = c.ROUND_RIVER;
+                this.calcHandWinner();
+                return {'hand-complete': true}
+            }
 
             if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat) &&
-                player.roundPIP == this.bigBlind) {
+                    player.roundPIP == this.bigBlind) {
                 // If button limps preflop.
                 this.nextTurn();
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CHECK, c.ACTION_RAISE];
@@ -289,7 +316,6 @@ Gs.prototype.applyAction = function(action) {
                 return {'next-round': true};
             }
             break;
-
 
         case c.ACTION_BET: case c.ACTION_RAISE:
             var raiseTo = action.amount;
