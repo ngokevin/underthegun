@@ -73,6 +73,10 @@ io.sockets.on('connection', function(socket) {
                 emitGsAll('next-round');
             } else if ('hand-complete' in handStatus) {
                 emitGsAll('hand-complete');
+            } else if ('all-in' in handStatus) {
+                emitGsAll('all-in');
+                gs.allIn();
+                emitGsAll('hand-complete');
             }
         });
 
@@ -80,8 +84,10 @@ io.sockets.on('connection', function(socket) {
             // TODO: verify game state
             if (seat == 0) {
                 // Only one player's socket needs to initiate new hand.
-                if (gs.hasGameWinner() === false) {
+                if (gs.calcGameWinner() === null) {
                     setTimeout(newHand, 6000);
+                } else {
+                    emitGsAll('game-over');
                 }
             }
         });

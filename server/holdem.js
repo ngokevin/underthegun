@@ -70,6 +70,7 @@ var Gs = function(gameId) {
     this.bigBlind = 20;
     this.startingChips = 1500;
     this.players = [];
+    this.gameWinner = null;
 }
 
 Gs.prototype.addPlayer = function(id) {
@@ -217,11 +218,14 @@ Gs.prototype.nextRound = function() {
     }
 };
 
-Gs.prototype.hasGameWinner = function() {
+Gs.prototype.calcGameWinner = function() {
     // Check if anyone has busted.
-    if (this.players[0].chips === 0) { return 1; }
-    if (this.players[1].chips === 0) { return 0; }
-    return false;
+    if (this.players[0].chips === 0) {
+        this.gameWinner = 1;
+    } else if (this.players[1].chips === 0) {
+        this.gameWinner = 0;
+    }
+    return this.gameWinner;
 }
 
 Gs.prototype.applyAction = function(action) {
@@ -276,7 +280,7 @@ Gs.prototype.applyAction = function(action) {
             // round to calculate how much to call a bet or raise.
             var toCall = this.currentBet - player.roundPIP;
 
-            if (toCall <= player.chips) {
+            if (toCall < player.chips) {
                 player.chips -= toCall;
                 player.roundPIP += toCall;
                 this.pot += toCall;
@@ -289,14 +293,8 @@ Gs.prototype.applyAction = function(action) {
                 var refund = toCall - player.chips;
                 this.players[this.getNextPlayer()].chips += refund;
                 this.pot -= refund;
-
                 player.chips = 0;
-                while (this.boardCards.length < 5) {
-                    this.boardCards.push(this.deck.draw());
-                }
-                this.currentRound = c.ROUND_RIVER;
-                this.calcHandWinner();
-                return {'hand-complete': true}
+                return {'all-in': true}
             }
 
             if (this.currentRound == c.ROUND_PREFLOP && this.isButton(seat) &&
@@ -329,13 +327,29 @@ Gs.prototype.applyAction = function(action) {
             player.roundPIP = raiseTo;
 
             this.updateToCall();
-
             this.nextTurn();
-            this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL, c.ACTION_RAISE];
+
+            if (this.toCall >= this.players[this.actionOn].chips) {
+                // All-in.
+                this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL];
+            } else {
+                this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL,
+                                         c.ACTION_RAISE];
+            }
+
             return {'next-turn': true};
             break;
     }
 };
+
+Gs.prototype.allIn = function() {
+    while (this.boardCards.length < 5) {
+        this.boardCards.push(this.deck.draw());
+    }
+    this.currentRound = c.ROUND_RIVER;
+    this.calcHandWinner();
+    return {'hand-complete': true}
+}
 
 Gs.prototype.updateToCall = function() {
     var nextPlayer = this.players[this.getNextPlayer()];
@@ -359,6 +373,7 @@ Gs.prototype.calcHandWinner = function() {
         this.players[this.winner].chips += this.pot;
     } else {
         // Split the pot. seat0 gets the odd chip.
+        this.winner = -1;
         var splitPot = parseInt(this.pot / 2, 10);
         this.players[0].chips += splitPot;
         this.pot -= splitPot;

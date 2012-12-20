@@ -55,11 +55,23 @@ function game(gameId, playerId, opponentId, seat) {
             getAction(gs.currentRound, gs);
         });
 
+        socket.on('all-in', function(gs) {
+            updateValues(gs);
+        });
+
         socket.on('hand-complete', function(gs) {
             var wait = updateValues(gs);
             setTimeout(function() {
                 socket.emit('hand-complete', {gs: gs})
             }, wait || 0);
+        });
+
+        socket.on('game-over', function(gs) {
+            if (gs.gameWinner === seat) {
+                notify('You won!');
+            } else {
+                notify('You lost.');
+            }
         });
 
         function getAction(round, gs) {
@@ -76,19 +88,24 @@ function game(gameId, playerId, opponentId, seat) {
 
                 var buttonText = c.actions[action];
                 if (action == c.ACTION_RAISE) { buttonText += ' to'; }
+                if (action == c.ACTION_CALL) {
+                    if (gs.toCall >= gs.players[seat].chips) {
+                        buttonText = 'All In'
+                    }
+                }
                 actionButtons.find('.action').text(buttonText);
             });
 
             enabledButtons.removeClass('inactive').bind('click', function() {
                 switch ($(this).data('action')) {
                     case c.ACTION_FOLD:
-                        action = {seat: seat, action: c.ACTION_FOLD, amount: 0};
+                        action = {seat: seat, action: c.ACTION_FOLD};
                         break;
                     case c.ACTION_CHECK:
-                        action = {seat: seat, action: c.ACTION_CHECK, amount: 0};
+                        action = {seat: seat, action: c.ACTION_CHECK};
                         break;
                     case c.ACTION_CALL:
-                        action = {seat: seat, action: c.ACTION_CALL, amount: 0};
+                        action = {seat: seat, action: c.ACTION_CALL};
                         break;
                     case c.ACTION_BET:
                         action = {seat: seat, action: c.ACTION_BET, amount: betAmount};
@@ -107,7 +124,7 @@ function game(gameId, playerId, opponentId, seat) {
             $('#bet-slider').slider({
                 min: gs.minRaiseTo,
                 value: gs.minRaiseTo,
-                max: gs.players[seat].chips + gs.pot
+                max: gs.players[seat].chips + gs.players[seat].roundPIP
             });
 
             // Button position.
@@ -170,7 +187,7 @@ function game(gameId, playerId, opponentId, seat) {
                 setTimeout(function() {
                     if (gs.winner == seat) {
                         notify('You won the hand and earned ' + gs.pot + ' chips.');
-                    } else if (gs.winner !== null) {
+                    } else if (gs.winner !== -1) {
                         notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
                     } else {
                         notify('You both tied the hand. Split pot.');
