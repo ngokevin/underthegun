@@ -185,6 +185,7 @@ Gs.prototype.getPrevPlayer = function(seat) {
 Gs.prototype.nextTurn = function() {
     // Switch turn to next player (action on other player).
     this.actionOn = this.getNextPlayer(this.actionOn);
+    return this.players[this.actionOn];
 };
 
 Gs.prototype.nextRound = function() {
@@ -317,8 +318,12 @@ Gs.prototype.applyAction = function(action) {
 
         case c.ACTION_BET: case c.ACTION_RAISE:
             var raiseTo = action.amount;
-            this.currentBet = raiseTo;
+            if (raiseTo - player.roundPIP >= player.chips) {
+                // Bet amount validation for overbetting chip stack.
+                raiseTo = player.chips + player.roundPIP;
+            }
 
+            this.currentBet = raiseTo;
             this.minRaiseTo = 2 * this.currentBet;
 
             // Raise the bet to the raise amount.
@@ -327,10 +332,11 @@ Gs.prototype.applyAction = function(action) {
             player.roundPIP = raiseTo;
 
             this.updateToCall();
-            this.nextTurn();
+            var nextPlayer = this.nextTurn();
 
-            if (this.toCall >= this.players[this.actionOn].chips) {
+            if (this.toCall >= nextPlayer.chips) {
                 // All-in.
+                this.toCall = nextPlayer.chips;
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL];
             } else {
                 this.availableActions = [c.ACTION_FOLD, c.ACTION_CALL,
