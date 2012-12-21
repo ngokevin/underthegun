@@ -33,6 +33,8 @@ function game(gameId, playerId, opponentId, seat) {
 
             // Clear the board.
             $('#board-cards .card').addClass('undealt').text('');
+             $('#opponentHole1').addClass('facedown').text('');
+             $('#opponentHole2').addClass('facedown').text('');
 
             // Receive hole cards.
             var hole1 = gs.players[seat].hole[0];
