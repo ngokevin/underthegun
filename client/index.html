@@ -31,15 +31,19 @@
       </div>
 
       <div id='game'>
+        <div id='opponent-stack' class='chipstack info'>
+          <img class="chip-icon" src="img/chip.png"><span id='opponent-chips'></span>
+        </div>
+        <div class='pkr-button' id='opponent-button'><span></span></div>
+
+        <div id='player-stack' class='chipstack info'>
+          <img class="chip-icon" src="img/chip.png"><span id='chips'></span>
+        </div>
+
+        <div class='pkr-button' id='player-button'><span></span></div>
+
         <span id='opponentHole1' class='card facedown'></span>
         <span id='opponentHole2' class='card facedown'></span>
-
-        <div id='opponent-info' class='info'>
-          <span>
-            <div class='pkr-button' id='opponent-button'><span>D</span></div>
-            Chips: <span id='opponent-chips'></span>
-          </span>
-        </div>
 
         <div id='board-cards'>
           <span id='flop1' class='flop card undealt'></span>
@@ -49,19 +53,13 @@
           <span id='river' class='card undealt'></span>
         </div>
 
-        <div class='info'>
-          <span>Pot: <span id='pot'></span></span>
+        <div id='hand-info' class='info'>
+          <img class="chip-icon" src="img/chip.png"><span id='pot'></span>
         </div>
 
         <span id='hole1' class='card'></span>
         <span id='hole2' class='card'></span>
 
-        <div id='player-info' class='info'>
-          <span>
-            <div class='pkr-button' id='button'><span>D</span></div>
-            Chips: <span id='chips'></span>
-          </span>
-        </div>
 
         <div id='bet-slider' class='slider c'></div>
 

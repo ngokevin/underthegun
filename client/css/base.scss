@@ -4,7 +4,7 @@ html, body {
     margin: 0 auto;
     margin-top: -12px;
     min-height: 240px;
-    overflow: auto;
+    overflow: none;
     padding: 0;
     width: 320px;
 }
@@ -19,7 +19,7 @@ html, body {
 
 #wrap {
     @include radial-gradient(lighten($green, 5%), $green);
-    padding: 24px 0 12px 0;
+    padding: 24px 0 6px 0;
     text-align: center;
 }
 

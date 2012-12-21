@@ -130,7 +130,7 @@ function game(gameId, playerId, opponentId, seat) {
             // Button position.
             if (gs.button == seat) {
                 $('.pkr-button').hide();
-                $('#button').show();
+                $('#player-button').show();
             } else {
                 $('.pkr-button').hide();
                 $('#opponent-button').show();
