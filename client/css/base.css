@@ -2,10 +2,8 @@ html, body {
   color: #dcdcdc;
   margin: 0 auto;
   margin-top: -12px;
-  min-height: 240px;
-  overflow: none;
-  padding: 0;
-  width: 320px; }
+  overflow: hidden;
+  padding: 0; }
 
 .c:after {
   content: ".";
@@ -22,8 +20,11 @@ html, body {
   background: -ms-radial-gradient(#0f4a03, #0a3102);
   background: -o-radial-gradient(#0f4a03, #0a3102);
   background: radial-gradient(#0f4a03, #0a3102);
+  height: 454px;
+  overflow: hidden;
   padding: 24px 0 6px 0;
-  text-align: center; }
+  text-align: center;
+  width: 320px; }
 
 #not-bar {
   background: #161414;
