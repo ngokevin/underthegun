@@ -1,4 +1,4 @@
-function game(gameId, playerId, opponentId, seat) {
+function game(gameId, playerId, opponentId) {
     notify('Cards in the air!');
     $('#lobby').hide();
     $('#game').show();
