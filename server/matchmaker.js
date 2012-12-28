@@ -56,7 +56,7 @@ io.sockets.on('connection', function(socket) {
     // Remove player from waiting list if disconnected.
     socket.on('disconnect', function() {
         var index = clients.indexOf(playerId);
-        clients.splice(index, index);
+        clients = clients.splice(index, index);
     });
 
 });

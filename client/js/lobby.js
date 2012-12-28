@@ -17,8 +17,6 @@ $(document).ready(function() {
         notify('Searching for an opponent...');
         enableClick = false;
 
-        console.log(socket);
-
         socket.on('connect_failed', function() {
             // Could not connect to server.
             $('#find-game').text('Find Game').removeClass('inactive');
