@@ -21,6 +21,7 @@ html, body {
   background: -o-radial-gradient(#0f4a03, #0a3102);
   background: radial-gradient(#0f4a03, #0a3102);
   height: 454px;
+  margin: 0 auto;
   overflow: hidden;
   padding: 24px 0 6px 0;
   text-align: center;
@@ -35,9 +36,9 @@ html, body {
   width: 100%; }
 
 span.button {
-  -moz-box-shadow: 3px 3px 2px 0 #050505;
-  -webkit-box-shadow: 3px 3px 2px 0 #050505;
-  box-shadow: 3px 3px 2px 0 #050505;
+  -moz-box-shadow: 0 0 1px 1px #050505;
+  -webkit-box-shadow: 0 0 1px 1px #050505;
+  box-shadow: 0 0 1px 1px #050505;
   background: #390208;
   border-radius: 10px;
   cursor: pointer;
@@ -53,7 +54,7 @@ span.button {
   span.button:hover {
     background: #370208; }
   span.button.clicked {
-    box-shadow: 0 0 0 0; }
+    box-shadow: 0px 0px 2px 2px #050505 inset; }
   span.button.inactive {
     background: #161414;
     color: #505050;

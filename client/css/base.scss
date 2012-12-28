@@ -18,6 +18,7 @@ html, body {
 #wrap {
     @include radial-gradient(lighten($green, 5%), $green);
     height: 454px;
+    margin: 0 auto;
     overflow: hidden;
     padding: 24px 0 6px 0;
     text-align: center;
@@ -46,12 +47,11 @@ span.button {
     text-align: center;
     text-transform: capitalize;
     width: 95%;
-
     &:hover {
         background: darken($red, .5%);
     }
     &.clicked {
-        box-shadow: 0 0 0 0;
+        box-shadow: 0px 0px 2px 2px $black inset;
     }
     &.inactive {
         background: $dark-gray;

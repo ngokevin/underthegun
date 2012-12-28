@@ -2,14 +2,29 @@ $(document).ready(function() {
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
 
-    notify('Welcome to Under the Gun!');
+    notify('Welcome to Versus Poker!');
 
     // Connect to the match-making system.
+    var enableClick = true;
     $('#find-game').click(function() {
+        if (!enableClick) { return; }
+
         var playerId = null;
-        var socket = io.connect('http://localhost:3479');
+        var socket = io.connect('http://localhost:3479', {'connect timeout': 1000});
 
         $('#find-game').text('Finding game...').addClass('inactive');
+        socket.emit('find-match', { playerId: playerId });
+        notify('Searching for an opponent...');
+        enableClick = false;
+
+        console.log(socket);
+
+        socket.on('connect_failed', function() {
+            // Could not connect to server.
+            $('#find-game').text('Find Game').removeClass('inactive');
+            notify('Sorry, the server seems to be down.');
+            enableClick = true;
+        });
 
         // Server will tell us what our player id is if we don't have one.
         socket.on('assign-player-id', function(data) {
@@ -20,10 +35,5 @@ $(document).ready(function() {
         socket.on('match-found', function(data) {
             game(data.gameId, playerId, data.opponentId, data.seat);
         });
-
-        socket.emit('find-match', { playerId: playerId });
-        notify('Searching for an opponent...');
-
-        $(this).unbind('click');
     });
 });
