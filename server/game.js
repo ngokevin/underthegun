@@ -30,7 +30,7 @@ io.sockets.on('connection', function(socket) {
     var seat, gs;
 
     socket.on('new-game', function(data) {
-        // Set up game.
+        // Set up game state.
         clients[data.playerId] = socket;
 
         if (!(data.gameId in gameStates)) {
@@ -38,28 +38,24 @@ io.sockets.on('connection', function(socket) {
             gs = new holdem.Gs(data.gameId);
             gs.addPlayer(data.playerId);
             gs.addPlayer(data.opponentId);
-
             for (var i = 0; i < gs.players.length; i++) {
                 if (gs.players[i].id == data.playerId) {
                     seat = i;
                     socket.emit('assign-seat', {seat: seat});
                 }
             }
-
             // Store it in a global object so both sockets can access it via
             // the gameId.
             gameStates[data.gameId] = gs;
         } else {
             // Second player's socket initiates the game.
             gs = gameStates[data.gameId];
-
             for (var i = 0; i < gs.players.length; i++) {
                 if (gs.players[i].id == data.playerId) {
                     seat = i;
                     socket.emit('assign-seat', {seat: seat});
                 }
             }
-
             emitGsAll('new-game');
             newHand();
         }
@@ -90,6 +86,11 @@ io.sockets.on('connection', function(socket) {
                     emitGsAll('game-over');
                 }
             }
+        });
+
+        socket.on('disconnect', function() {
+            gs.gameWinner = gs.getNextPlayer(seat);
+            emitGsAll('game-over-dc');
         });
 
         function newHand() {

@@ -69,12 +69,25 @@ function game(gameId, playerId, opponentId, seat) {
         });
 
         socket.on('game-over', function(gs) {
-            if (gs.gameWinner === seat) {
-                notify('You won!');
-            } else {
-                notify('You lost.');
-            }
+            gameOver(gs);
         });
+
+        socket.on('game-over-dc', function(gs) {
+            gameOver(gs, true);
+        });
+
+        function gameOver(gs, disconnect) {
+            var msg = '';
+            if (disconnect) {
+                msg = 'Opponent disconnected. ';
+            }
+            if (gs.gameWinner === seat) {
+                msg += 'You won!';
+            } else {
+                msg += 'You lost.';
+            }
+            notify(msg);
+        }
 
         function getAction(round, gs) {
             // Displays action buttons, gets the one clicked, and sends the
