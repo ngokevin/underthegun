@@ -1,7 +1,12 @@
-$(document).ready(function() {
+$(document).ready(lobby);
+
+function lobby() {
     $('.button').mousedown(function() { $(this).addClass('clicked'); });
     $('.button').mouseup(function() { $(this).removeClass('clicked'); });
 
+    $('#game').hide();
+    $('#lobby').show();
+    $('#find-game').text('Find Game').removeClass('inactive');
     notify('Welcome to Versus Poker!');
 
     // Connect to the match-making system.
@@ -34,4 +39,4 @@ $(document).ready(function() {
             game(data.gameId, playerId, data.opponentId, data.seat);
         });
     });
-});
+}

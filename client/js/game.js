@@ -87,6 +87,7 @@ function game(gameId, playerId, opponentId, seat) {
                 msg += 'You lost.';
             }
             notify(msg);
+            setTimeout(lobby, 5000);
         }
 
         function getAction(round, gs) {
