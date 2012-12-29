@@ -5,17 +5,17 @@ var http = require('http').createServer(function(request, response) {
 }).listen(8433);
 
 // Connect to DB.
-var mysql = require("db-mysql");
-new mysql.Database({
-    "hostname": "localhost",
-    "user": "root",
-    "password": "yoursql",
-    "database": "underthegun"
-}).connect(function(error) {
-    if (error) {
-        return console.log('Database connection error: ' + error);
-    }
-});
+//var mysql = require("db-mysql");
+//new mysql.Database({
+//    "hostname": "localhost",
+//    "user": "root",
+//    "password": "yoursql",
+//    "database": "underthegun"
+//}).connect(function(error) {
+//    if (error) {
+//        return console.log('Database connection error: ' + error);
+//    }
+//});
 
 var holdem = require('./holdem');
 

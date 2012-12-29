@@ -29,7 +29,7 @@ function init() {
         enableFindGame = false;
 
         if (!socket) {
-            socket = io.connect('http://localhost:3479', {'connect timeout': 1000});
+            socket = io.connect('http://underthegun.ngokevin.com:3479', {'connect timeout': 1000});
 
             socket.on('connect_failed', function() {
                 // Could not connect to server.

@@ -5,24 +5,24 @@ var http = require('http').createServer(function(request, response) {
 }).listen(3479);
 
 // Connect to DB.
-var mysql = require("db-mysql");
-new mysql.Database({
-    "hostname": "localhost",
-    "user": "root",
-    "password": "yoursql",
-    "database": "underthegun"
-}).connect(function(error) {
-    if (error) {
-        return console.log('Database connection error: ' + error);
-    }
-});
+//var mysql = require("db-mysql");
+//new mysql.Database({
+//    "hostname": "localhost",
+//    "user": "root",
+//    "password": "yoursql",
+//    "database": "underthegun"
+//}).connect(function(error) {
+//    if (error) {
+//        return console.log('Database connection error: ' + error);
+//    }
+//});
 
 // Global vars.
 var numPlayers = 0;
 var numGames = 0;
 var clients = [];
 
-var io = require('socket.io').listen(http);
+var io = require('socket.io').listen(http, {origins: '*:*'});
 io.sockets.on('connection', function(socket) {
     var playerId;
 
