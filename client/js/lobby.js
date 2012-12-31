@@ -29,7 +29,8 @@ function init() {
         enableFindGame = false;
 
         if (!socket) {
-            socket = io.connect('http://localhost:3479', {'connect timeout': 1000});
+            socket = io.connect('http://localhost:4000/matchmaking',
+                                {'connect timeout': 1000});
 
             socket.on('connect_failed', function() {
                 // Could not connect to server.
@@ -45,7 +46,6 @@ function init() {
 
             // Match found, start a game.
             socket.on('match-found', function(data) {
-                // TODO: getting called twice.
                 game(data.gameId, playerId, data.opponentId);
             });
         }

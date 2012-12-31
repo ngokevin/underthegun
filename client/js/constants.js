@@ -1,1 +1,1 @@
-../../constants.js
+../../lib/constants.js

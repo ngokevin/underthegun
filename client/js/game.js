@@ -3,7 +3,7 @@ function game(gameId, playerId, opponentId) {
     $('#lobby').hide();
     $('#game').show();
 
-    var socket = io.connect('http://localhost:8433');
+    var socket = io.connect('http://localhost:4000/game');
 
     socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
 
