@@ -2,6 +2,7 @@
 
 #game {
     .card {
+        @include default-box-shadow();
         background: $white;
         border-radius: 2px;
         color: $black;
@@ -13,6 +14,7 @@
         width: 50px;
         vertical-align: top;
         &.undealt {
+            box-shadow: none;
             background: none;
             border: 1px dashed $light-gray;
         }
@@ -20,19 +22,27 @@
             background: $light-blue;
         }
         .rank {
+            font: 26px monospace;
             position: absolute;
             left: 3px;
             top: 0;
         }
+        .black-suit-little, .red-suit-little, {
+            font-size: 18px;
+            left: 3px;
+            position: absolute;
+            top: 26px;
+        }
         .black-suit, .red-suit {
+            bottom: -4px;
+            font-size: 40px;
             position: absolute;
             right: 0;
-            top: 0;
         }
-        .black-suit {
+        .black-suit, .black-suit-little, {
             color: black;
         }
-        .red-suit {
+        .red-suit, .red-suit-little {
             color: lighten($red, 30%);
         }
     }

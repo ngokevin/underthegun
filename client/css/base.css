@@ -36,9 +36,9 @@ html, body {
   width: 100%; }
 
 span.button {
-  -moz-box-shadow: 0 0 1px 1px #050505;
-  -webkit-box-shadow: 0 0 1px 1px #050505;
-  box-shadow: 0 0 1px 1px #050505;
+  -moz-box-shadow: 0 0 1px 1px #282828;
+  -webkit-box-shadow: 0 0 1px 1px #282828;
+  box-shadow: 0 0 1px 1px #282828;
   background: #390208;
   border-radius: 10px;
   cursor: pointer;

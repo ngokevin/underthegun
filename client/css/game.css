@@ -1,4 +1,7 @@
 #game .card {
+  -moz-box-shadow: 0 0 1px 1px #282828;
+  -webkit-box-shadow: 0 0 1px 1px #282828;
+  box-shadow: 0 0 1px 1px #282828;
   background: #dcdcdc;
   border-radius: 2px;
   color: #050505;
@@ -10,21 +13,29 @@
   width: 50px;
   vertical-align: top; }
   #game .card.undealt {
+    box-shadow: none;
     background: none;
     border: 1px dashed #505050; }
   #game .card.facedown {
     background: #299283; }
   #game .card .rank {
+    font: 26px monospace;
     position: absolute;
     left: 3px;
     top: 0; }
-  #game .card .black-suit, #game .card .red-suit {
+  #game .card .black-suit-little, #game .card .red-suit-little {
+    font-size: 18px;
+    left: 3px;
     position: absolute;
-    right: 0;
-    top: 0; }
-  #game .card .black-suit {
+    top: 26px; }
+  #game .card .black-suit, #game .card .red-suit {
+    bottom: -4px;
+    font-size: 40px;
+    position: absolute;
+    right: 0; }
+  #game .card .black-suit, #game .card .black-suit-little {
     color: black; }
-  #game .card .red-suit {
+  #game .card .red-suit, #game .card .red-suit-little {
     color: #cd071d; }
 #game #board-cards {
   margin-top: 12px; }
@@ -52,9 +63,9 @@
   height: 16px;
   width: 16px; }
 #game .pkr-button {
-  -moz-box-shadow: 0 0 1px 1px #050505;
-  -webkit-box-shadow: 0 0 1px 1px #050505;
-  box-shadow: 0 0 1px 1px #050505;
+  -moz-box-shadow: 0 0 1px 1px #282828;
+  -webkit-box-shadow: 0 0 1px 1px #282828;
+  box-shadow: 0 0 1px 1px #282828;
   background: #dcdcdc;
   border-radius: 15px;
   color: #161414;

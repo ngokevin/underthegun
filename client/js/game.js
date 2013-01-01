@@ -216,22 +216,30 @@ function game(gameId, playerId, opponentId) {
     });
 
     function prettyCard(cardStr) {
-        var card = '<span class="rank">' + cardStr[0] + '</span>';
+        // Create playing card.
+        var card = $('<span/>');
+        card.append($('<span/>').addClass('rank').html(cardStr[0]));
+        var suit = $('<span/>');
+        var littleSuit = $('<span/>');
         switch (cardStr[1]) {
             case 'c':
-                card += '<span class="black-suit">&clubs;</span>';
+                littleSuit.addClass('black-suit-little').html('&clubs;');
+                suit.addClass('black-suit').html('&clubs;');
                 break;
             case 'd':
-                card += '<span class="red-suit">&diams;</span>';
+                littleSuit.addClass('red-suit-little').html('&diams;');
+                suit.addClass('red-suit').html('&diams;');
                 break;
             case 'h':
-                card += '<span class="red-suit">&hearts;</span>';
+                littleSuit.addClass('red-suit-little').html('&hearts;');
+                suit.addClass('red-suit').html('&hearts;');
                 break;
             case 's':
-                card += '<span class="black-suit">&spades;</span>';
+                littleSuit.addClass('black-suit-little').html('&spades;');
+                suit.addClass('black-suit').html('&spades;');
                 break;
         }
-        return card;
+        return card.append(littleSuit).append(suit);
     }
 
     // When game over, disconnect and redirect to lobby.
