@@ -4,15 +4,16 @@
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
     <title>Versus Poker</title>
+    <link rel='stylesheet' href='css/lib/normalize.css'>
     <link rel='stylesheet' href='css/base.css'>
     <link rel='stylesheet' href='css/lobby.css'>
     <link rel='stylesheet' href='css/game.css'>
-    <link rel='stylesheet' href='css/jquery-ui.custom.css'>
-    <link rel='stylesheet' href='css/font-awesome.css'>
+    <link rel='stylesheet' href='css/lib/jquery.mobile.min.css'>
+    <link rel='stylesheet' href='css/lib/font-awesome.css'>
     <link rel='icon' type='image/x-icon' href='img/favicon.ico'/>
     <script src='js/constants.js'></script>
     <script src='js/lib/jquery.min.js'></script>
-    <script src='js/lib/jquery-ui.custom.min.js'></script>
+    <script src='js/lib/jquery.mobile.min.js'></script>
     <script src='js/lib/socket.io.js'></script>
 
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
@@ -61,8 +62,11 @@
         <span id='hole1' class='card'></span>
         <span id='hole2' class='card'></span>
 
-
-        <div id='bet-slider' class='slider c'></div>
+        <div id='bet-slider'>
+          <input class='bet-slider c' type="range"
+                 name="slider-fill" id="slider-fill"
+                 value="60" min="0" max="1500" data-highlight="true">
+        </div>
 
         <div id='actions'>
           <span class='fold button inactive'>

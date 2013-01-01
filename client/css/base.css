@@ -1,5 +1,5 @@
 html, body {
-  color: #dcdcdc;
+  color: #ebebeb;
   margin: 0 auto;
   margin-top: -12px;
   overflow: hidden;
@@ -23,7 +23,7 @@ html, body {
   height: 454px;
   margin: 0 auto;
   overflow: hidden;
-  padding: 24px 0 6px 0;
+  padding: 12px 0 6px;
   text-align: center;
   width: 320px; }
 
@@ -39,16 +39,18 @@ span.button {
   -moz-box-shadow: 0 0 1px 1px #282828;
   -webkit-box-shadow: 0 0 1px 1px #282828;
   box-shadow: 0 0 1px 1px #282828;
-  background-color: #3e0209;
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#4d030b), to(#3e0209));
-  background-image: -webkit-linear-gradient(#4d030b, #3e0209);
-  background-image: -moz-linear-gradient(#4d030b, #3e0209);
-  background-image: -ms-linear-gradient(#4d030b, #3e0209);
-  background-image: -o-linear-gradient(#4d030b, #3e0209);
-  background-image: linear-gradient(#4d030b, #3e0209);
+  background-color: #7e0909;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#8c0a0a), to(#7e0909));
+  background-image: -webkit-linear-gradient(#8c0a0a, #7e0909);
+  background-image: -moz-linear-gradient(#8c0a0a, #7e0909);
+  background-image: -ms-linear-gradient(#8c0a0a, #7e0909);
+  background-image: -o-linear-gradient(#8c0a0a, #7e0909);
+  background-image: linear-gradient(#8c0a0a, #7e0909);
   border-radius: 10px;
+  color: #ebebeb;
   cursor: pointer;
   display: inline-block;
+  font-weight: bold;
   height: 35px;
   width: 20%;
   margin: auto;
@@ -58,7 +60,7 @@ span.button {
   text-transform: capitalize;
   width: 95%; }
   span.button:hover {
-    background: #4a030a; }
+    background: #8a0a0a; }
   span.button.clicked {
     box-shadow: 0px 0px 2px 2px #050505 inset; }
   span.button.inactive {

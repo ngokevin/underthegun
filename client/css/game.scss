@@ -23,7 +23,7 @@
             background: url('/img/grey_sandbag.png');
             overflow: hidden;
             &:after {
-                color: darken($white, 2%);
+                color: $light-gray;
                 content: 'vs';
                 font-size: 64px;
                 left: -8px;
@@ -62,11 +62,20 @@
     }
 
     #bet-slider {
-        margin: auto;
-        margin-top: 24px;
-        width: 75%;
-        &:hover {
-            cursor: pointer;
+        position: relative;
+        div.ui-slider {
+            right: 48px;
+            margin: 30px auto auto;
+            position: relative;
+            width: 55%;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        #slider-fill {
+            position: absolute;
+            left: 225px;
+            top: 10px;
         }
     }
 
@@ -127,17 +136,19 @@
         }
     }
 
-    #actions span.button {
-        display: inline-block;
-        width: 25%;
-        margin: 0 3px 0 3px;
-        padding: 10px 7px 15px 7px;
-        top: 18px;
-        &:first-child {
-            top: -1px;
-        }
-        .inner-button {
-            display: inline;
+    #actions {
+        position: relative;
+        left: 13px;
+        span.button {
+            display: inline-block;
+            float: left;
+            width: 25%;
+            margin: 0 3px 0 3px;
+            padding: 10px 7px 15px 7px;
+            top: 18px;
+            .inner-button {
+                display: inline;
+            }
         }
     }
 }

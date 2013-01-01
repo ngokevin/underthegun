@@ -3,7 +3,7 @@ function game(gameId, playerId, opponentId) {
     $('#lobby').hide();
     $('#game').show();
 
-    var socket = io.connect('http://versuspoker.ngokevin.com:4001/game');
+    var socket = io.connect('http://localhost:4001/game');
 
     socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
 
@@ -14,18 +14,18 @@ function game(gameId, playerId, opponentId) {
     // Start game.
     socket.on('new-game', function(gs) {
         // Initialize bet slider.
-        var betAmount = gs.bigBlind;
-        function updateBetAmount(amount) {
-            betAmount = amount;
-            $('#bet-amount').text(amount);
+        var betAmount = gs.pot + gs.bigBlind;
+        $('#bet-amount').text(betAmount);
+        function updateBetAmount() {
+            betAmount = $('.bet-slider').attr('value');
+            $('#bet-amount').text(betAmount);
         }
-        $('#bet-slider').slider({
-            min: gs.pot + gs.bigBlind, max: gs.players[seat].chips, value: gs.bigBlind, step: 1,
-            slide: function(e, ui) { updateBetAmount(ui.value) },
-            change: function(e, ui) { updateBetAmount(ui.value) },
-            stop: function(e, ui) { updateBetAmount(ui.value) }
-        });
-        updateBetAmount(gs.pot + gs.bigBlind);
+        $('.bet-slider').attr('min', gs.pot + gs.bigBlind)
+                        .attr('max', gs.players[seat].chips)
+                        .attr('value', 3 * gs.bigBlind)
+                        .attr('step', 10)
+                        .on('change', updateBetAmount);
+        updateBetAmount();
 
         // Start hand.
         socket.on('new-hand', function(gs) {
@@ -137,11 +137,9 @@ function game(gameId, playerId, opponentId) {
 
         function updateValues(gs) {
             // Update DOM values according to game state.
-            $('#bet-slider').slider({
-                min: gs.minRaiseTo,
-                value: gs.minRaiseTo,
-                max: gs.players[seat].chips + gs.players[seat].roundPIP
-            });
+            ($('.bet-slider').attr('min', gs.minRaiseTo)
+                             .attr('max', gs.players[seat].chips + gs.players[seat].roundPIP)
+                             .attr('value', gs.minRaiseTo));
 
             // Button position.
             if (gs.button == seat) {

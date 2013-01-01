@@ -1,4 +1,5 @@
 @import 'globals';
+
 html, body {
     color: $white;
     margin: 0 auto;
@@ -20,7 +21,7 @@ html, body {
     height: 454px;
     margin: 0 auto;
     overflow: hidden;
-    padding: 24px 0 6px 0;
+    padding: 12px 0 6px;
     text-align: center;
     width: 320px;
 }
@@ -38,8 +39,10 @@ span.button {
     @include default-box-shadow();
     @include gradient($red, darken($red, 3%));
     border-radius: 10px;
+    color: $white;
     cursor: pointer;
     display: inline-block;
+    font-weight: bold;
     height: 35px; width: 20%;
     margin: auto;
     padding: 10px 0 0;

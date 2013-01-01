@@ -21,7 +21,7 @@
     background: url("/img/grey_sandbag.png");
     overflow: hidden; }
     #game .card.facedown:after {
-      color: #d7d7d7;
+      color: #505050;
       content: 'vs';
       font-size: 64px;
       left: -8px;
@@ -49,11 +49,18 @@
 #game #board-cards {
   margin-top: 12px; }
 #game #bet-slider {
-  margin: auto;
-  margin-top: 24px;
-  width: 75%; }
-  #game #bet-slider:hover {
-    cursor: pointer; }
+  position: relative; }
+  #game #bet-slider div.ui-slider {
+    right: 48px;
+    margin: 30px auto auto;
+    position: relative;
+    width: 55%; }
+    #game #bet-slider div.ui-slider:hover {
+      cursor: pointer; }
+  #game #bet-slider #slider-fill {
+    position: absolute;
+    left: 225px;
+    top: 10px; }
 #game .info {
   font-size: 14px;
   margin-bottom: 6px; }
@@ -75,7 +82,7 @@
   -moz-box-shadow: 0 0 1px 1px #282828;
   -webkit-box-shadow: 0 0 1px 1px #282828;
   box-shadow: 0 0 1px 1px #282828;
-  background: #dcdcdc;
+  background: #ebebeb;
   border-radius: 15px;
   color: #161414;
   display: block;
@@ -94,13 +101,15 @@
     top: 4px; }
     #game .pkr-button span:after {
       content: "D"; }
-#game #actions span.button {
-  display: inline-block;
-  width: 25%;
-  margin: 0 3px 0 3px;
-  padding: 10px 7px 15px 7px;
-  top: 18px; }
-  #game #actions span.button:first-child {
-    top: -1px; }
-  #game #actions span.button .inner-button {
-    display: inline; }
+#game #actions {
+  position: relative;
+  left: 13px; }
+  #game #actions span.button {
+    display: inline-block;
+    float: left;
+    width: 25%;
+    margin: 0 3px 0 3px;
+    padding: 10px 7px 15px 7px;
+    top: 18px; }
+    #game #actions span.button .inner-button {
+      display: inline; }

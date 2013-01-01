@@ -29,7 +29,7 @@ function init() {
         enableFindGame = false;
 
         if (!socket) {
-            socket = io.connect('http://versuspoker.ngokevin.com:4001/matchmaking',
+            socket = io.connect('http://localhost:4001/matchmaking',
                                 {'connect timeout': 8000});
 
             socket.on('connect_failed', function() {
