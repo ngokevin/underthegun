@@ -29,8 +29,8 @@ function init() {
         enableFindGame = false;
 
         if (!socket) {
-            socket = io.connect('http://localhost:4000/matchmaking',
-                                {'connect timeout': 1000});
+            socket = io.connect('http://versuspoker.ngokevin.com:4001/matchmaking',
+                                {'connect timeout': 8000});
 
             socket.on('connect_failed', function() {
                 // Could not connect to server.

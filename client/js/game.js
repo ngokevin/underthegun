@@ -3,7 +3,7 @@ function game(gameId, playerId, opponentId) {
     $('#lobby').hide();
     $('#game').show();
 
-    var socket = io.connect('http://localhost:4000/game');
+    var socket = io.connect('http://versuspoker.ngokevin.com:4001/game');
 
     socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
 
