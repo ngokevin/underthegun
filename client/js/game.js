@@ -218,28 +218,32 @@ function game(gameId, playerId, opponentId) {
     function prettyCard(cardStr) {
         // Create playing card.
         var card = $('<span/>');
-        card.append($('<span/>').addClass('rank').html(cardStr[0]));
-        var suit = $('<span/>');
+        var rank = $('<span/>').addClass('rank').html(cardStr[0]);
         var littleSuit = $('<span/>');
+        var suit = $('<span/>');
         switch (cardStr[1]) {
             case 'c':
-                littleSuit.addClass('black-suit-little').html('&clubs;');
-                suit.addClass('black-suit').html('&clubs;');
+                rank.addClass('black');
+                littleSuit.addClass('suit-little black').html('&clubs;');
+                suit.addClass('suit black').html('&clubs;');
                 break;
             case 'd':
-                littleSuit.addClass('red-suit-little').html('&diams;');
-                suit.addClass('red-suit').html('&diams;');
+                rank.addClass('red');
+                littleSuit.addClass('suit-little red').html('&diams;');
+                suit.addClass('suit red').html('&diams;');
                 break;
             case 'h':
-                littleSuit.addClass('red-suit-little').html('&hearts;');
-                suit.addClass('red-suit').html('&hearts;');
+                rank.addClass('red');
+                littleSuit.addClass('suit-little red').html('&hearts;');
+                suit.addClass('suit red').html('&hearts;');
                 break;
             case 's':
-                littleSuit.addClass('black-suit-little').html('&spades;');
-                suit.addClass('black-suit').html('&spades;');
+                rank.addClass('black');
+                littleSuit.addClass('suit-little black').html('&spades;');
+                suit.addClass('suit black').html('&spades;');
                 break;
         }
-        return card.append(littleSuit).append(suit);
+        return card.append(rank).append(littleSuit).append(suit);
     }
 
     // When game over, disconnect and redirect to lobby.

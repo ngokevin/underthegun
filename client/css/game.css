@@ -2,7 +2,7 @@
   -moz-box-shadow: 0 0 1px 1px #282828;
   -webkit-box-shadow: 0 0 1px 1px #282828;
   box-shadow: 0 0 1px 1px #282828;
-  background: #dcdcdc;
+  background: url("/img/debut_light.png");
   border-radius: 2px;
   color: #050505;
   display: inline-block;
@@ -15,28 +15,37 @@
   #game .card.undealt {
     box-shadow: none;
     background: none;
-    border: 1px dashed #505050; }
+    border: 1px dashed #505050;
+    position: relative; }
   #game .card.facedown {
-    background: #299283; }
+    background: url("/img/grey_sandbag.png");
+    overflow: hidden; }
+    #game .card.facedown:after {
+      color: #d7d7d7;
+      content: 'vs';
+      font-size: 64px;
+      left: -8px;
+      position: absolute;
+      top: -8px; }
   #game .card .rank {
     font: 26px monospace;
     position: absolute;
     left: 3px;
     top: 0; }
-  #game .card .black-suit-little, #game .card .red-suit-little {
+  #game .card .suit-little {
     font-size: 18px;
     left: 3px;
     position: absolute;
-    top: 26px; }
-  #game .card .black-suit, #game .card .red-suit {
+    top: 27px; }
+  #game .card .suit {
     bottom: -4px;
     font-size: 40px;
     position: absolute;
     right: 0; }
-  #game .card .black-suit, #game .card .black-suit-little {
+  #game .card .black {
     color: black; }
-  #game .card .red-suit, #game .card .red-suit-little {
-    color: #cd071d; }
+  #game .card .red {
+    color: #C3071D; }
 #game #board-cards {
   margin-top: 12px; }
 #game #bet-slider {

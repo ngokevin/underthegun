@@ -36,7 +36,7 @@ html, body {
 
 span.button {
     @include default-box-shadow();
-    background: $red;
+    @include gradient($red, darken($red, 3%));
     border-radius: 10px;
     cursor: pointer;
     display: inline-block;

@@ -3,7 +3,7 @@
 #game {
     .card {
         @include default-box-shadow();
-        background: $white;
+        background: url('/img/debut_light.png');
         border-radius: 2px;
         color: $black;
         display: inline-block;
@@ -17,9 +17,19 @@
             box-shadow: none;
             background: none;
             border: 1px dashed $light-gray;
+            position: relative;
         }
         &.facedown {
-            background: $light-blue;
+            background: url('/img/grey_sandbag.png');
+            overflow: hidden;
+            &:after {
+                color: darken($white, 2%);
+                content: 'vs';
+                font-size: 64px;
+                left: -8px;
+                position: absolute;
+                top: -8px;
+            }
         }
         .rank {
             font: 26px monospace;
@@ -27,23 +37,23 @@
             left: 3px;
             top: 0;
         }
-        .black-suit-little, .red-suit-little, {
+        .suit-little {
             font-size: 18px;
             left: 3px;
             position: absolute;
-            top: 26px;
+            top: 27px;
         }
-        .black-suit, .red-suit {
+        .suit {
             bottom: -4px;
             font-size: 40px;
             position: absolute;
             right: 0;
         }
-        .black-suit, .black-suit-little, {
+        .black {
             color: black;
         }
-        .red-suit, .red-suit-little {
-            color: lighten($red, 30%);
+        .red {
+            color: #C3071D;
         }
     }
 
