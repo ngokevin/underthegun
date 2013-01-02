@@ -87,6 +87,7 @@ function game(gameId, playerId, opponentId) {
                 msg += 'You lost.';
             }
             notify(msg);
+            socket.disconnect();
             setTimeout(lobby, 5000);
         }
 
@@ -243,8 +244,6 @@ function game(gameId, playerId, opponentId) {
         }
         return card.append(rank).append(littleSuit).append(suit);
     }
-
-    // When game over, disconnect and redirect to lobby.
 }
 
 
