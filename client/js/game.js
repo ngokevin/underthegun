@@ -2,15 +2,17 @@ var socketBinded = null;
 
 
 function game(gameId, playerId, opponentId) {
-    notify('Cards in the air!');
-    $('#lobby').hide();
-    $('#game').show();
-
+    var seat;
     var socket = io.connect('http://localhost:4001/game');
     socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
+
     if (!socketBinded) {
         gameSocket(socket);
     }
+
+    notify('Cards in the air!');
+    $('#lobby').hide();
+    $('#game').show();
 }
 
 
@@ -22,45 +24,33 @@ function gameSocket(socket) {
     // Start game.
     socket.on('new-game', function(gs) {
         // Initialize bet slider.
-        $('#bet-amount').text(gs.pot + gs.bigBlind);
-        function updateBetAmount() {
-            $('#bet-amount').text($('.bet-slider').attr('value'));
-        }
-        $('.bet-slider').attr('min', gs.pot + gs.bigBlind)
-                        .attr('max', gs.players[seat].chips)
-                        .attr('value', 3 * gs.bigBlind)
-                        .attr('step', 10)
-                        .on('change', updateBetAmount);
-        updateBetAmount();
+        $('.bet-slider')
+            .attr('min', gs.minRaiseTo)
+            .attr('max', gs.players[seat].chips)
+            .attr('value', 3 * gs.bigBlind)
+            .attr('step', 10)
+            .on('change', function() {
+                $('#bet-amount').text($('.bet-slider').attr('value'));
+            });
     });
 
     // Start hand.
     socket.on('new-hand', function(gs) {
         updateValues(gs);
-
-        // Clear the board.
-        $('#board-cards .card').addClass('undealt').text('');
-         $('#opponentHole1').addClass('facedown').text('');
-         $('#opponentHole2').addClass('facedown').text('');
-
-        // Receive hole cards.
-        var hole1 = gs.players[seat].hole[0];
-        var hole2 = gs.players[seat].hole[1];
-        $('#hole1').html(prettyCard(hole1.card));
-        $('#hole2').html(prettyCard(hole2.card));
-
+        clearBoard();
+        showHand(gs);
         notify('Dealt ' + hole1.card + hole2.card);
-        getAction(gs.currentRound, gs, socket);
+        getAndEmitAction(gs, socket);
     });
 
     socket.on('next-turn', function(gs) {
         updateValues(gs);
-        getAction(gs.currentRound, gs, socket);
+        getAndEmitAction(gs, socket);
     });
 
     socket.on('next-round', function(gs) {
         updateValues(gs);
-        getAction(gs.currentRound, gs, socket);
+        getAndEmitAction(gs, socket);
     });
 
     socket.on('all-in', function(gs) {
@@ -85,6 +75,7 @@ function gameSocket(socket) {
     socketBinded = true;
 }
 
+
 function gameOver(gs, disconnect) {
     var msg = '';
     if (disconnect) {
@@ -97,6 +88,32 @@ function gameOver(gs, disconnect) {
     }
     notify(msg);
     setTimeout(lobby, 5000);
+    setTimeout(clearBoard, 5500);
+}
+
+
+function clearBoard() {
+    // Clear the board.
+    $('#board-cards .card').addClass('undealt').text('');
+    $('#opponentHole1').addClass('facedown').text('');
+    $('#opponentHole2').addClass('facedown').text('');
+}
+
+
+function getAndEmitAction(gs, socket) {
+    var action = getAction(gs.currentRound, gs);
+    if (action) {
+        socket.emit('action', {action: action, gs: gs})
+    }
+}
+
+
+function showHand(gs) {
+    // Receive hole cards.
+    var hole1 = gs.players[seat].hole[0];
+    var hole2 = gs.players[seat].hole[1];
+    $('#hole1').html(prettyCard(hole1.card));
+    $('#hole2').html(prettyCard(hole2.card));
 }
 
 
@@ -104,16 +121,25 @@ function getAction(round, gs, socket) {
     // Displays action buttons, gets the one clicked, and sends the
     // action to the server.
     if (gs.actionOn != seat) { return; }
-    var action;
 
     var enabledButtons = $();
     $(gs.availableActions).each(function(index, action) {
         // From available actions, enable the respective buttons.
-        actionButtons = $('#actions span.' + c.actions[action]);
+        var actionButtons = $('#actions span.' + c.actions[action]);
         enabledButtons = enabledButtons.add(actionButtons.data('action', action));
 
         var buttonText = c.actions[action];
-        if (action == c.ACTION_RAISE) { buttonText += ' to'; }
+        if (action == c.ACTION_RAISE) {
+            for (var i = 0; i < gs.players.length; i++) {
+                if (gs.players[i].roundPIP > 0) {
+                    buttonText = 'Bet';
+                    break;
+                }
+            }
+            if (buttonText == c.actions[action]) {
+                buttonText += ' to';
+            }
+        }
         if (action == c.ACTION_CALL) {
             if (gs.toCall >= gs.players[seat].chips) {
                 buttonText = 'All In'
@@ -123,7 +149,6 @@ function getAction(round, gs, socket) {
     });
 
     enabledButtons.removeClass('inactive').on('click', function() {
-        var betAmount = $('.bet-slider').attr('value');
         switch ($(this).data('action')) {
             case c.ACTION_FOLD:
                 action = {seat: seat, action: c.ACTION_FOLD};
@@ -134,24 +159,25 @@ function getAction(round, gs, socket) {
             case c.ACTION_CALL:
                 action = {seat: seat, action: c.ACTION_CALL};
                 break;
-            case c.ACTION_BET:
-                action = {seat: seat, action: c.ACTION_BET, amount: betAmount};
-                break;
             case c.ACTION_RAISE:
-                action = {seat: seat, action: c.ACTION_RAISE, amount: betAmount};
+                action = {seat: seat, action: c.ACTION_RAISE,
+                          amount: $('.bet-slider').attr('value')};
                 break;
         }
-        socket.emit('action', {action: action, gs: gs})
         enabledButtons.addClass('inactive').off('click');
+        return action;
     });
 }
 
 
 function updateValues(gs) {
     // Update DOM values according to game state.
-    ($('.bet-slider').attr('min', gs.minRaiseTo)
-                     .attr('max', gs.players[seat].chips + gs.players[seat].roundPIP)
-                     .attr('value', gs.minRaiseTo));
+    ($('.bet-slider')
+        .attr('min', gs.minRaiseTo)
+        .attr('max', gs.players[seat].chips + gs.players[seat].roundPIP)
+        .attr('value', gs.minRaiseTo));
+        // Move the bar to match the value.
+        $('.bet-slider').trigger('change');
 
     // Button position.
     if (gs.button == seat) {
