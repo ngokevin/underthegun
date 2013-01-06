@@ -3,6 +3,7 @@ var socketBinded = null;
 
 function game(gameId, playerId, opponentId) {
     var seat;
+    var opponentSeat;
     var socket = io.connect('http://localhost:4001/game');
     socket.emit('new-game', { gameId: gameId, playerId: playerId, opponentId: opponentId });
 
@@ -19,6 +20,7 @@ function game(gameId, playerId, opponentId) {
 function gameSocket(socket) {
     socket.on('assign-seat', function(data) {
         seat = data.seat;
+        opponentSeat = seat == 0 ? 1 : 0;
     });
 
     // Start game.
@@ -39,7 +41,6 @@ function gameSocket(socket) {
         updateValues(gs);
         clearBoard();
         showHand(gs);
-        notify('Dealt ' + hole1.card + hole2.card);
         getAndEmitAction(gs, socket);
     });
 
@@ -114,6 +115,7 @@ function showHand(gs) {
     var hole2 = gs.players[seat].hole[1];
     $('#hole1').html(prettyCard(hole1.card));
     $('#hole2').html(prettyCard(hole2.card));
+    notify('Dealt ' + hole1.card + hole2.card);
 }
 
 

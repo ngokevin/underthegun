@@ -1,0 +1,53 @@
+<div id='game'>
+  <div id='opponent-stack' class='chipstack info'>
+    <img class="chip-icon" src="img/chip.png">
+    <span id='opponent-chips'>{{ gs.players[opponentSeat].chips }}</span>
+  </div>
+  <div class='pkr-button' id='opponent-button'><span></span></div>
+
+  <div id='player-stack' class='chipstack info'>
+    <img class="chip-icon" src="img/chip.png">
+    <span id='chips'>{{ gs.players[seat].chips }}</span>
+  </div>
+
+  <div class='pkr-button' id='player-button'><span></span></div>
+
+  <span id='opponentHole1' class='card facedown'></span>
+  <span id='opponentHole2' class='card facedown'></span>
+
+  <div id='board-cards'>
+    <span id='flop1' class='flop card undealt'></span>
+    <span id='flop2' class='flop card undealt'></span>
+    <span id='flop3' class='flop card undealt'></span>
+    <span id='turn' class='card undealt'></span>
+    <span id='river' class='card undealt'></span>
+  </div>
+
+  <div id='hand-info' class='info'>
+    <img class="chip-icon" src="img/chip.png"><span id='pot'>{{ gs.pot }}</span>
+  </div>
+
+  <span id='hole1' class='card'></span>
+  <span id='hole2' class='card'></span>
+
+  <div id='bet-slider'>
+    <input class='bet-slider c' type="range"
+           name="slider-fill" id="slider-fill"
+           value="{{ gs.bigBlind * 2 }}" min="0" max="{{ gs.players[seat].chips }}"
+           data-highlight="true">
+  </div>
+
+  <div id='actions'>
+    <span class='fold button inactive'>
+      <span class='action'>Fold</span>
+    </span>
+    <span class='check call button inactive'>
+      <span class='action c'>Check</span>
+      <span class='inner-button' id='call-amount'></span>
+    </span>
+    <span class='bet raise button inactive'>
+      <span class='action c'>Raise to</span>
+      <span class='inner-button' id='bet-amount'></span>
+    </span>
+  </div>
+</div>

@@ -1,90 +1,31 @@
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
-'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
-<html xmlns='http://www.w3.org/1999/xhtml'>
+<!doctype html>
+<html ng-app="poker-app">
   <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
     <title>Versus Poker</title>
-    <link rel='stylesheet' href='css/lib/normalize.css'>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
     <link rel='stylesheet' href='css/base.css'>
     <link rel='stylesheet' href='css/lobby.css'>
     <link rel='stylesheet' href='css/game.css'>
+    <link rel='stylesheet' href='css/lib/normalize.css'>
     <link rel='stylesheet' href='css/lib/jquery.mobile.min.css'>
-    <link rel='stylesheet' href='css/lib/font-awesome.css'>
     <link rel='icon' type='image/x-icon' href='img/favicon.ico'/>
-    <script src='js/constants.js'></script>
     <script src='js/lib/jquery.min.js'></script>
     <script src='js/lib/jquery.mobile.min.js'></script>
     <script src='js/lib/socket.io.js'></script>
-
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+    <script src='js/lib/angular.min.js'></script>
+    <script src='js/app.js'></script>
+    <script src='js/lobby.js'></script>
+    <script src='js/constants.js'></script>
+    <script src='js/game.js'></script>
   </head>
 
   <body>
     <div id='wrap'>
       <div id='not-bar'></div>
-      <script src='js/utils.js'></script>
-
-      <div id='lobby'>
-        <h1>Versus Poker</h1>
-        <p>Heads-Up Hold'em</p>
-        <span id='find-game' class='button'>Find Game</span>
-        <img id='logo' src="img/logo.png">
-        <script src='js/lobby.js'></script>
-      </div>
-
-      <div id='game'>
-        <div id='opponent-stack' class='chipstack info'>
-          <img class="chip-icon" src="img/chip.png"><span id='opponent-chips'></span>
-        </div>
-        <div class='pkr-button' id='opponent-button'><span></span></div>
-
-        <div id='player-stack' class='chipstack info'>
-          <img class="chip-icon" src="img/chip.png"><span id='chips'></span>
-        </div>
-
-        <div class='pkr-button' id='player-button'><span></span></div>
-
-        <span id='opponentHole1' class='card facedown'></span>
-        <span id='opponentHole2' class='card facedown'></span>
-
-        <div id='board-cards'>
-          <span id='flop1' class='flop card undealt'></span>
-          <span id='flop2' class='flop card undealt'></span>
-          <span id='flop3' class='flop card undealt'></span>
-          <span id='turn' class='card undealt'></span>
-          <span id='river' class='card undealt'></span>
-        </div>
-
-        <div id='hand-info' class='info'>
-          <img class="chip-icon" src="img/chip.png"><span id='pot'></span>
-        </div>
-
-        <span id='hole1' class='card'></span>
-        <span id='hole2' class='card'></span>
-
-        <div id='bet-slider'>
-          <input class='bet-slider c' type="range"
-                 name="slider-fill" id="slider-fill"
-                 value="60" min="0" max="1500" data-highlight="true">
-        </div>
-
-        <div id='actions'>
-          <span class='fold button inactive'>
-            <span class='action'>Fold</span>
-          </span>
-          <span class='check call button inactive'>
-            <span class='action c'>Check</span>
-            <span class='inner-button' id='call-amount'></span>
-          </span>
-          <span class='bet raise button inactive'>
-            <span class='action c'>Raise to</span>
-            <span class='inner-button' id='bet-amount'></span>
-          </span>
-        </div>
-
-      </div>
-      <script src='js/game.js'></script>
+      <div ng-view></div>
     </div>
 
+    <script src='js/utils.js'></script>
   </body>
 </html>
