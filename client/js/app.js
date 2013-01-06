@@ -40,8 +40,6 @@ pokerApp.factory('Socket', function($rootScope) {
 })
 
 
-
-
 function PokerCtrl($scope, Socket, gameHolder) {
 
     Socket.emit('new-game', gameHolder.gameData());
@@ -54,15 +52,13 @@ function PokerCtrl($scope, Socket, gameHolder) {
     // Start game.
     Socket.on('new-game', function(gs) {
         $scope.gs = gs;
+        $scope.$apply();
         // Initialize bet slider.
-        $('.bet-slider')
-            .attr('min', gs.minRaiseTo)
-            .attr('max', gs.players[$scope.seat].chips)
-            .attr('value', 3 * gs.bigBlind)
-            .attr('step', 10)
+        $('.bet-slider').slider()
             .on('change', function() {
-                $('#bet-amount').text($('.bet-slider').attr('value'));
-            });
+                $scope.raiseAmount = $('.bet-slider').attr('value');
+                $scope.$apply();
+            }).trigger('change');
     });
 
     // Start hand.

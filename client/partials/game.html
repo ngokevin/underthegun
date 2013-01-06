@@ -31,10 +31,10 @@
   <span id='hole2' class='card'></span>
 
   <div id='bet-slider'>
-    <input class='bet-slider c' type="range"
-           name="slider-fill" id="slider-fill"
-           value="{{ gs.bigBlind * 2 }}" min="0" max="{{ gs.players[seat].chips }}"
-           data-highlight="true">
+    <input ng-model="raiseAmount" id="slider-fill" class='bet-slider c' type="range"
+           name="slider-fill" data-highlight="true"
+           value="{{ gs.bigBlind * 2 }}" step='10'
+           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips }}">
   </div>
 
   <div id='actions'>
@@ -47,7 +47,7 @@
     </span>
     <span class='bet raise button inactive'>
       <span class='action c'>Raise to</span>
-      <span class='inner-button' id='bet-amount'></span>
+      <span class='inner-button' id='bet-amount'>{{ raiseAmount }}</span>
     </span>
   </div>
 </div>
