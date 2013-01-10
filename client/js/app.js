@@ -40,6 +40,20 @@ pokerApp.factory('Socket', function($rootScope) {
 })
 
 
+pokerApp.directive('card', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'card.html',
+        transclude: true,
+        scope: {
+            rank: '@rank',
+            suit: '@suit',
+        },
+    };
+});
+
+
 function PokerCtrl($scope, Socket, gameHolder) {
 
     Socket.emit('new-game', gameHolder.gameData());
@@ -49,11 +63,10 @@ function PokerCtrl($scope, Socket, gameHolder) {
         $scope.opponentSeat = data.seat == 0 ? 1 : 0;
     });
 
-    // Start game.
     Socket.on('new-game', function(gs) {
         $scope.gs = gs;
         $scope.$apply();
-        // Initialize bet slider.
+
         $('.bet-slider').slider()
             .on('change', function() {
                 $scope.raiseAmount = $('.bet-slider').attr('value');
@@ -61,31 +74,31 @@ function PokerCtrl($scope, Socket, gameHolder) {
             }).trigger('change');
     });
 
-    // Start hand.
     Socket.on('new-hand', function(gs) {
         $scope.gs = gs;
+        getAndEmitAction(gs, socket);
     });
 
     Socket.on('next-turn', function(gs) {
-        updateValues(gs);
         $scope.gs = gs;
         getAndEmitAction(gs, Socket);
     });
 
     Socket.on('next-round', function(gs) {
-        updateValues(gs);
+        $scope.gs = gs;
         getAndEmitAction(gs, Socket);
     });
 
     Socket.on('all-in', function(gs) {
-        updateValues(gs);
+        $scope.gs = gs;
     });
 
     Socket.on('hand-complete', function(gs) {
-        var wait = updateValues(gs);
-        setTimeout(function() {
-            Socket.emit('hand-complete', {gs: gs})
-        }, wait || 0);
+        $scope.gs = gs;
+        //        var wait = updateValues(gs);
+        //        setTimeout(function() {
+        //            Socket.emit('hand-complete', {gs: gs})
+        //        }, wait || 0);
     });
 
     Socket.on('game-over', function(gs) {
@@ -98,6 +111,7 @@ function PokerCtrl($scope, Socket, gameHolder) {
 
     socketBinded = true;
 }
+
 
 
 

@@ -1,53 +1,58 @@
-<div id='game'>
-  <div id='opponent-stack' class='chipstack info'>
+<div id="game">
+  <div id="opponent-stack" class="chipstack info">
     <img class="chip-icon" src="img/chip.png">
-    <span id='opponent-chips'>{{ gs.players[opponentSeat].chips }}</span>
+    <span>{{ gs.players[opponentSeat].chips }}</span>
   </div>
-  <div class='pkr-button' id='opponent-button'><span></span></div>
 
-  <div id='player-stack' class='chipstack info'>
+  <div class="pkr-button" id="opponent-button" ng-show="{{ gs.button != seat }}"><span></span></div>
+
+  <div id="player-stack" class="chipstack info">
     <img class="chip-icon" src="img/chip.png">
-    <span id='chips'>{{ gs.players[seat].chips }}</span>
+    <span>{{ gs.players[seat].chips }}</span>
   </div>
 
-  <div class='pkr-button' id='player-button'><span></span></div>
+  <div class="pkr-button" id="player-button" ng-show="{{ gs.button == seat }}"><span></span></div>
 
-  <span id='opponentHole1' class='card facedown'></span>
-  <span id='opponentHole2' class='card facedown'></span>
+  <card rank="{{ gs.players[opponentSeat].hole[0].rank }}"
+        suit="{{ gs.players[opponentSeat].hole[0].suit}}"></card>
+  <card rank="{{ gs.players[opponentSeat].hole[1].rank }}"
+        suit="{{ gs.players[opponentSeat].hole[1].suit }}"></card>
 
-  <div id='board-cards'>
-    <span id='flop1' class='flop card undealt'></span>
-    <span id='flop2' class='flop card undealt'></span>
-    <span id='flop3' class='flop card undealt'></span>
-    <span id='turn' class='card undealt'></span>
-    <span id='river' class='card undealt'></span>
+  <div id="board-cards">
+    <span id="flop1" class="flop card" ng-class="{undealt: gs.boardCards.length > 0}"></span>
+    <span id="flop2" class="flop card" ng-class="{undealt: gs.boardCards.length > 0}"></span>
+    <span id="flop3" class="flop card" ng-class="{undealt: gs.boardCards.length > 0}"></span>
+    <span id="turn" class="card" ng-class="{undealt: gs.boardCards.length > 3}"></span>
+    <span id="river" class="card" ng-class="{undealt: gs.boardCards.length > 4}"></span>
   </div>
 
-  <div id='hand-info' class='info'>
-    <img class="chip-icon" src="img/chip.png"><span id='pot'>{{ gs.pot }}</span>
+  <div id="hand-info" class="info">
+    <img class="chip-icon" src="img/chip.png"><span id="pot">{{ gs.pot }}</span>
   </div>
 
-  <span id='hole1' class='card'></span>
-  <span id='hole2' class='card'></span>
+  <card rank="{{ gs.players[seat].hole[0].rank }}"
+        suit="{{ gs.players[seat].hole[0].suit}}"></card>
+  <card rank="{{ gs.players[seat].hole[1].rank }}"
+        suit="{{ gs.players[seat].hole[1].suit }}"></card>
 
-  <div id='bet-slider'>
-    <input ng-model="raiseAmount" id="slider-fill" class='bet-slider c' type="range"
+  <div id="bet-slider">
+    <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
-           value="{{ gs.bigBlind * 2 }}" step='10'
+           value="{{ gs.bigBlind * 2 }}" step="10"
            min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips }}">
   </div>
 
-  <div id='actions'>
-    <span class='fold button inactive'>
-      <span class='action'>Fold</span>
+  <div id="actions">
+    <span class="fold button" ng-class="{inactive: turnInactive}">
+      <span class="action">Fold</span>
     </span>
-    <span class='check call button inactive'>
-      <span class='action c'>Check</span>
-      <span class='inner-button' id='call-amount'></span>
+    <span class="check call button" ng-class="{inactive: turnInactive}">
+      <span class="action c">Check</span>
+      <span class="inner-button">{{ callAmount }}</span>
     </span>
-    <span class='bet raise button inactive'>
-      <span class='action c'>Raise to</span>
-      <span class='inner-button' id='bet-amount'>{{ raiseAmount }}</span>
+    <span class="bet raise button" ng-class="{inactive: turnInactive}">
+      <span class="action c">{{ raiseText }}</span>
+      <span class="inner-button">{{ raiseAmount }}</span>
     </span>
   </div>
 </div>
