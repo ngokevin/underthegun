@@ -29,8 +29,8 @@
     <script type="text/ng-template" id="card.html">
       <span class="card" ng-class="{facedown: !rank}">
         <span class="rank">{{ rank }}</span>
-        <span class="suit-little {{ suitColor }}">{{ suit }}</span>
-        <span class="suit {{ suitColor }}"></span>
+        <span class="suit-little {{ suitColor }}" ng-bind-html-unsafe="suit"></span>
+        <span class="suit {{ suitColor }}" ng-bind-html-unsafe="suit"></span>
       </span>
     </script>
 

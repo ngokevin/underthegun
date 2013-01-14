@@ -14,9 +14,9 @@
   <div class="pkr-button" id="player-button" ng-show="{{ gs.button == seat }}"><span></span></div>
 
   <card rank="{{ gs.players[opponentSeat].hole[0].rank }}"
-        suit="{{ gs.players[opponentSeat].hole[0].suit }}"</card>
+        suit="{{ gs.players[opponentSeat].hole[0].suit }}"></card>
   <card rank="{{ gs.players[opponentSeat].hole[1].rank }}"
-        suit="{{ gs.players[opponentSeat].hole[1].suit }}"</card>
+        suit="{{ gs.players[opponentSeat].hole[1].suit }}"></card>
 
   <div id="board-cards">
     <span id="flop1" class="flop card" ng-class="{undealt: gs.boardCards.length > 0}"></span>
@@ -34,7 +34,7 @@
         suit="{{ gs.players[seat].hole[0].suit }}"
         card="{{ gs.players[seat].hole[0] }}"></card>
   <card rank="{{ gs.players[seat].hole[1].rank }}"
-        suit="{{ gs.players[seat].hole[1].suit }}"</card>
+        suit="{{ gs.players[seat].hole[1].suit }}"></card>
   <div id="bet-slider">
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"

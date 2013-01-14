@@ -69,16 +69,15 @@ pokerApp.directive('card', function() {
         replace: true,
         templateUrl: 'card.html',
         scope: {
-            rank: '@rank',
-            suit: '@suit',
-            localCard: '@card',
+            localRank: '@rank',
+            localSuit: '@suit',
         },
         link: function(scope, element, attrs) {
-            scope.$watch('rank', function(rank) {
-                element.find('.rank').html(getRank(rank));
+            scope.$watch('localRank', function(rank) {
+                scope.rank = getRank(rank);
             });
-            scope.$watch('suit', function(suit) {
-                element.find('.suit-little, .suit').html(getSuit(suit));
+            scope.$watch('localSuit', function(suit) {
+                scope.suit = getSuit(suit);
                 scope.suitColor = suitColor(suit);
             });
         },
