@@ -40,15 +40,47 @@ pokerApp.factory('Socket', function($rootScope) {
 })
 
 
+function getRank(rank) {
+    return {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
+            8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
+            14: 'A'}[rank];
+}
+function getSuit(suit) {
+    switch(suit) {
+        case 'c': return '&clubs;';
+        case 'd': return '&diams;';
+        case 'h': return '&hearts;';
+        case 's': return '&clubs;';
+    }
+}
+function suitColor(suit) {
+    switch(suit) {
+        case 'c': return 'black';
+        case 'd': return 'red';
+        case 'h': return 'red';
+        case 's': return 'black';
+    }
+}
+
+
 pokerApp.directive('card', function() {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'card.html',
-        transclude: true,
         scope: {
             rank: '@rank',
             suit: '@suit',
+            localCard: '@card',
+        },
+        link: function(scope, element, attrs) {
+            scope.$watch('rank', function(rank) {
+                element.find('.rank').html(getRank(rank));
+            });
+            scope.$watch('suit', function(suit) {
+                element.find('.suit-little, .suit').html(getSuit(suit));
+                scope.suitColor = suitColor(suit);
+            });
         },
     };
 });
