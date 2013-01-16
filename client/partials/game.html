@@ -1,4 +1,4 @@
-<div id="game">
+<div id="game" ng-controller="PokerCtrl">
   <div id="opponent-stack" class="chipstack info">
     <img class="chip-icon" src="img/chip.png">
     <span>{{ gs.players[opponentSeat].chips }}</span>
@@ -35,6 +35,7 @@
         card="{{ gs.players[seat].hole[0] }}"></card>
   <card rank="{{ gs.players[seat].hole[1].rank }}"
         suit="{{ gs.players[seat].hole[1].suit }}"></card>
+
   <div id="bet-slider">
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
@@ -51,7 +52,7 @@
       <span class="inner-button">{{ callAmount }}</span>
     </span>
     <span class="bet raise button" ng-class="{inactive: turnInactive}">
-      <span class="action c">{{ raiseText }}</span>
+      <span class="action c">{{ raiseText || "Raise to" }}</span>
       <span class="inner-button">{{ raiseAmount }}</span>
     </span>
   </div>

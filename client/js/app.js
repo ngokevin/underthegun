@@ -1,11 +1,5 @@
 'use strict';
-var pokerApp = angular.module('poker-app', []).
-    config(['$routeProvider', function($routeProvider) {
-        $routeProvider.
-            when('', {templateUrl: 'partials/lobby.html', controller: LobbyCtrl}).
-            when('/game', {templateUrl: 'partials/game.html', controller: PokerCtrl}).
-            otherwise({redirectTo: ''});
-    }]);
+var pokerApp = angular.module('poker-app', []);
 
 
 pokerApp.factory('gameHolder', function() {
@@ -85,7 +79,7 @@ pokerApp.directive('card', function() {
 });
 
 
-function PokerCtrl($scope, Socket, gameHolder) {
+function PokerCtrl($scope, $location, Socket, gameHolder) {
 
     Socket.emit('new-game', gameHolder.gameData());
 
@@ -144,9 +138,7 @@ function PokerCtrl($scope, Socket, gameHolder) {
 }
 
 
-
-
-function LobbyCtrl($scope, $location, gameHolder) {
+function LobbyCtrl($scope, gameHolder) {
     $scope.findGame = function() {
         // Connect to the match-making system.
         if (!enableFindGame) {
@@ -176,8 +168,8 @@ function LobbyCtrl($scope, $location, gameHolder) {
             // Match found, start a game.
             socket.on('match-found', function(data) {
                 gameHolder.newGame(data);
-                $location.path("/game");
-                $scope.$apply()
+                $scope.view = 'game';
+                $scope.$apply();
             });
         }
 

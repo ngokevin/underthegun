@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="poker-app">
+<html>
   <head>
     <title>Versus Poker</title>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
@@ -20,10 +20,13 @@
     <script src='js/game.js'></script>
   </head>
 
-  <body>
+  <body ng-app="poker-app">
     <div id='wrap'>
       <div id='not-bar'></div>
-      <div ng-view></div>
+      <div ng-switch on="view" ng-controller="LobbyCtrl">
+        <div ng-switch-default ng-include="'partials/lobby.html'"></div>
+        <div ng-switch-when="game" ng-include="'partials/game.html'"></div>
+      </div>
     </div>
 
     <script type="text/ng-template" id="card.html">
