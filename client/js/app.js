@@ -63,23 +63,75 @@ pokerApp.directive('card', function() {
         replace: true,
         templateUrl: 'card.html',
         scope: {
-            localRank: '@rank',
-            localSuit: '@suit',
+            localCard: '@card',
         },
         link: function(scope, element, attrs) {
-            scope.$watch('localRank', function(rank) {
-                scope.rank = getRank(rank);
-            });
-            scope.$watch('localSuit', function(suit) {
-                scope.suit = getSuit(suit);
-                scope.suitColor = suitColor(suit);
+            scope.$watch('localCard', function(card) {
+                if (card) {
+                    var card = JSON.parse(card);
+                    scope.rank = getRank(card.rank);
+                    scope.suit = getSuit(card.suit);
+                    scope.suitColor = suitColor(card.suit);
+                }
             });
         },
     };
 });
 
 
-function PokerCtrl($scope, $location, Socket, gameHolder) {
+function PokerCtrl($scope, Socket, gameHolder) {
+
+    $scope.checkCallText = function() {
+        var gs = $scope.gs;
+        if (!gs || !gs.availableActions) {
+            return 'Call';
+        } else if (gs.availableActions.indexOf(c.actions[c.ACTION_FOLD]) > -1) {
+            return 'Fold';
+        } else if (gs.toCall >= gs.players[$scope.seat].chips) {
+            return 'All In'
+        }
+        return 'Call';
+    };
+
+    $scope.betRaiseText = function() {
+        var gs = $scope.gs;
+        if (!gs) {
+            return 'Raise to';
+        }
+        for (var i = 0; i < gs.players.length; i++) {
+            if (gs.players[i].roundPIP > 0) {
+                return 'Raise to';
+            }
+        }
+        return 'Bet';
+    };
+
+    $scope.doAction = function(action) {
+        // Displays action buttons, gets the one clicked, and sends the
+        // action to the server.
+        var gs = $scope.gs;
+        var seat = $scope.seat;
+        if (gs.actionOn != seat) { return; }
+
+        var action;
+        switch (action) {
+            case 'fold':
+                action = {seat: seat, action: c.ACTION_FOLD};
+                break;
+            case 'checkCall':
+                if (gs.availableActions.indexOf(c.ACTION_CHECK) > -1) {
+                    action = {seat: seat, action: c.ACTION_CHECK};
+                } else {
+                    action = {seat: seat, action: c.ACTION_CALL};
+                }
+                break;
+            case 'raise':
+                action = {seat: seat, action: c.ACTION_RAISE,
+                          amount: $scope.raiseAmount};
+                break;
+        }
+        Socket.emit('action', {action: action, gs: gs});
+    };
 
     Socket.emit('new-game', gameHolder.gameData());
 
@@ -120,10 +172,10 @@ function PokerCtrl($scope, $location, Socket, gameHolder) {
 
     Socket.on('hand-complete', function(gs) {
         $scope.gs = gs;
-        //        var wait = updateValues(gs);
-        //        setTimeout(function() {
-        //            Socket.emit('hand-complete', {gs: gs})
-        //        }, wait || 0);
+        // var wait = updateValues(gs);
+        // setTimeout(function() {
+        //     Socket.emit('hand-complete', {gs: gs})
+        // }, wait || 0);
     });
 
     Socket.on('game-over', function(gs) {
