@@ -25,10 +25,10 @@
             &:after {
                 color: $light-gray;
                 content: 'vs';
-                font-size: 64px;
-                left: -8px;
+                font-size: 52px;
+                left: -4px;
                 position: absolute;
-                top: -8px;
+                top: -2px;
             }
         }
         .rank {
@@ -129,7 +129,7 @@
             font-size: 14px;
             font-weight: bold;
             position: relative;
-            top: 4px;
+            top: 3px;
             &:after {
                 content: "D";
             }

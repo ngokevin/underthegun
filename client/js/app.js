@@ -2,6 +2,11 @@
 var pokerApp = angular.module('poker-app', []);
 
 
+pokerApp.run(function($rootScope) {
+    $rootScope.enableFindGame = true;
+});
+
+
 pokerApp.factory('gameHolder', function() {
     var _gameData;
     return {
@@ -21,6 +26,7 @@ pokerApp.factory('Socket', function($rootScope) {
     // Override socket.on to $apply the changes to angular.
     return {
         on: function(eventName, fn) {
+            socket.removeAllListeners(eventName);
             socket.on(eventName, function(gs) {
                 $rootScope.$apply(function() {
                     fn(gs);
@@ -53,6 +59,8 @@ pokerApp.directive('card', function() {
                     scope.undealt = false;
                     scope.facedown = false;
                 } else {
+                    scope.rank = '';
+                    scope.suit = '';
                     if ('hole' in attrs) {
                         scope.facedown = true;
                     } else {
@@ -120,6 +128,35 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
 
     Socket.emit('new-game', gameHolder.gameData());
 
+    sockets($scope, $rootScope, Socket);
+    $rootScope.socketBinded = true;
+
+}
+
+
+function gameOver($scope, $rootScope, disconnect) {
+    var msg = '';
+    if (disconnect) {
+        msg = 'Opponent disconnected. ';
+    }
+    if ($scope.gs.gameWinner == $scope.seat) {
+        msg += 'You won!';
+    } else {
+        msg += 'You lost.';
+    }
+    notify(msg);
+    setTimeout(function() {
+       $rootScope.enableFindGame = true;
+       $rootScope.view = 'lobby';
+       $rootScope.$apply();
+    }, 5000);
+    setTimeout(function() {
+        clearBoard($scope);
+    }, 5500);
+}
+
+
+function sockets($scope, $rootScope, Socket) {
     Socket.on('assign-seat', function(data) {
         $scope.seat = data.seat;
         $scope.opponentSeat = data.seat == 0 ? 1 : 0;
@@ -133,11 +170,17 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
             .on('change', function() {
                 $scope.raiseAmount = $('.bet-slider').attr('value');
                 $scope.$apply();
-            }).trigger('change');
+            });
+        setTimeout(function() {
+            $('.bet-slider').trigger('change');
+        });
     });
 
     Socket.on('new-hand', function(gs) {
         $scope.gs = gs;
+        var hole1 = gs.players[$scope.seat].hole[0];
+        var hole2 = gs.players[$scope.seat].hole[1];
+        notify('Dealt ' + strCard(hole1) + strCard(hole2));
     });
 
     Socket.on('next-turn', function(gs) {
@@ -206,45 +249,27 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
     });
 
     Socket.on('game-over', function(gs) {
-        gameOver(gs);
+        $scope.gs = gs;
+        gameOver($scope, $rootScope);
     });
 
     Socket.on('game-over-dc', function(gs) {
-        gameOver(gs, true);
+        $scope.gs = gs;
+        gameOver($scope, $rootScope, true);
     });
-
-    function gameOver(disconnect) {
-        var msg = '';
-        if (disconnect) {
-            msg = 'Opponent disconnected. ';
-        }
-        if ($scope.gs.gameWinner === $scope.seat) {
-            msg += 'You won!';
-        } else {
-            msg += 'You lost.';
-        }
-        notify(msg);
-        setTimeout(function() {
-           $rootScope.view = 'lobby';
-           $rootScope.$apply();
-        }, 5000);
-        setTimeout(function() {
-            clearBoard($scope);
-        }, 5500);
-    }
 }
 
 
 function LobbyCtrl($scope, $rootScope, gameHolder) {
     $scope.findGame = function() {
         // Connect to the match-making system.
-        if (!enableFindGame) {
+        if (!$rootScope.enableFindGame) {
             return;
         }
 
         $('#find-game').text('Finding game...').addClass('inactive');
         notify('Searching for an opponent...');
-        enableFindGame = false;
+        $rootScope.enableFindGame = false;
 
         if (!socket) {
             socket = io.connect('http://localhost:4001/matchmaking',
@@ -254,7 +279,7 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
                 // Could not connect to server.
                 $('#find-game').text('Find Game').removeClass('inactive');
                 notify('Sorry, the server seems to be down.');
-                enableFindGame = true;
+                $rootScope.enableFindGame = true;
             });
 
             // Server will tell us what our player id is if we don't have one.
@@ -298,7 +323,7 @@ function getSuit(suit) {
         case 'c': return '&clubs;';
         case 'd': return '&diams;';
         case 'h': return '&hearts;';
-        case 's': return '&clubs;';
+        case 's': return '&spades;';
     }
 }
 
@@ -310,4 +335,9 @@ function suitColor(suit) {
         case 'h': return 'red';
         case 's': return 'black';
     }
+}
+
+
+function strCard(card) {
+    return getRank(card.rank) + card.suit;
 }

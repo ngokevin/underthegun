@@ -4,17 +4,17 @@
     <span>{{ gs.players[opponentSeat].chips }}</span>
   </div>
 
-  <div class="pkr-button" id="opponent-button" ng-show="{{ gs.button != seat }}"><span></span></div>
+  <div class="pkr-button" id="opponent-button" ng-show="gs.button != seat"><span></span></div>
 
   <div id="player-stack" class="chipstack info">
     <img class="chip-icon" src="img/chip.png">
     <span>{{ gs.players[seat].chips }}</span>
   </div>
 
-  <div class="pkr-button" id="player-button" ng-show="{{ gs.button == seat }}"><span></span></div>
+  <div class="pkr-button" id="player-button" ng-show="gs.button == seat"><span></span></div>
 
-  <card rank="{{ gs.players[opponentSeat].hole[0] }}" hole></card>
-  <card rank="{{ gs.players[opponentSeat].hole[1] }}" hole></card>
+  <card card="{{ gs.players[opponentSeat].hole[0] }}" hole></card>
+  <card card="{{ gs.players[opponentSeat].hole[1] }}" hole></card>
 
   <div id="board-cards">
     <card card="{{ gs.boardCards[0] }}" board></card>
@@ -35,25 +35,26 @@
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
            value="{{ gs.bigBlind * 2 }}" step="10"
-           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips + gs.pot }}">
+           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips + gs.players[seat].roundPIP}}">
+
   </div>
 
   <div id="actions">
     <span class="button" ng-click="doAction('fold')"
-          ng-class="{inactive: gs.actionOn != seat &&
-                     gs.availableActions.indexOf(0) > -1}">
+          ng-class="{inactive: gs.actionOn != seat ||
+                     gs.availableActions.indexOf(0) == -1}">
       <span class="action">Fold</span>
     </span>
     <span class="button" ng-click="doAction('checkCall')"
-          ng-class="{inactive: gs.actionOn != seat &&
-                     (gs.availableActions.indexOf(1) > -1 ||
-                      gs.availableActions.indexOf(2) > -1)}">
+          ng-class="{inactive: gs.actionOn != seat ||
+                     (gs.availableActions.indexOf(1) == -1 &&
+                      gs.availableActions.indexOf(2) == -1)}">
       <span class="action c">{{ checkCallText() }}</span>
       <span class="inner-button">{{ gs.toCall }}</span>
     </span>
     <span class="button" ng-click="doAction('raise')"
-          ng-class="{inactive: gs.actionOn != seat &&
-                     gs.availableActions.indexOf(3)}">
+          ng-class="{inactive: gs.actionOn != seat ||
+                     gs.availableActions.indexOf(3) == -1}">
       <span class="action c">{{ betRaiseText() }}</span>
       <span class="inner-button">{{ raiseAmount }}</span>
     </span>

@@ -23,10 +23,10 @@
     #game .card.facedown:after {
       color: #505050;
       content: 'vs';
-      font-size: 64px;
-      left: -8px;
+      font-size: 52px;
+      left: -4px;
       position: absolute;
-      top: -8px; }
+      top: -2px; }
   #game .card .rank {
     font: 26px monospace;
     position: absolute;
@@ -98,7 +98,7 @@
     font-size: 14px;
     font-weight: bold;
     position: relative;
-    top: 4px; }
+    top: 3px; }
     #game .pkr-button span:after {
       content: "D"; }
 #game #actions {
