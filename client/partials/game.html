@@ -17,25 +17,25 @@
   <card rank="{{ gs.players[opponentSeat].hole[1] }}" hole></card>
 
   <div id="board-cards">
-    <card card="{{ gs.boardCards[0] }}" ng-class="{undealt: !gs.boardCards[0]}" board></card>
-    <card card="{{ gs.boardCards[1] }}" ng-class="{undealt: !gs.boardCards[1]}" board></card>
-    <card card="{{ gs.boardCards[2] }}" ng-class="{undealt: !gs.boardCards[2]}" board></card>
-    <card card="{{ gs.boardCards[3] }}" ng-class="{undealt: !gs.boardCards[3]}" board></card>
-    <card card="{{ gs.boardCards[4] }}" ng-class="{undealt: !gs.boardCards[4]}" board></card>
+    <card card="{{ gs.boardCards[0] }}" board></card>
+    <card card="{{ gs.boardCards[1] }}" board></card>
+    <card card="{{ gs.boardCards[2] }}" board></card>
+    <card card="{{ gs.boardCards[3] }}" board></card>
+    <card card="{{ gs.boardCards[4] }}" board></card>
   </div>
 
   <div id="hand-info" class="info">
     <img class="chip-icon" src="img/chip.png"><span id="pot">{{ gs.pot }}</span>
   </div>
 
-  <card card="{{ gs.players[seat].hole[0] }}"></card>
-  <card card="{{ gs.players[seat].hole[1] }}"></card>
+  <card card="{{ gs.players[seat].hole[0] }}" hole></card>
+  <card card="{{ gs.players[seat].hole[1] }}" hole></card>
 
   <div id="bet-slider">
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
            value="{{ gs.bigBlind * 2 }}" step="10"
-           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips }}">
+           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips + gs.pot }}">
   </div>
 
   <div id="actions">
@@ -49,7 +49,7 @@
                      (gs.availableActions.indexOf(1) > -1 ||
                       gs.availableActions.indexOf(2) > -1)}">
       <span class="action c">{{ checkCallText() }}</span>
-      <span class="inner-button">{{ callAmount }}</span>
+      <span class="inner-button">{{ gs.toCall }}</span>
     </span>
     <span class="button" ng-click="doAction('raise')"
           ng-class="{inactive: gs.actionOn != seat &&

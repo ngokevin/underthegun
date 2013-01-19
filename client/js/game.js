@@ -122,8 +122,6 @@ function showHand(gs) {
 function getAction(round, gs, socket) {
     // Displays action buttons, gets the one clicked, and sends the
     // action to the server.
-    return;
-
     if (gs.actionOn != seat) { return; }
 
     var enabledButtons = $();

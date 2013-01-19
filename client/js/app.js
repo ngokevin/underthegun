@@ -34,29 +34,6 @@ pokerApp.factory('Socket', function($rootScope) {
 })
 
 
-function getRank(rank) {
-    return {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
-            8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
-            14: 'A'}[rank];
-}
-function getSuit(suit) {
-    switch(suit) {
-        case 'c': return '&clubs;';
-        case 'd': return '&diams;';
-        case 'h': return '&hearts;';
-        case 's': return '&clubs;';
-    }
-}
-function suitColor(suit) {
-    switch(suit) {
-        case 'c': return 'black';
-        case 'd': return 'red';
-        case 'h': return 'red';
-        case 's': return 'black';
-    }
-}
-
-
 pokerApp.directive('card', function() {
     return {
         restrict: 'E',
@@ -72,6 +49,15 @@ pokerApp.directive('card', function() {
                     scope.rank = getRank(card.rank);
                     scope.suit = getSuit(card.suit);
                     scope.suitColor = suitColor(card.suit);
+
+                    scope.undealt = false;
+                    scope.facedown = false;
+                } else {
+                    if ('hole' in attrs) {
+                        scope.facedown = true;
+                    } else {
+                        scope.undealt = true;
+                    }
                 }
             });
         },
@@ -79,15 +65,14 @@ pokerApp.directive('card', function() {
 });
 
 
-function PokerCtrl($scope, Socket, gameHolder) {
+function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
 
     $scope.checkCallText = function() {
         var gs = $scope.gs;
+        var seat = $scope.seat;
         if (!gs || !gs.availableActions) {
             return 'Call';
-        } else if (gs.availableActions.indexOf(c.actions[c.ACTION_FOLD]) > -1) {
-            return 'Fold';
-        } else if (gs.toCall >= gs.players[$scope.seat].chips) {
+        } else if (gs.toCall >= gs.players[seat].chips && gs.actionOn == seat) {
             return 'All In'
         }
         return 'Call';
@@ -153,17 +138,14 @@ function PokerCtrl($scope, Socket, gameHolder) {
 
     Socket.on('new-hand', function(gs) {
         $scope.gs = gs;
-        getAndEmitAction(gs, socket);
     });
 
     Socket.on('next-turn', function(gs) {
         $scope.gs = gs;
-        getAndEmitAction(gs, Socket);
     });
 
     Socket.on('next-round', function(gs) {
         $scope.gs = gs;
-        getAndEmitAction(gs, Socket);
     });
 
     Socket.on('all-in', function(gs) {
@@ -171,11 +153,56 @@ function PokerCtrl($scope, Socket, gameHolder) {
     });
 
     Socket.on('hand-complete', function(gs) {
-        $scope.gs = gs;
-        // var wait = updateValues(gs);
-        // setTimeout(function() {
-        //     Socket.emit('hand-complete', {gs: gs})
-        // }, wait || 0);
+        var delayInterval = 2000;
+        var delay = 0;  // Set delays for all-in sequence.
+        if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
+            for (var i = 0; i < 3; i++) {
+                $scope.gs.boardCards[i] = gs.boardCards[i];
+            }
+            delay += delayInterval;
+        }
+        if (!$scope.gs.boardCards[3] && gs.boardCards.length >= 4) {
+            setTimeout(function() {
+                $scope.$apply(function() {
+                    $scope.gs.boardCards[3] = gs.boardCards[3];
+                });
+            }, delay);
+            delay += delayInterval;
+        }
+        if (!$scope.gs.boardCards[4] && gs.boardCards.length >= 5) {
+            setTimeout(function() {
+                $scope.gs.boardCards[4] = gs.boardCards[4];
+                $scope.$apply(function() {
+                    $scope.gs.boardCards[4] = gs.boardCards[4];
+                });
+            }, delay);
+            delay += delayInterval;
+        }
+
+        // Don't update chip counts until the all-in sequence is finish.
+        setTimeout(function() {
+            $scope.gs.players[$scope.opponentSeat].chips = gs.players[$scope.opponentSeat].chips;
+            $scope.gs.players[$scope.seat].chips = gs.players[$scope.seat].chips;
+            $scope.gs.pot = gs.pot;
+        }, gs.winner !== null ? delay: 0);
+
+        // Display winner.
+        if (gs.winner !== null) {
+            setTimeout(function() {
+                if (gs.winner == $scope.seat) {
+                    notify('You won the hand and earned ' + gs.pot + ' chips.');
+                } else if (gs.winner !== -1) {
+                    notify('You lost the hand. Opponent won ' + gs.pot + ' chips.');
+                } else {
+                    notify('You both tied the hand. Split pot.');
+                }
+            }, delay);
+        }
+
+        setTimeout(function() {
+            Socket.emit('hand-complete', {gs: gs})
+            $scope.gs = gs;
+        }, delay || 0);
     });
 
     Socket.on('game-over', function(gs) {
@@ -186,11 +213,29 @@ function PokerCtrl($scope, Socket, gameHolder) {
         gameOver(gs, true);
     });
 
-    socketBinded = true;
+    function gameOver(disconnect) {
+        var msg = '';
+        if (disconnect) {
+            msg = 'Opponent disconnected. ';
+        }
+        if ($scope.gs.gameWinner === $scope.seat) {
+            msg += 'You won!';
+        } else {
+            msg += 'You lost.';
+        }
+        notify(msg);
+        setTimeout(function() {
+           $rootScope.view = 'lobby';
+           $rootScope.$apply();
+        }, 5000);
+        setTimeout(function() {
+            clearBoard($scope);
+        }, 5500);
+    }
 }
 
 
-function LobbyCtrl($scope, gameHolder) {
+function LobbyCtrl($scope, $rootScope, gameHolder) {
     $scope.findGame = function() {
         // Connect to the match-making system.
         if (!enableFindGame) {
@@ -220,11 +265,49 @@ function LobbyCtrl($scope, gameHolder) {
             // Match found, start a game.
             socket.on('match-found', function(data) {
                 gameHolder.newGame(data);
-                $scope.view = 'game';
-                $scope.$apply();
+                $rootScope.view = 'game';
+                $rootScope.$apply();
             });
         }
 
         socket.emit('find-match', { playerId: playerId });
     };
+}
+
+
+function clearBoard($scope) {
+    // Clear the board.
+    for (var i = 0; i < 5; i++) {
+        $scope.gs.boardCards[i] = null;
+    }
+    for (var i = 0; i < 2; i++) {
+        $scope.gs.players[$scope.opponentSeat][i] = null;
+    }
+}
+
+
+function getRank(rank) {
+    return {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
+            8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
+            14: 'A'}[rank];
+}
+
+
+function getSuit(suit) {
+    switch(suit) {
+        case 'c': return '&clubs;';
+        case 'd': return '&diams;';
+        case 'h': return '&hearts;';
+        case 's': return '&clubs;';
+    }
+}
+
+
+function suitColor(suit) {
+    switch(suit) {
+        case 'c': return 'black';
+        case 'd': return 'red';
+        case 'h': return 'red';
+        case 's': return 'black';
+    }
 }
