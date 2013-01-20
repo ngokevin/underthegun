@@ -8,7 +8,7 @@
         @include default-box-shadow();
         background: url('/img/debut_light.png');
         border: 1px solid $green;
-        border-radius: 2px;
+        border-radius: 3px;
         color: $black;
         display: inline-block;
         font-size: 32px;
@@ -109,9 +109,28 @@
         }
     }
 
-    .chip-icon {
+    .chip {
+        @include default-box-shadow();
+        background: $white;
+        border: 1px double green;
+        border-radius: 12px;
+        bottom: 2px;
+        color: $dark-gray;
+        display: inline;
+        position: relative;
+        font-size: 9px;
         height: 16px;
         width: 16px;
+        span {
+            font-size: 12px;
+            font-weight: bold;
+            position: relative;
+            top: 2px;
+            &:after {
+                color: $red;
+                content: "\2660";
+            }
+        }
     }
 
     .pkr-button {
@@ -145,12 +164,13 @@
         position: relative;
         left: 13px;
         span.button {
+            border-radius: 10px 10px 0 0;
             display: inline-block;
             float: left;
             width: 25%;
             margin: 0 3px 0 3px;
             padding: 10px 7px 15px 7px;
-            top: 18px;
+            top: 20px;
             .inner-button {
                 display: inline;
             }

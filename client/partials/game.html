@@ -1,13 +1,13 @@
 <div id="game" ng-controller="PokerCtrl">
   <div id="opponent-stack" class="chipstack info">
-    <img class="chip-icon" src="img/chip.png">
+    <div class="chip" src="img/chip.png"><span></span></div>
     <span>{{ gs.players[opponentSeat].chips }}</span>
   </div>
 
   <div class="pkr-button" id="opponent-button" ng-show="gs.button != seat"><span></span></div>
 
   <div id="player-stack" class="chipstack info">
-    <img class="chip-icon" src="img/chip.png">
+    <div class="chip" src="img/chip.png"><span></span></div>
     <span>{{ gs.players[seat].chips }}</span>
   </div>
 
@@ -25,7 +25,8 @@
   </div>
 
   <div id="hand-info" class="info">
-    <img class="chip-icon" src="img/chip.png"><span id="pot">{{ gs.pot }}</span>
+    <div class="chip" src="img/chip.png"><span></span></div>
+    <span id="pot">{{ gs.pot }}</span>
   </div>
 
   <card card="{{ gs.players[seat].hole[0] }}" hole></card>
