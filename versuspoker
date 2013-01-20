@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-var Poker = require('./lib/poker');
+var Poker = require('./lib/app');
 var poker = new Poker();
 poker.start();
