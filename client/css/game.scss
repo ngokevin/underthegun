@@ -1,9 +1,13 @@
 @import 'globals';
 
 #game {
+    left: 320px;
+    position: relative;
+    transition: left .5s linear;
     .card {
         @include default-box-shadow();
         background: url('/img/debut_light.png');
+        border: 1px solid $green;
         border-radius: 2px;
         color: $black;
         display: inline-block;
@@ -11,6 +15,7 @@
         margin: 6px 0 6px;
         height: 70px;
         position: relative;
+        transition: all .2s;
         width: 50px;
         vertical-align: top;
         &.undealt {

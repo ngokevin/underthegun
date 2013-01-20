@@ -1,115 +1,121 @@
-#game .card {
-  -moz-box-shadow: 0 0 1px 1px #282828;
-  -webkit-box-shadow: 0 0 1px 1px #282828;
-  box-shadow: 0 0 1px 1px #282828;
-  background: url("/img/debut_light.png");
-  border-radius: 2px;
-  color: #050505;
-  display: inline-block;
-  font-size: 32px;
-  margin: 6px 0 6px;
-  height: 70px;
+#game {
+  left: 320px;
   position: relative;
-  width: 50px;
-  vertical-align: top; }
-  #game .card.undealt {
-    box-shadow: none;
-    background: none;
-    border: 1px dashed #505050;
-    position: relative; }
-  #game .card.facedown {
-    background: url("/img/grey_sandbag.png");
-    overflow: hidden; }
-    #game .card.facedown:after {
-      color: #505050;
-      content: 'vs';
-      font-size: 52px;
-      left: -4px;
-      position: absolute;
-      top: -2px; }
-  #game .card .rank {
-    font: 26px monospace;
-    position: absolute;
-    left: 3px;
-    top: 0; }
-  #game .card .suit-little {
-    font-size: 18px;
-    left: 3px;
-    position: absolute;
-    top: 27px; }
-  #game .card .suit {
-    bottom: -4px;
-    font-size: 40px;
-    position: absolute;
-    right: 0; }
-  #game .card .black {
-    color: black; }
-  #game .card .red {
-    color: #C3071D; }
-#game #board-cards {
-  margin-top: 12px; }
-#game #bet-slider {
-  position: relative; }
-  #game #bet-slider div.ui-slider {
-    right: 48px;
-    margin: 30px auto auto;
-    position: relative;
-    width: 55%; }
-    #game #bet-slider div.ui-slider:hover {
-      cursor: pointer; }
-  #game #bet-slider #slider-fill {
-    position: absolute;
-    left: 225px;
-    top: 10px; }
-#game .info {
-  font-size: 14px;
-  margin-bottom: 6px; }
-#game #hand-info span {
-  text-transform: capitalize; }
-#game .chipstack {
-  position: absolute;
-  margin-left: 240px; }
-  #game .chipstack span {
-    position: absolute; }
-  #game .chipstack#opponent-stack {
-    margin-top: 6px; }
-  #game .chipstack#player-stack {
-    margin-top: 267px; }
-#game .chip-icon {
-  height: 16px;
-  width: 16px; }
-#game .pkr-button {
-  -moz-box-shadow: 0 0 1px 1px #282828;
-  -webkit-box-shadow: 0 0 1px 1px #282828;
-  box-shadow: 0 0 1px 1px #282828;
-  background: #ebebeb;
-  border-radius: 15px;
-  color: #161414;
-  display: block;
-  height: 25px;
-  margin-left: 75px;
-  position: absolute;
-  width: 25px; }
-  #game .pkr-button#opponent-button {
-    margin-top: 2px; }
-  #game .pkr-button#player-button {
-    margin-top: 259px; }
-  #game .pkr-button span {
-    font-size: 14px;
-    font-weight: bold;
-    position: relative;
-    top: 3px; }
-    #game .pkr-button span:after {
-      content: "D"; }
-#game #actions {
-  position: relative;
-  left: 13px; }
-  #game #actions span.button {
+  transition: left .5s linear; }
+  #game .card {
+    -moz-box-shadow: 0 0 1px 1px #282828;
+    -webkit-box-shadow: 0 0 1px 1px #282828;
+    box-shadow: 0 0 1px 1px #282828;
+    background: url("/img/debut_light.png");
+    border: 1px solid #0a3102;
+    border-radius: 2px;
+    color: #050505;
     display: inline-block;
-    float: left;
-    width: 25%;
-    margin: 0 3px 0 3px;
-    padding: 10px 7px 15px 7px;
-    top: 18px; }
-    #game #actions span.button .inner-button {
-      display: inline; }
+    font-size: 32px;
+    margin: 6px 0 6px;
+    height: 70px;
+    position: relative;
+    transition: all .2s;
+    width: 50px;
+    vertical-align: top; }
+    #game .card.undealt {
+      box-shadow: none;
+      background: none;
+      border: 1px dashed #505050;
+      position: relative; }
+    #game .card.facedown {
+      background: url("/img/grey_sandbag.png");
+      overflow: hidden; }
+      #game .card.facedown:after {
+        color: #505050;
+        content: 'vs';
+        font-size: 52px;
+        left: -4px;
+        position: absolute;
+        top: -2px; }
+    #game .card .rank {
+      font: 26px monospace;
+      position: absolute;
+      left: 3px;
+      top: 0; }
+    #game .card .suit-little {
+      font-size: 18px;
+      left: 3px;
+      position: absolute;
+      top: 27px; }
+    #game .card .suit {
+      bottom: -4px;
+      font-size: 40px;
+      position: absolute;
+      right: 0; }
+    #game .card .black {
+      color: black; }
+    #game .card .red {
+      color: #C3071D; }
+  #game #board-cards {
+    margin-top: 12px; }
+  #game #bet-slider {
+    position: relative; }
+    #game #bet-slider div.ui-slider {
+      right: 48px;
+      margin: 30px auto auto;
+      position: relative;
+      width: 55%; }
+      #game #bet-slider div.ui-slider:hover {
+        cursor: pointer; }
+    #game #bet-slider #slider-fill {
+      position: absolute;
+      left: 225px;
+      top: 10px; }
+  #game .info {
+    font-size: 14px;
+    margin-bottom: 6px; }
+  #game #hand-info span {
+    text-transform: capitalize; }
+  #game .chipstack {
+    position: absolute;
+    margin-left: 240px; }
+    #game .chipstack span {
+      position: absolute; }
+    #game .chipstack#opponent-stack {
+      margin-top: 6px; }
+    #game .chipstack#player-stack {
+      margin-top: 267px; }
+  #game .chip-icon {
+    height: 16px;
+    width: 16px; }
+  #game .pkr-button {
+    -moz-box-shadow: 0 0 1px 1px #282828;
+    -webkit-box-shadow: 0 0 1px 1px #282828;
+    box-shadow: 0 0 1px 1px #282828;
+    background: #ebebeb;
+    border-radius: 15px;
+    color: #161414;
+    display: block;
+    height: 25px;
+    margin-left: 75px;
+    position: absolute;
+    width: 25px; }
+    #game .pkr-button#opponent-button {
+      margin-top: 2px; }
+    #game .pkr-button#player-button {
+      margin-top: 259px; }
+    #game .pkr-button span {
+      font-size: 14px;
+      font-weight: bold;
+      position: relative;
+      top: 3px; }
+      #game .pkr-button span:after {
+        content: "D"; }
+  #game #actions {
+    position: relative;
+    left: 13px; }
+    #game #actions span.button {
+      display: inline-block;
+      float: left;
+      width: 25%;
+      margin: 0 3px 0 3px;
+      padding: 10px 7px 15px 7px;
+      top: 18px; }
+      #game #actions span.button .inner-button {
+        display: inline; }

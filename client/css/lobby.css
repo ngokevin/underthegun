@@ -1,3 +1,10 @@
+#lobby {
+  position: relative;
+  right: 320px;
+  transition: right .5s linear; }
+  #lobby.transition-off {
+    transition: none; }
+
 #logo {
   opacity: .95; }
 

@@ -4,6 +4,7 @@ var pokerApp = angular.module('poker-app', []);
 
 pokerApp.run(function($rootScope) {
     $rootScope.enableFindGame = true;
+    $rootScope.firstGame = true;
 });
 
 
@@ -74,12 +75,17 @@ pokerApp.directive('card', function() {
 
 
 function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
+    setTimeout(function() {
+        $('#game').css('left', '0px');
+    });
 
     $scope.checkCallText = function() {
         var gs = $scope.gs;
         var seat = $scope.seat;
         if (!gs || !gs.availableActions) {
             return 'Call';
+        } else if (gs.availableActions.indexOf(c.ACTION_CALL) < 0) {
+            return 'Check';
         } else if (gs.toCall >= gs.players[seat].chips && gs.actionOn == seat) {
             return 'All In'
         }
@@ -129,8 +135,6 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
     Socket.emit('new-game', gameHolder.gameData());
 
     sockets($scope, $rootScope, Socket);
-    $rootScope.socketBinded = true;
-
 }
 
 
@@ -145,6 +149,9 @@ function gameOver($scope, $rootScope, disconnect) {
         msg += 'You lost.';
     }
     notify(msg);
+    setTimeout(function() {
+        $('#game').css('left', '320px');
+    }, 4500);
     setTimeout(function() {
        $rootScope.enableFindGame = true;
        $rootScope.view = 'lobby';
@@ -196,6 +203,10 @@ function sockets($scope, $rootScope, Socket) {
     });
 
     Socket.on('hand-complete', function(gs) {
+        // Gray out buttons.
+        $scope.gs.actionOn = gs.actionOn;
+        $scope.gs.availableActions = gs.availableActions;
+
         var delayInterval = 2000;
         var delay = 0;  // Set delays for all-in sequence.
         if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
@@ -261,6 +272,20 @@ function sockets($scope, $rootScope, Socket) {
 
 
 function LobbyCtrl($scope, $rootScope, gameHolder) {
+    notify("Welcome to Versus Poker!");
+    setTimeout(function() {
+        if ($rootScope.firstGame) {
+            $('#lobby').addClass('transition-off');
+            $('#lobby').css('right', '0px');
+            setTimeout(function() {
+                $('#lobby').removeClass('transition-off');
+            });
+        } else {
+            $('#lobby').css('right', '0px');
+        }
+    });
+
+    var playerId, socket;
     $scope.findGame = function() {
         // Connect to the match-making system.
         if (!$rootScope.enableFindGame) {
@@ -271,31 +296,38 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
         notify('Searching for an opponent...');
         $rootScope.enableFindGame = false;
 
-        if (!socket) {
-            socket = io.connect('http://localhost:4001/matchmaking',
-                                {'connect timeout': 8000});
+        socket = io.connect('http://localhost:4001/matchmaking',
+                            {'connect timeout': 8000});
 
-            socket.on('connect_failed', function() {
-                // Could not connect to server.
-                $('#find-game').text('Find Game').removeClass('inactive');
-                notify('Sorry, the server seems to be down.');
-                $rootScope.enableFindGame = true;
-            });
+        socket.on('connect_failed', function() {
+            // Could not connect to server.
+            $('#find-game').text('Find Game').removeClass('inactive');
+            notify('Sorry, the server seems to be down.');
+            $rootScope.enableFindGame = true;
+        });
 
-            // Server will tell us what our player id is if we don't have one.
-            socket.on('assign-player-id', function(data) {
-                playerId = data.playerId;
-            });
+        // Server will tell us what our player id is if we don't have one.
+        socket.on('assign-player-id', function(data) {
+            playerId = data.playerId;
+        });
 
-            // Match found, start a game.
-            socket.on('match-found', function(data) {
-                gameHolder.newGame(data);
+        // Match found, start a game.
+        socket.on('match-found', function(data) {
+            gameHolder.newGame(data);
+            setTimeout(function() {
                 $rootScope.view = 'game';
                 $rootScope.$apply();
-            });
-        }
+            }, 500);
 
-        socket.emit('find-match', { playerId: playerId });
+            $rootScope.firstGame = false;
+            $('#lobby').css('right', '320px');
+            $('#loading').css('opacity', '1');
+            setTimeout(function() {
+                $('#loading').css('opacity', '0');
+            }, 1000);
+        });
+
+        socket.emit('find-match', {playerId: playerId});
     };
 }
 
