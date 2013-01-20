@@ -77,10 +77,14 @@
     margin-left: 240px; }
     #game .chipstack span {
       position: absolute; }
+    #game .chipstack .stack {
+      background: url("/img/assault.png");
+      border-radius: 4px 0 0 4px;
+      padding: 6px 57px 6px 10px; }
     #game .chipstack#opponent-stack {
       margin-top: 6px; }
     #game .chipstack#player-stack {
-      margin-top: 267px; }
+      margin-top: 253px; }
     #game .chipstack#opponent-pip {
       margin-top: 64px; }
     #game .chipstack#player-pip {
@@ -138,8 +142,8 @@
       display: inline-block;
       float: left;
       width: 25%;
-      margin: 0 3px 0 3px;
-      padding: 10px 7px 15px 7px;
+      margin: 0 3px;
+      padding: 10px 7px 17px;
       top: 20px; }
       #game #actions span.button .inner-button {
         display: inline; }
