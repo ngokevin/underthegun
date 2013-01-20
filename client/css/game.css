@@ -8,7 +8,7 @@
     box-shadow: 0 0 1px 1px #282828;
     background: url("/img/debut_light.png");
     border: 1px solid #0a3102;
-    border-radius: 2px;
+    border-radius: 3px;
     color: #050505;
     display: inline-block;
     font-size: 32px;
@@ -81,9 +81,32 @@
       margin-top: 6px; }
     #game .chipstack#player-stack {
       margin-top: 267px; }
-  #game .chip-icon {
+    #game .chipstack#opponent-pip {
+      margin-top: 64px; }
+    #game .chipstack#player-pip {
+      margin-top: 209px; }
+  #game .chip {
+    -moz-box-shadow: 0 0 1px 1px #282828;
+    -webkit-box-shadow: 0 0 1px 1px #282828;
+    box-shadow: 0 0 1px 1px #282828;
+    background: #ebebeb;
+    border: 1px double green;
+    border-radius: 12px;
+    bottom: 2px;
+    color: #161414;
+    display: inline;
+    position: relative;
+    font-size: 9px;
     height: 16px;
     width: 16px; }
+    #game .chip span {
+      font-size: 12px;
+      font-weight: bold;
+      position: relative;
+      top: 2px; }
+      #game .chip span:after {
+        color: #8c0a0a;
+        content: "\2660"; }
   #game .pkr-button {
     -moz-box-shadow: 0 0 1px 1px #282828;
     -webkit-box-shadow: 0 0 1px 1px #282828;
@@ -111,11 +134,12 @@
     position: relative;
     left: 13px; }
     #game #actions span.button {
+      border-radius: 10px 10px 0 0;
       display: inline-block;
       float: left;
       width: 25%;
       margin: 0 3px 0 3px;
       padding: 10px 7px 15px 7px;
-      top: 18px; }
+      top: 20px; }
       #game #actions span.button .inner-button {
         display: inline; }

@@ -51,7 +51,7 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
             $('#loading').css('opacity', '1');
             setTimeout(function() {
                 $('#loading').css('opacity', '0');
-            }, 1000);
+            }, 600);
         });
 
         socket.emit('find-match', {playerId: playerId});

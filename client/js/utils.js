@@ -9,9 +9,17 @@ function gameOver($scope, $rootScope, disconnect) {
         msg += 'You lost.';
     }
     notify(msg);
+
+    // Animation.
     setTimeout(function() {
         $('#game').css('left', '320px');
+        $('#loading').css('opacity', '1');
+        setTimeout(function() {
+            $('#loading').css('opacity', '0');
+        }, 600);
     }, 4500);
+
+    // Switch to lobby.
     setTimeout(function() {
        $rootScope.enableFindGame = true;
        $rootScope.view = 'lobby';
