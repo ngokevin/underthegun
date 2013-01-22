@@ -8,7 +8,7 @@ function gameOver($scope, $rootScope, disconnect) {
     } else {
         msg += 'You lost.';
     }
-    notify(msg);
+    $rootScope.notify = msg;
 
     // Animation.
     setTimeout(function() {
@@ -74,7 +74,42 @@ function strCard(card) {
 }
 
 
-var notBar = $('#not-bar');
-function notify(msg) {
-    notBar.text(msg);
+function resetSlider(gs, seat, zero) {
+    setTimeout(function() {
+        if (gs.actionOn == seat) {
+            $('.bet-slider').attr('value', zero ? gs.minRaiseTo : 0);
+            $('.bet-slider').trigger('change');
+        } else {
+            $('#slider-fill').attr('value', '');
+        }
+    });
+}
+
+
+function prettyLastAction(history, seat) {
+    var highestRound = '0';
+    for (var round in history) {
+        if (history.hasOwnProperty(round)) {
+            if (history[round].length > 0 && round > highestRound) {
+                highestRound = round;
+            }
+        }
+    }
+    var round = highestRound;
+    var lastAction = history[round][history[round].length - 1];
+
+    var msg = '';
+    if (lastAction.seat == seat) {
+        msg += 'You ';
+    } else {
+        msg += 'Opponent ';
+    }
+
+    msg += c.actions[lastAction.action.action];
+
+    if (lastAction.action.action == c.ACTION_RAISE) {
+        msg += ' ' + lastAction.action.amount;
+    }
+    msg += '.';
+    return msg;
 }

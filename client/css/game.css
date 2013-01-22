@@ -45,7 +45,7 @@
       top: 27px; }
     #game .card .suit {
       bottom: -4px;
-      font-size: 40px;
+      font-size: 36px;
       position: absolute;
       right: 0; }
     #game .card .black {
@@ -126,7 +126,7 @@
     #game .pkr-button#opponent-button {
       margin-top: 2px; }
     #game .pkr-button#player-button {
-      margin-top: 259px; }
+      margin-top: 262px; }
     #game .pkr-button span {
       font-size: 14px;
       font-weight: bold;

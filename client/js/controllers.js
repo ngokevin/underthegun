@@ -1,5 +1,7 @@
 function LobbyCtrl($scope, $rootScope, gameHolder) {
-    notify("Welcome to Versus Poker!");
+    $rootScope.notify = 'Welcome to Versus Poker!'
+
+    // Animation stuff.
     setTimeout(function() {
         if ($rootScope.firstGame) {
             $('#lobby').addClass('transition-off');
@@ -20,7 +22,7 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
         }
 
         $('#find-game').text('Finding game...').addClass('inactive');
-        notify('Searching for an opponent...');
+        $rootScope.notify = 'Searching for an opponent...';
         $rootScope.enableFindGame = false;
 
         socket = io.connect('http://localhost:4001/matchmaking',
@@ -29,7 +31,7 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
         socket.on('connect_failed', function() {
             // Could not connect to server.
             $('#find-game').text('Find Game').removeClass('inactive');
-            notify('Sorry, the server seems to be down.');
+            $rootScope.notify = 'Sorry, the server seems to be down.';
             $rootScope.enableFindGame = true;
         });
 
@@ -40,12 +42,17 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
 
         // Match found, start a game.
         socket.on('match-found', function(data) {
+            $rootScope.$apply(function() {
+                $rootScope.notify = 'Cards in the air!';
+            });
+
             gameHolder.newGame(data);
             setTimeout(function() {
                 $rootScope.view = 'game';
                 $rootScope.$apply();
             }, 500);
 
+            // Animation stuff.
             $rootScope.firstGame = false;
             $('#lobby').css('right', '320px');
             $('#loading').css('opacity', '1');
@@ -85,7 +92,8 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
         for (var i = 0; i < gs.players.length; i++) {
             if (gs.players[i].roundPIP > 0) {
                 return 'Raise to';
-            } }
+            }
+        }
         return 'Bet';
     };
 
@@ -113,6 +121,8 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
                           amount: $scope.raiseAmount};
                 break;
         }
+        resetSlider(gs, seat, true);
+        $('#slider-fill').attr('value', '');
         Socket.emit('action', {action: action, gs: gs});
     };
 

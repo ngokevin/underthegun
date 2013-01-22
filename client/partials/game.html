@@ -51,7 +51,6 @@
            name="slider-fill" data-highlight="true"
            value="{{ gs.bigBlind * 2 }}" step="10"
            min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips + gs.players[seat].roundPIP}}">
-
   </div>
 
   <div id="actions">
@@ -65,13 +64,15 @@
                      (gs.availableActions.indexOf(1) == -1 &&
                       gs.availableActions.indexOf(2) == -1)}">
       <span class="action c">{{ checkCallText() }}</span>
-      <span class="inner-button">{{ gs.toCall }}</span>
+      <span class="inner-button">{{ gs.actionOn == seat && gs.toCall || '' }}</span>
     </span>
     <span class="button" ng-click="doAction('raise')"
           ng-class="{inactive: gs.actionOn != seat ||
                      gs.availableActions.indexOf(3) == -1}">
-      <span class="action c">{{ betRaiseText() }}</span>
-      <span class="inner-button">{{ raiseAmount }}</span>
+      <span class="action c">
+        {{ raiseAmount >= gs.players[seat].chips + gs.players[seat].roundPIP && 'All-in' || betRaiseText() }}
+      </span>
+      <span class="inner-button">{{ gs.actionOn == seat && raiseAmount || '' }}</span>
     </span>
   </div>
 </div>
