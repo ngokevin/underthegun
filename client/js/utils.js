@@ -12,11 +12,8 @@ function gameOver($scope, $rootScope, disconnect) {
 
     // Animation.
     setTimeout(function() {
+        $('.loading').css('opacity', '1');
         $('#game').css('left', '320px');
-        $('#loading').css('opacity', '1');
-        setTimeout(function() {
-            $('#loading').css('opacity', '0');
-        }, 600);
     }, 4500);
 
     // Switch to lobby.

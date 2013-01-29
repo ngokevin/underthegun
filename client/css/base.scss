@@ -36,16 +36,6 @@ html, body {
     width: 100%;
 }
 
-#loading {
-    @include transition(opacity .5s ease-out);
-    font-size: 32px;
-    opacity: 0;
-    position: absolute;
-    text-align: center;
-    top: 200px;
-    width: 100%;
-}
-
 span.button {
     @include default-box-shadow();
     @include gradient($red, darken($red, 3%));
@@ -133,10 +123,6 @@ span.button {
     &.logo {
         @include box-shadow(0 0 1px 0 $light-gray);
         @include transform(scale(3));
-        position: relative;
-        margin-bottom: 235px;
-        top: 83px;
-        right: 6px;
         &.transform {
             @include transform(scale(3) rotateZ(-5deg));
             &:nth-child(2) {
@@ -144,4 +130,12 @@ span.button {
             }
         }
     }
+}
+
+.loading {
+    @include transition(opacity .4s ease-out);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 235px;
 }

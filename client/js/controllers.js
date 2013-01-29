@@ -6,9 +6,11 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
         $('.card.logo').addClass('transform');
         if ($rootScope.firstGame) {
             $('#lobby').addClass('transition-off');
-            $('#lobby').css('right', '0px');
             setTimeout(function() {
-                $('#lobby').removeClass('transition-off');
+                $('#lobby').css('right', '0px');
+                setTimeout(function() {
+                    $('#lobby').removeClass('transition-off');
+                });
             });
         } else {
             $('#lobby').css('right', '0px');
@@ -56,9 +58,8 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
             // Animation stuff.
             $rootScope.firstGame = false;
             $('#lobby').css('right', '320px');
-            $('#loading').css('opacity', '1');
             setTimeout(function() {
-                $('#loading').css('opacity', '0');
+                $('.loading').css('opacity', '0');
             }, 600);
         });
 
