@@ -23,10 +23,10 @@ $light-gray: rgb(80, 80, 80);
     background-color: $color2;
     background-image: -webkit-gradient(linear, left bottom, left top, from($color1), to($color2));
     background-image: -webkit-linear-gradient($color1, $color2);
-    background-image:    -moz-linear-gradient($color1, $color2);
-    background-image:     -ms-linear-gradient($color1, $color2);
-    background-image:      -o-linear-gradient($color1, $color2);
-    background-image:         linear-gradient($color1, $color2);
+    background-image: -moz-linear-gradient($color1, $color2);
+    background-image: -ms-linear-gradient($color1, $color2);
+    background-image: -o-linear-gradient($color1, $color2);
+    background-image: linear-gradient($color1, $color2);
 }
 
 @mixin radial-gradient($color1, $color2) {
@@ -37,4 +37,26 @@ $light-gray: rgb(80, 80, 80);
     background: -ms-radial-gradient($color1, $color2);
     background: -o-radial-gradient($color1, $color2);
     background: radial-gradient($color1, $color2);
+}
+
+@mixin transform($transform) {
+    -moz-transform: $transform;
+   -ms-transform: $transform;
+   -o-transform: $transform;
+   -webkit-transform: $transform;
+}
+
+@mixin transition($transition) {
+    -moz-transition: $transition;
+    -ms-transition: $transition;
+    -o-transition: $transition;
+    -webkit-transition: $transition;
+    transition: $transition;
+}
+
+@mixin transform-origin($transform-origin) {
+    -moz-transform-origin: $transform-origin;
+   -ms-transform-origin: $transform-origin;
+   -o-transform-origin: $transform-origin;
+   -webkit-transform-origin: $transform-origin;
 }

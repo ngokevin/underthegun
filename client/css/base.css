@@ -37,8 +37,12 @@ html, body {
   width: 100%; }
 
 #loading {
+  -moz-transition: opacity 0.5s ease-out;
+  -ms-transition: opacity 0.5s ease-out;
+  -o-transition: opacity 0.5s ease-out;
+  -webkit-transition: opacity 0.5s ease-out;
+  transition: opacity 0.5s ease-out;
   font-size: 32px;
-  transition: opacity .5s ease-out;
   opacity: 0;
   position: absolute;
   text-align: center;
@@ -56,7 +60,7 @@ span.button {
   background-image: -ms-linear-gradient(#8c0a0a, #7e0909);
   background-image: -o-linear-gradient(#8c0a0a, #7e0909);
   background-image: linear-gradient(#8c0a0a, #7e0909);
-  border-radius: 10px;
+  border-radius: 3px;
   color: #ebebeb;
   cursor: pointer;
   display: inline-block;
@@ -78,3 +82,80 @@ span.button {
     color: #505050;
     cursor: default;
     box-shadow: 0 0 0 0; }
+
+.card {
+  -moz-box-shadow: 0 0 1px 1px #282828;
+  -webkit-box-shadow: 0 0 1px 1px #282828;
+  box-shadow: 0 0 1px 1px #282828;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  background: url("/img/debut_light.png");
+  border: 1px solid #161414;
+  border-radius: 3px;
+  color: #050505;
+  display: inline-block;
+  font-size: 32px;
+  margin: 6px 0 6px;
+  height: 70px;
+  position: relative;
+  width: 50px;
+  vertical-align: top; }
+  .card .rank {
+    font: 26px monospace;
+    position: absolute;
+    left: 3px;
+    top: 0; }
+  .card .suit-little {
+    font-size: 18px;
+    left: 3px;
+    position: absolute;
+    top: 27px; }
+  .card .suit {
+    bottom: -4px;
+    font-size: 36px;
+    position: absolute;
+    right: 0; }
+  .card .black {
+    color: black; }
+  .card .red {
+    color: #C3071D; }
+  .card.undealt {
+    box-shadow: none;
+    background: none;
+    border: 1px dashed #505050;
+    position: relative; }
+  .card.facedown {
+    background: url("/img/grey_sandbag.png");
+    overflow: hidden; }
+    .card.facedown:after {
+      color: #505050;
+      content: 'vs';
+      font-size: 52px;
+      left: -4px;
+      position: absolute;
+      top: -2px; }
+  .card.logo {
+    -moz-box-shadow: 0 0 1px 0 #505050;
+    -webkit-box-shadow: 0 0 1px 0 #505050;
+    box-shadow: 0 0 1px 0 #505050;
+    -moz-transform: scale(3);
+    -ms-transform: scale(3);
+    -o-transform: scale(3);
+    -webkit-transform: scale(3);
+    position: relative;
+    margin-bottom: 235px;
+    top: 83px;
+    right: 6px; }
+    .card.logo.transform {
+      -moz-transform: scale(3) rotateZ(-5deg);
+      -ms-transform: scale(3) rotateZ(-5deg);
+      -o-transform: scale(3) rotateZ(-5deg);
+      -webkit-transform: scale(3) rotateZ(-5deg); }
+      .card.logo.transform:nth-child(2) {
+        -moz-transform: scale(3) rotateZ(35deg);
+        -ms-transform: scale(3) rotateZ(35deg);
+        -o-transform: scale(3) rotateZ(35deg);
+        -webkit-transform: scale(3) rotateZ(35deg); }

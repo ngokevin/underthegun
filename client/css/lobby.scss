@@ -1,18 +1,21 @@
 @import 'globals';
 
 #lobby {
+    @include transition(right .5s linear);
     position: relative;
     right: 320px;
-    transition: right .5s linear;
     &.transition-off {
-        transition: none;
+        @include transition(none);
     }
 }
 
-#logo {
-    opacity: .95;
+h1 {
+    margin-bottom: 0;
 }
 
 #find-game {
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }

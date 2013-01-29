@@ -3,6 +3,7 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
 
     // Animation stuff.
     setTimeout(function() {
+        $('.card.logo').addClass('transform');
         if ($rootScope.firstGame) {
             $('#lobby').addClass('transition-off');
             $('#lobby').css('right', '0px');

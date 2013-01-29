@@ -1,57 +1,11 @@
 #game {
+  -moz-transition: left 0.5s linear;
+  -ms-transition: left 0.5s linear;
+  -o-transition: left 0.5s linear;
+  -webkit-transition: left 0.5s linear;
+  transition: left 0.5s linear;
   left: 320px;
-  position: relative;
-  transition: left .5s linear; }
-  #game .card {
-    -moz-box-shadow: 0 0 1px 1px #282828;
-    -webkit-box-shadow: 0 0 1px 1px #282828;
-    box-shadow: 0 0 1px 1px #282828;
-    background: url("/img/debut_light.png");
-    border: 1px solid #0a3102;
-    border-radius: 3px;
-    color: #050505;
-    display: inline-block;
-    font-size: 32px;
-    margin: 6px 0 6px;
-    height: 70px;
-    position: relative;
-    transition: all .2s;
-    width: 50px;
-    vertical-align: top; }
-    #game .card.undealt {
-      box-shadow: none;
-      background: none;
-      border: 1px dashed #505050;
-      position: relative; }
-    #game .card.facedown {
-      background: url("/img/grey_sandbag.png");
-      overflow: hidden; }
-      #game .card.facedown:after {
-        color: #505050;
-        content: 'vs';
-        font-size: 52px;
-        left: -4px;
-        position: absolute;
-        top: -2px; }
-    #game .card .rank {
-      font: 26px monospace;
-      position: absolute;
-      left: 3px;
-      top: 0; }
-    #game .card .suit-little {
-      font-size: 18px;
-      left: 3px;
-      position: absolute;
-      top: 27px; }
-    #game .card .suit {
-      bottom: -4px;
-      font-size: 36px;
-      position: absolute;
-      right: 0; }
-    #game .card .black {
-      color: black; }
-    #game .card .red {
-      color: #C3071D; }
+  position: relative; }
   #game #board-cards {
     margin-top: 12px; }
   #game #bet-slider {

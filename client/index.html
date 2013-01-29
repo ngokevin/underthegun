@@ -25,8 +25,19 @@
   <body ng-app="poker-app">
     <div id='wrap'>
       <div id='not-bar'>{{ notify }}</div>
-      <div id='loading'>VERSUS POKER</div>
-      <div ng-switch on="view">
+      <div id='loading'>
+        <span class="card logo">
+          <span class="rank">V</span>
+          <span class="suit-little red">&hearts;</span>
+          <span class="suit red">&hearts;</span>
+        </span>
+        <span class="card logo">
+          <span class="rank">S</span>
+          <span class="suit-little red">&hearts;</span>
+          <span class="suit red">&hearts;</span>
+        </span>
+      </div>
+      <div id='view' ng-switch on="view">
         <div ng-switch-default ng-include="'partials/lobby.html'"></div>
         <div ng-switch-when="game" ng-include="'partials/game.html'"></div>
       </div>

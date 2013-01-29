@@ -1,12 +1,23 @@
 #lobby {
+  -moz-transition: right 0.5s linear;
+  -ms-transition: right 0.5s linear;
+  -o-transition: right 0.5s linear;
+  -webkit-transition: right 0.5s linear;
+  transition: right 0.5s linear;
   position: relative;
-  right: 320px;
-  transition: right .5s linear; }
+  right: 320px; }
   #lobby.transition-off {
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    -webkit-transition: none;
     transition: none; }
 
-#logo {
-  opacity: .95; }
+h1 {
+  margin-bottom: 0; }
 
 #find-game {
-  position: relative; }
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0; }
