@@ -4,8 +4,10 @@
   -o-transition: right 0.5s linear;
   -webkit-transition: right 0.5s linear;
   transition: right 0.5s linear;
+  float: left;
+  height: 100%;
   position: relative;
-  right: 320px; }
+  width: 50%; }
   #lobby.transition-off {
     -moz-transition: none;
     -ms-transition: none;
@@ -13,11 +15,35 @@
     -webkit-transition: none;
     transition: none; }
 
+#logo {
+  margin: 0 auto;
+  position: relative;
+  top: 90px;
+  right: 10px; }
+  #logo .logo {
+    -moz-box-shadow: 0 0 1px 0 #505050;
+    -webkit-box-shadow: 0 0 1px 0 #505050;
+    box-shadow: 0 0 1px 0 #505050;
+    -moz-transform: scale(3);
+    -ms-transform: scale(3);
+    -o-transform: scale(3);
+    -webkit-transform: scale(3); }
+    #logo .logo.transform {
+      -moz-transform: scale(3) rotateZ(-5deg);
+      -ms-transform: scale(3) rotateZ(-5deg);
+      -o-transform: scale(3) rotateZ(-5deg);
+      -webkit-transform: scale(3) rotateZ(-5deg); }
+      #logo .logo.transform:nth-child(2) {
+        -moz-transform: scale(3) rotateZ(35deg);
+        -ms-transform: scale(3) rotateZ(35deg);
+        -o-transform: scale(3) rotateZ(35deg);
+        -webkit-transform: scale(3) rotateZ(35deg); }
+
 h1 {
-  margin-bottom: 0; }
+  margin-top: 0; }
 
 #find-game {
   position: absolute;
-  top: 360px;
+  top: 425px;
   left: 0;
   right: 0; }

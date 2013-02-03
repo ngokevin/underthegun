@@ -7,7 +7,7 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
         newGame: function(gameData) {
             _gameData = gameData;
         }
-    }
+    };
 }).factory('Socket', function($rootScope) {
     var socket = io.connect('http://localhost:4001/game');
 
@@ -26,3 +26,28 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
         }
     };
 })
+.factory('pubsub', function() {
+    var cache = {};
+    return {
+        publish: function(topic, args) {
+            cache[topic] && $.each(cache[topic], function() {
+                this.apply(null, args || []);
+            });
+        },
+        subscribe: function(topic, callback) {
+            if(!cache[topic]) {
+                cache[topic] = [];
+            }
+            cache[topic].push(callback);
+            return [topic, callback];
+        },
+        unsubscribe: function(handle) {
+            var t = handle[0];
+            cache[t] && $.each(cache[t], function(idx){
+                if(this == handle[1]) {
+                    cache[t].splice(idx, 1);
+                }
+            });
+        }
+    };
+});

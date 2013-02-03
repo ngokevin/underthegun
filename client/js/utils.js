@@ -12,14 +12,13 @@ function gameOver($scope, $rootScope, disconnect) {
 
     // Animation.
     setTimeout(function() {
-        $('.loading').css('opacity', '1');
         $('#game').css('left', '320px');
     }, 4500);
 
     // Switch to lobby.
     setTimeout(function() {
        $rootScope.enableFindGame = true;
-       $rootScope.view = 'lobby';
+       $rootScope.gameView = false;
        $rootScope.$apply();
     }, 5000);
     setTimeout(function() {
@@ -33,7 +32,7 @@ function clearBoard($scope) {
     for (var i = 0; i < 5; i++) {
         $scope.gs.boardCards[i] = null;
     }
-    for (var i = 0; i < 2; i++) {
+    for (i = 0; i < 2; i++) {
         $scope.gs.players[$scope.opponentSeat][i] = null;
     }
 }

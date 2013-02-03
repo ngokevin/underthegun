@@ -1,11 +1,15 @@
 @import 'globals';
 
+
 html, body {
+    background: rgb(25, 25, 25);
     color: $white;
     margin: 0 auto;
-    margin-top: -12px;
     overflow: hidden;
     padding: 0;
+    &.ui-mobile {
+        height: 100%;
+    }
 }
 
 .c:after {
@@ -17,20 +21,25 @@ html, body {
 }
 
 #wrap {
+    @include box-shadow(0 0 1px 1px $medium-gray);
     @include radial-gradient(lighten($green, 5%), $green);
-    height: 454px;
+    @include transition(all .4s);
+    height: 480px;
     margin: 0 auto;
     overflow: hidden;
-    padding: 12px 0 6px;
     position: relative;
+    right: 0;
     text-align: center;
-    width: 320px;
+    width: 640px;
+    &.gameView {
+        right: 320px;
+    }
 }
 
-#not-bar {
+.not-bar {
     background: $dark-gray;
     font-size: 13px;
-    margin-bottom: 12px;
+    margin-bottom: 13px;
     height: 22px;
     padding: 5px 0 0;
     width: 100%;
@@ -120,22 +129,6 @@ span.button {
             top: -2px;
         }
     }
-    &.logo {
-        @include box-shadow(0 0 1px 0 $light-gray);
-        @include transform(scale(3));
-        &.transform {
-            @include transform(scale(3) rotateZ(-5deg));
-            &:nth-child(2) {
-                @include transform(scale(3) rotateZ(35deg));
-            }
-        }
-    }
+
 }
 
-.loading {
-    @include transition(opacity .4s ease-out);
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 235px;
-}

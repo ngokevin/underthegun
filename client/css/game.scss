@@ -1,9 +1,11 @@
 @import 'globals';
 
+
 #game {
     @include transition(left .5s linear);
-    left: 320px;
     position: relative;
+    float: left;
+    width: 50%;
     #board-cards {
         margin-top: 12px;
     }
@@ -107,8 +109,9 @@
         }
     }
     #actions {
+        left: 10px;
         position: relative;
-        left: 13px;
+        top: 40px;
         span.button {
             border-radius: 10px 10px 0 0;
             display: inline-block;
@@ -116,7 +119,6 @@
             width: 25%;
             margin: 0 3px;
             padding: 10px 7px 17px;
-            top: 20px;
             .inner-button {
                 display: inline;
             }

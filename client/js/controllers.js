@@ -1,21 +1,9 @@
-function LobbyCtrl($scope, $rootScope, gameHolder) {
-    $rootScope.notify = 'Welcome to Versus Poker!'
+function LobbyCtrl($scope, $rootScope,  pubsub) {
+    $rootScope.notify = 'Welcome to Versus Poker!';
 
-    // Animation stuff.
     setTimeout(function() {
         $('.card.logo').addClass('transform');
-        if ($rootScope.firstGame) {
-            $('#lobby').addClass('transition-off');
-            setTimeout(function() {
-                $('#lobby').css('right', '0px');
-                setTimeout(function() {
-                    $('#lobby').removeClass('transition-off');
-                });
-            });
-        } else {
-            $('#lobby').css('right', '0px');
-        }
-    });
+    }, 100);
 
     var playerId, socket;
     $scope.findGame = function() {
@@ -48,19 +36,9 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
             $rootScope.$apply(function() {
                 $rootScope.notify = 'Cards in the air!';
             });
-
-            gameHolder.newGame(data);
-            setTimeout(function() {
-                $rootScope.view = 'game';
-                $rootScope.$apply();
-            }, 500);
-
-            // Animation stuff.
-            $rootScope.firstGame = false;
-            $('#lobby').css('right', '320px');
-            setTimeout(function() {
-                $('.loading').css('opacity', '0');
-            }, 600);
+            pubsub.publish('new-game', [data]);
+            $rootScope.gameView = true;
+            $rootScope.$apply();
         });
 
         socket.emit('find-match', {playerId: playerId});
@@ -68,9 +46,12 @@ function LobbyCtrl($scope, $rootScope, gameHolder) {
 }
 
 
-function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
-    setTimeout(function() {
-        $('#game').css('left', '0px');
+function PokerCtrl($scope, $rootScope, pubsub, Socket) {
+    $('.bet-slider').slider();
+
+    pubsub.subscribe('new-game', function(data) {
+        Socket.emit('new-game', data);
+        sockets($scope, $rootScope, Socket);
     });
 
     $scope.checkCallText = function() {
@@ -80,8 +61,9 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
             return 'Call';
         } else if (gs.availableActions.indexOf(c.ACTION_CALL) < 0) {
             return 'Check';
-        } else if (gs.toCall >= gs.players[seat].chips && gs.actionOn == seat) {
-            return 'All In'
+        } else if (gs.toCall >= gs.players[seat].chips &&
+                   gs.actionOn == seat) {
+            return 'All In';
         }
         return 'Call';
     };
@@ -99,7 +81,7 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
         return 'Bet';
     };
 
-    $scope.doAction = function(action) {
+    $scope.doAction = function(btn_action) {
         // Displays action buttons, gets the one clicked, and sends the
         // action to the server.
         var gs = $scope.gs;
@@ -107,7 +89,7 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
         if (gs.actionOn != seat) { return; }
 
         var action;
-        switch (action) {
+        switch (btn_action) {
             case 'fold':
                 action = {seat: seat, action: c.ACTION_FOLD};
                 break;
@@ -127,8 +109,4 @@ function PokerCtrl($scope, $rootScope, Socket, gameHolder) {
         $('#slider-fill').attr('value', '');
         Socket.emit('action', {action: action, gs: gs});
     };
-
-    Socket.emit('new-game', gameHolder.gameData());
-
-    sockets($scope, $rootScope, Socket);
 }

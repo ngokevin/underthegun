@@ -1,9 +1,11 @@
 html, body {
+  background: #191919;
   color: #ebebeb;
   margin: 0 auto;
-  margin-top: -12px;
   overflow: hidden;
   padding: 0; }
+  html.ui-mobile, body.ui-mobile {
+    height: 100%; }
 
 .c:after {
   content: ".";
@@ -13,6 +15,9 @@ html, body {
   visibility: hidden; }
 
 #wrap {
+  -moz-box-shadow: 0 0 1px 1px #282828;
+  -webkit-box-shadow: 0 0 1px 1px #282828;
+  box-shadow: 0 0 1px 1px #282828;
   background: #0a3102;
   background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(#0f4a03), to(#0a3102));
   background: -webkit-radial-gradient(#0f4a03, #0a3102);
@@ -20,18 +25,25 @@ html, body {
   background: -ms-radial-gradient(#0f4a03, #0a3102);
   background: -o-radial-gradient(#0f4a03, #0a3102);
   background: radial-gradient(#0f4a03, #0a3102);
-  height: 454px;
+  -moz-transition: all 0.4s;
+  -ms-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  height: 480px;
   margin: 0 auto;
   overflow: hidden;
-  padding: 12px 0 6px;
   position: relative;
+  right: 0;
   text-align: center;
-  width: 320px; }
+  width: 640px; }
+  #wrap.gameView {
+    right: 320px; }
 
-#not-bar {
+.not-bar {
   background: #161414;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 13px;
   height: 22px;
   padding: 5px 0 0;
   width: 100%; }
@@ -124,32 +136,3 @@ span.button {
       left: -4px;
       position: absolute;
       top: -2px; }
-  .card.logo {
-    -moz-box-shadow: 0 0 1px 0 #505050;
-    -webkit-box-shadow: 0 0 1px 0 #505050;
-    box-shadow: 0 0 1px 0 #505050;
-    -moz-transform: scale(3);
-    -ms-transform: scale(3);
-    -o-transform: scale(3);
-    -webkit-transform: scale(3); }
-    .card.logo.transform {
-      -moz-transform: scale(3) rotateZ(-5deg);
-      -ms-transform: scale(3) rotateZ(-5deg);
-      -o-transform: scale(3) rotateZ(-5deg);
-      -webkit-transform: scale(3) rotateZ(-5deg); }
-      .card.logo.transform:nth-child(2) {
-        -moz-transform: scale(3) rotateZ(35deg);
-        -ms-transform: scale(3) rotateZ(35deg);
-        -o-transform: scale(3) rotateZ(35deg);
-        -webkit-transform: scale(3) rotateZ(35deg); }
-
-.loading {
-  -moz-transition: opacity 0.4s ease-out;
-  -ms-transition: opacity 0.4s ease-out;
-  -o-transition: opacity 0.4s ease-out;
-  -webkit-transition: opacity 0.4s ease-out;
-  transition: opacity 0.4s ease-out;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 235px; }

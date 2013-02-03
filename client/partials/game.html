@@ -1,4 +1,6 @@
 <div id="game" ng-controller="PokerCtrl">
+  <div class="not-bar">{{ notify }}</div>
+
   <div id="opponent-stack" class="chipstack info">
     <div class="stack">
       <div class="chip"><span></span></div>
@@ -49,8 +51,9 @@
   <div id="bet-slider">
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
-           value="{{ gs.bigBlind * 2 }}" step="10"
-           min="{{ gs.minRaiseTo }}" max="{{ gs.players[seat].chips + gs.players[seat].roundPIP}}">
+           value="{{ gs.bigBlind * 2 || 0 }}" step="10"
+           min="{{ gs.minRaiseTo || 0 }}"
+           max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0}}">
   </div>
 
   <div id="actions">
