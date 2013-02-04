@@ -1,7 +1,7 @@
 function sockets($scope, $rootScope, Socket) {
     Socket.on('assign-seat', function(data) {
         $scope.seat = data.seat;
-        $scope.opponentSeat = data.seat == 0 ? 1 : 0;
+        $scope.opponentSeat = data.seat === 0 ? 1 : 0;
     });
 
     Socket.on('new-game', function(gs) {
@@ -12,7 +12,7 @@ function sockets($scope, $rootScope, Socket) {
             .on('change', function() {
                 $scope.raiseAmount = $('.bet-slider').attr('value');
                 $scope.$apply();
-            })
+            });
         setTimeout(function() {
             $('.bet-slider').trigger('change');
         });
@@ -34,6 +34,7 @@ function sockets($scope, $rootScope, Socket) {
 
     Socket.on('all-in', function(gs) {
         $scope.gs = gs;
+        $rootScope.notify = prettyLastAction(gs.history, $scope.seat);
     });
 
     Socket.on('hand-complete', function(gs) {
@@ -89,7 +90,7 @@ function sockets($scope, $rootScope, Socket) {
         }
 
         setTimeout(function() {
-            Socket.emit('hand-complete', {gs: gs})
+            Socket.emit('hand-complete', {gs: gs});
             $scope.gs = gs;
         }, delay || 0);
     });

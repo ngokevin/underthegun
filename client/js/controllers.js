@@ -11,34 +11,34 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
         if (!$rootScope.enableFindGame) {
             return;
         }
-
-        $rootScope.notify = 'Searching for an opponent...';
         $rootScope.enableFindGame = false;
+        $rootScope.notify = 'Searching for an opponent...';
 
-        socket = io.connect('http://localhost:4001/matchmaking',
-                            {'connect timeout': 8000});
+        if (!socket) {
+            socket = io.connect('http://localhost:4001/matchmaking',
+                                {'connect timeout': 8000});
 
-        socket.on('connect_failed', function() {
-            // Could not connect to server.
-            $rootScope.notify = 'Sorry, the server seems to be down.';
-            $rootScope.enableFindGame = true;
-        });
-
-        // Server will tell us what our player id is if we don't have one.
-        socket.on('assign-player-id', function(data) {
-            playerId = data.playerId;
-        });
-
-        // Match found, start a game.
-        socket.on('match-found', function(data) {
-            $rootScope.$apply(function() {
-                $rootScope.notify = 'Cards in the air!';
+            socket.on('connect_failed', function() {
+                // Could not connect to server.
+                $rootScope.notify = 'Sorry, the server seems to be down.';
+                $rootScope.enableFindGame = true;
             });
-            pubsub.publish('new-game', [data]);
-            $rootScope.gameView = true;
-            $rootScope.$apply();
-        });
 
+            // Server will tell us what our player id is if we don't have one.
+            socket.on('assign-player-id', function(data) {
+                playerId = data.playerId;
+            });
+
+            // Match found, start a game.
+            socket.on('match-found', function(data) {
+                $rootScope.$apply(function() {
+                    $rootScope.notify = 'Cards in the air!';
+                });
+                pubsub.publish('new-game', [data]);
+                $rootScope.gameView = true;
+                $rootScope.$apply();
+            });
+        }
         socket.emit('find-match', {playerId: playerId});
     };
 }
@@ -47,9 +47,14 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
 function PokerCtrl($scope, $rootScope, pubsub, Socket) {
     $('.bet-slider').slider();
 
+    var socketsInitialized;
     pubsub.subscribe('new-game', function(data) {
         Socket.emit('new-game', data);
-        sockets($scope, $rootScope, Socket);
+        if (!socketsInitialized) {
+            sockets($scope, $rootScope, Socket);
+        } else {
+            $socketsInitialized = true;
+        }
     });
 
     $scope.checkCallText = function() {
