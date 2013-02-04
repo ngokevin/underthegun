@@ -10,11 +10,6 @@ function gameOver($scope, $rootScope, disconnect) {
     }
     $rootScope.notify = msg;
 
-    // Animation.
-    setTimeout(function() {
-        $('#game').css('left', '320px');
-    }, 4500);
-
     // Switch to lobby.
     setTimeout(function() {
        $rootScope.enableFindGame = true;

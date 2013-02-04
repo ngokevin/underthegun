@@ -12,7 +12,6 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
             return;
         }
 
-        $('#find-game').text('Finding game...').addClass('inactive');
         $rootScope.notify = 'Searching for an opponent...';
         $rootScope.enableFindGame = false;
 
@@ -21,7 +20,6 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
 
         socket.on('connect_failed', function() {
             // Could not connect to server.
-            $('#find-game').text('Find Game').removeClass('inactive');
             $rootScope.notify = 'Sorry, the server seems to be down.';
             $rootScope.enableFindGame = true;
         });
@@ -81,7 +79,7 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
         return 'Bet';
     };
 
-    $scope.doAction = function(btn_action) {
+    $scope.doAction = function(btnAction) {
         // Displays action buttons, gets the one clicked, and sends the
         // action to the server.
         var gs = $scope.gs;
@@ -89,7 +87,7 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
         if (gs.actionOn != seat) { return; }
 
         var action;
-        switch (btn_action) {
+        switch (btnAction) {
             case 'fold':
                 action = {seat: seat, action: c.ACTION_FOLD};
                 break;

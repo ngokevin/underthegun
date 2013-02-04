@@ -15,5 +15,8 @@
       <span class="suit red">&hearts;</span>
     </span>
   </div>
-  <span id="find-game" class="button" ng-click="findGame()">Find Game</span>
+  <span id="find-game" class="button" ng-class="{inactive: !enableFindGame}"
+        ng-click="findGame()">
+    {{ (!enableFindGame && 'Finding Game...') || 'Find Game' }}
+  </span>
 </div>
