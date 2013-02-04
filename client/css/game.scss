@@ -12,17 +12,17 @@
     #bet-slider {
         position: relative;
         div.ui-slider {
-            right: 48px;
+            right: 40px;
             margin: 30px auto auto;
             position: relative;
-            width: 55%;
+            width: 66%;
             &:hover {
                 cursor: pointer;
             }
         }
         #slider-fill {
             position: absolute;
-            left: 225px;
+            left: 239px;
             top: 10px;
         }
     }
@@ -38,8 +38,12 @@
     .chipstack {
         position: absolute;
         margin-left: 240px;
-        span {
+        .chip {
+            float: left;
+        }
+        .chip-val {
             position: absolute;
+            left: 30px;
         }
         .stack {
             background: url('/img/assault.png');
@@ -64,18 +68,18 @@
         background: $white;
         border: 1px double green;
         border-radius: 12px;
-        bottom: 2px;
         color: $dark-gray;
-        display: inline;
-        position: relative;
+        display: inline-block;
         font-size: 9px;
+        margin: 0 auto;
+        margin-right: 4px;
         height: 16px;
         width: 16px;
         span {
             font-size: 12px;
             font-weight: bold;
             position: relative;
-            top: 2px;
+            top: 1px;
             &:after {
                 color: $red;
                 content: "\2660";
@@ -102,6 +106,7 @@
             font-size: 14px;
             font-weight: bold;
             position: relative;
+            left: 1px;
             top: 3px;
             &:after {
                 content: "D";
@@ -111,7 +116,7 @@
     #actions {
         left: 10px;
         position: relative;
-        top: 40px;
+        top: 17px;
         span.button {
             border-radius: 10px 10px 0 0;
             display: inline-block;

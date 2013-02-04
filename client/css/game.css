@@ -12,15 +12,15 @@
   #game #bet-slider {
     position: relative; }
     #game #bet-slider div.ui-slider {
-      right: 48px;
+      right: 40px;
       margin: 30px auto auto;
       position: relative;
-      width: 55%; }
+      width: 66%; }
       #game #bet-slider div.ui-slider:hover {
         cursor: pointer; }
     #game #bet-slider #slider-fill {
       position: absolute;
-      left: 225px;
+      left: 239px;
       top: 10px; }
   #game .info {
     font-size: 14px;
@@ -30,8 +30,11 @@
   #game .chipstack {
     position: absolute;
     margin-left: 240px; }
-    #game .chipstack span {
-      position: absolute; }
+    #game .chipstack .chip {
+      float: left; }
+    #game .chipstack .chip-val {
+      position: absolute;
+      left: 30px; }
     #game .chipstack .stack {
       background: url("/img/assault.png");
       border-radius: 4px 0 0 4px;
@@ -51,18 +54,18 @@
     background: #ebebeb;
     border: 1px double green;
     border-radius: 12px;
-    bottom: 2px;
     color: #161414;
-    display: inline;
-    position: relative;
+    display: inline-block;
     font-size: 9px;
+    margin: 0 auto;
+    margin-right: 4px;
     height: 16px;
     width: 16px; }
     #game .chip span {
       font-size: 12px;
       font-weight: bold;
       position: relative;
-      top: 2px; }
+      top: 1px; }
       #game .chip span:after {
         color: #8c0a0a;
         content: "\2660"; }
@@ -86,13 +89,14 @@
       font-size: 14px;
       font-weight: bold;
       position: relative;
+      left: 1px;
       top: 3px; }
       #game .pkr-button span:after {
         content: "D"; }
   #game #actions {
     left: 10px;
     position: relative;
-    top: 40px; }
+    top: 17px; }
     #game #actions span.button {
       border-radius: 10px 10px 0 0;
       display: inline-block;

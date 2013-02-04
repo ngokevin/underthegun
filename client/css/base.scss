@@ -24,7 +24,7 @@ html, body {
     @include box-shadow(0 0 1px 1px $medium-gray);
     @include radial-gradient(lighten($green, 5%), $green);
     @include transition(all .4s);
-    height: 480px;
+    height: 457px;
     margin: 0 auto;
     overflow: hidden;
     position: relative;
@@ -123,10 +123,13 @@ span.button {
         &:after {
             color: $light-gray;
             content: 'vs';
-            font-size: 52px;
-            left: -4px;
+            font-family: monospace;
+            font-size: 44px;
+            left: 0;
             position: absolute;
-            top: -2px;
+            text-shadow: 0 0 1px $black;
+            right: 0;
+            top: 5px;
         }
     }
 

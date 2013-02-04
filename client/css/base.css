@@ -30,7 +30,7 @@ html, body {
   -o-transition: all 0.4s;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
-  height: 480px;
+  height: 457px;
   margin: 0 auto;
   overflow: hidden;
   position: relative;
@@ -132,7 +132,10 @@ span.button {
     .card.facedown:after {
       color: #505050;
       content: 'vs';
-      font-size: 52px;
-      left: -4px;
+      font-family: monospace;
+      font-size: 44px;
+      left: 0;
       position: absolute;
-      top: -2px; }
+      text-shadow: 0 0 1px #050505;
+      right: 0;
+      top: 5px; }
