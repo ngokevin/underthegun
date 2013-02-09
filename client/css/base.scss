@@ -61,7 +61,7 @@ span.button {
     text-transform: capitalize;
     width: 95%;
     &:hover {
-        background: darken($red, .5%);
+        @include gradient(darken($red, 3%), $red);
     }
     &.clicked {
         box-shadow: 0px 0px 2px 2px $black inset;

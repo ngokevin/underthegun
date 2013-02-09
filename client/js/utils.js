@@ -86,7 +86,7 @@ function prettyLastAction(history, seat) {
             }
         }
     }
-    var round = highestRound;
+    round = highestRound;
     var lastAction = history[round][history[round].length - 1];
 
     var msg = '';

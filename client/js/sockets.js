@@ -32,11 +32,6 @@ function sockets($scope, $rootScope, Socket) {
         resetSlider(gs, $scope.seat, false);
     });
 
-    Socket.on('all-in', function(gs) {
-        $scope.gs = gs;
-        $rootScope.notify = prettyLastAction(gs.history, $scope.seat);
-    });
-
     Socket.on('hand-complete', function(gs) {
         // Gray out buttons.
         $scope.gs.actionOn = gs.actionOn;
