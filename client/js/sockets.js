@@ -37,6 +37,9 @@ function sockets($scope, $rootScope, Socket) {
         $scope.gs.actionOn = gs.actionOn;
         $scope.gs.availableActions = gs.availableActions;
 
+        // Show cards.
+        $scope.gs.players = gs.players;
+
         var delayInterval = 2000;
         var delay = 0;  // Set delays for all-in sequence.
         if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
@@ -72,11 +75,17 @@ function sockets($scope, $rootScope, Socket) {
 
         // Display winner.
         if (gs.winner !== null) {
+            var hand;
+            if (gs.winner.hand) {
+                hand = c.hands[gs.winner.hand.strength];
+            }
             setTimeout(function() {
-                if (gs.winner == $scope.seat) {
-                    $rootScope.notify = 'You won the hand and earned ' + gs.pot + ' chips.';
-                } else if (gs.winner !== -1) {
-                    $rootScope.notify = 'You lost the hand. Opponent won ' + gs.pot + ' chips.';
+                if (gs.winner.seat === $scope.seat) {
+                    $rootScope.notify = ('You won with ' + hand +
+                                         ' and earned $' + gs.pot + '.');
+                } else if (gs.winner.seat !== $scope.seat) {
+                    $rootScope.notify = ('You lost to ' + hand +
+                                         '. Opponent earned $' + gs.pot + '.');
                 } else {
                     $rootScope.notify = 'You both tied the hand. Split pot.';
                 }
