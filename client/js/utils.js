@@ -104,3 +104,15 @@ function prettyLastAction(history, seat) {
     msg += '.';
     return msg;
 }
+
+
+function initSlider($scope) {
+    $('.bet-slider').slider()
+        .on('change', function() {
+            $scope.raiseAmount = $('.bet-slider').attr('value');
+            $scope.$apply();
+        });
+    setTimeout(function() {
+        $('.bet-slider').trigger('change');
+    });
+}

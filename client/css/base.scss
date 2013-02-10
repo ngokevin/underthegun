@@ -37,7 +37,7 @@ html, body {
 }
 
 .not-bar {
-    background: $dark-gray;
+    background: url('/img/dark_bg.png');
     font-size: 13px;
     margin-bottom: 13px;
     height: 22px;
@@ -78,7 +78,7 @@ span.button {
     @include default-box-shadow();
     @include transition(all .2s);
     background: url('/img/debut_light.png');
-    border: 1px solid $dark-gray;
+    border: 1px solid $white;
     border-radius: 3px;
     color: $black;
     display: inline-block;
@@ -118,16 +118,17 @@ span.button {
         position: relative;
     }
     &.facedown {
-        background: url('/img/grey_sandbag.png');
+        background: url('/img/escheresque_ste.png');
+        border: 1px solid $medium-gray;
         overflow: hidden;
         &:after {
-            color: $light-gray;
+            color: $white;
             content: 'vs';
             font-family: monospace;
             font-size: 44px;
             left: 0;
+            opacity: .3;
             position: absolute;
-            text-shadow: 0 0 1px $black;
             right: 0;
             top: 5px;
         }

@@ -7,15 +7,7 @@ function sockets($scope, $rootScope, notify, Socket) {
     Socket.on('new-game', function(gs) {
         $scope.gs = gs;
         $scope.$apply();
-
-        $('.bet-slider').slider()
-            .on('change', function() {
-                $scope.raiseAmount = $('.bet-slider').attr('value');
-                $scope.$apply();
-            });
-        setTimeout(function() {
-            $('.bet-slider').trigger('change');
-        });
+        initSlider($scope);
     });
 
     Socket.on('new-hand', function(gs) {

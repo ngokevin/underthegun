@@ -1,6 +1,15 @@
 <div id="game" ng-controller="PokerCtrl">
   <div class="not-bar">{{ notify }}</div>
 
+  <div id="pnp-overlay" ng-class="{show: pnpOverlay}">
+    <h3>Next Turn</h3>
+    <div id="inner-overlay">
+      <p>{{ pnpAction }}</p>
+      <p>Pass the game to the opponent</p>
+      <span class="button" ng-click="pnpOverlay = false">Play</span>
+    </div>
+  </div>
+
   <div id="opponent-stack" class="chipstack info">
     <div class="stack c">
       <div class="chip"><span></span></div>
@@ -58,19 +67,19 @@
 
   <div id="actions">
     <span class="button" ng-click="doAction('fold')"
-          ng-class="{inactive: gs.actionOn != seat ||
+          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      gs.availableActions.indexOf(0) == -1}">
       <span class="action">Fold</span>
     </span>
     <span class="button" ng-click="doAction('checkCall')"
-          ng-class="{inactive: gs.actionOn != seat ||
+          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      (gs.availableActions.indexOf(1) == -1 &&
                       gs.availableActions.indexOf(2) == -1)}">
       <span class="action c">{{ checkCallText() }}</span>
       <span class="inner-button">{{ gs.actionOn == seat && gs.toCall || '' }}</span>
     </span>
     <span class="button" ng-click="doAction('raise')"
-          ng-class="{inactive: gs.actionOn != seat ||
+          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      gs.availableActions.indexOf(3) == -1}">
       <span class="action c">
         {{ raiseAmount >= gs.players[seat].chips + gs.players[seat].roundPIP && 'All-in' || betRaiseText() }}

@@ -7,34 +7,41 @@ var Game = function ($scope, $rootScope, notify) {
         gs.addPlayer();
         gs.addPlayer();
         gs.newHand();
-        syncView();
-        nextTurn();
+        _syncView();
+        initSlider($scope);
+        _nextTurn();
     };
 
     var action = function(actionObj) {
         var handStatus = gs.applyAction(actionObj.action);
         if ('next-turn' in handStatus) {
-            nextTurn();
+            _nextTurn();
+            _pnpOverlay();
         } else if ('hand-complete' in handStatus) {
             if (gs.calcGameWinner() === null) {
                 setTimeout(function() {
                     gs.newHand();
-                    syncView();
+                    _syncView();
                 }, 6000);
             } else {
                 gameOver($scope, $rootScope, notify);
             }
         }
-        syncView();
+        _syncView();
     };
 
-    var nextTurn = function() {
+    var _pnpOverlay= function() {
+        $scope.pnpOverlay = true;
+        $scope.pnpAction = prettyLastAction(gs.history, $scope.seat);
+    };
+
+    var _nextTurn = function() {
         // Switch seats.
         $scope.seat = gs.actionOn;
         $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
     };
 
-    var syncView = function() {
+    var _syncView = function() {
         $scope.gs = gs.filter(gs.actionOn);
         $scope.$apply();
     };

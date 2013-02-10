@@ -41,7 +41,7 @@ html, body {
     right: 320px; }
 
 .not-bar {
-  background: #161414;
+  background: url("/img/dark_bg.png");
   font-size: 13px;
   margin-bottom: 13px;
   height: 22px;
@@ -98,7 +98,7 @@ span.button {
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   background: url("/img/debut_light.png");
-  border: 1px solid #161414;
+  border: 1px solid #ebebeb;
   border-radius: 3px;
   color: #050505;
   display: inline-block;
@@ -133,15 +133,16 @@ span.button {
     border: 1px dashed #505050;
     position: relative; }
   .card.facedown {
-    background: url("/img/grey_sandbag.png");
+    background: url("/img/escheresque_ste.png");
+    border: 1px solid #282828;
     overflow: hidden; }
     .card.facedown:after {
-      color: #505050;
+      color: #ebebeb;
       content: 'vs';
       font-family: monospace;
       font-size: 44px;
       left: 0;
+      opacity: .3;
       position: absolute;
-      text-shadow: 0 0 1px #050505;
       right: 0;
       top: 5px; }
