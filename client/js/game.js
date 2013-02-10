@@ -1,32 +1,43 @@
 var Game = function ($scope, $rootScope, notify) {
+    var gs;
 
-    function newGame() {
+    var newGame = function() {
         $scope.pnp = true;
-        $scope.gs = new Holdem.Gs();
-        $scope.gs.addPlayer();
-        $scope.gs.addPlayer();
-        $scope.gs.newHand();
+        gs = new Holdem.Gs();
+        gs.addPlayer();
+        gs.addPlayer();
+        gs.newHand();
+        syncView();
         nextTurn();
-    }
+    };
 
-    function action(actionObj) {
-        var handStatus = $scope.gs.applyAction(actionObj.action);
+    var action = function(actionObj) {
+        var handStatus = gs.applyAction(actionObj.action);
         if ('next-turn' in handStatus) {
             nextTurn();
         } else if ('hand-complete' in handStatus) {
-            if ($scope.gs.calcGameWinner === null) {
-                setTimeout($scope.gs.newHand(), 6000);
+            if (gs.calcGameWinner() === null) {
+                setTimeout(function() {
+                    gs.newHand();
+                    syncView();
+                }, 6000);
             } else {
                 gameOver($scope, $rootScope, notify);
             }
         }
-    }
+        syncView();
+    };
 
-    function nextTurn() {
+    var nextTurn = function() {
         // Switch seats.
-        $scope.seat = $scope.gs.actionOn;
+        $scope.seat = gs.actionOn;
         $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
-    }
+    };
+
+    var syncView = function() {
+        $scope.gs = gs.filter(gs.actionOn);
+        $scope.$apply();
+    };
 
     return {
         newGame: newGame,

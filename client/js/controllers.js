@@ -50,7 +50,7 @@ function LobbyCtrl($scope, $rootScope, notify, pubsub) {
 }
 
 
-function PokerCtrl($scope, $rootScope, pubsub, Socket) {
+function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
     $('.bet-slider').slider();
 
     var socketsInitialized;
