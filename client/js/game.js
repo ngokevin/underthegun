@@ -1,4 +1,4 @@
-var Game = function ($scope) {
+var Game = function ($scope, $rootScope, notify) {
 
     function newGame() {
         $scope.pnp = true;
@@ -10,8 +10,16 @@ var Game = function ($scope) {
     }
 
     function action(actionObj) {
-        $scope.gs.applyAction(actionObj.action);
-        nextTurn();
+        var handStatus = $scope.gs.applyAction(actionObj.action);
+        if ('next-turn' in handStatus) {
+            nextTurn();
+        } else if ('hand-complete' in handStatus) {
+            if ($scope.gs.calcGameWinner === null) {
+                setTimeout($scope.gs.newHand(), 6000);
+            } else {
+                gameOver($scope, $rootScope, notify);
+            }
+        }
     }
 
     function nextTurn() {

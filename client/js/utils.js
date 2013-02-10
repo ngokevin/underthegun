@@ -1,4 +1,4 @@
-function gameOver($scope, $rootScope, disconnect) {
+function gameOver($scope, $rootScope, notify, disconnect) {
     var msg = '';
     if (disconnect) {
         msg = 'Opponent disconnected. ';
@@ -8,7 +8,7 @@ function gameOver($scope, $rootScope, disconnect) {
     } else {
         msg += 'You lost.';
     }
-    $rootScope.notify = msg;
+    notify(msg);
 
     // Switch to lobby.
     setTimeout(function() {

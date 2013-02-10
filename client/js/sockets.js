@@ -1,4 +1,4 @@
-function sockets($scope, $rootScope, Socket) {
+function sockets($scope, $rootScope, notify, Socket) {
     Socket.on('assign-seat', function(data) {
         $scope.seat = data.seat;
         $scope.opponentSeat = data.seat === 0 ? 1 : 0;
@@ -22,13 +22,13 @@ function sockets($scope, $rootScope, Socket) {
         $scope.gs = gs;
         var hole1 = gs.players[$scope.seat].hole[0];
         var hole2 = gs.players[$scope.seat].hole[1];
-        $rootScope.notify = 'Dealt ' + strCard(hole1) + strCard(hole2);
+        notify('Dealt ' + strCard(hole1) + strCard(hole2));
         resetSlider(gs, $scope.seat, false);
     });
 
     Socket.on('next-turn', function(gs) {
         $scope.gs = gs;
-        $rootScope.notify = prettyLastAction(gs.history, $scope.seat);
+        notify(prettyLastAction(gs.history, $scope.seat));
         resetSlider(gs, $scope.seat, false);
     });
 
@@ -81,13 +81,13 @@ function sockets($scope, $rootScope, Socket) {
             }
             setTimeout(function() {
                 if (gs.winner.seat === $scope.seat) {
-                    $rootScope.notify = ('You won with ' + hand +
-                                         ' and earned $' + gs.pot + '.');
+                    notify('You won with ' + hand + ' and earned $' +
+                           gs.pot + '.');
                 } else if (gs.winner.seat !== $scope.seat) {
-                    $rootScope.notify = ('You lost to ' + hand +
-                                         '. Opponent earned $' + gs.pot + '.');
+                    notify('You lost to ' + hand + '. Opponent earned $' +
+                           gs.pot + '.');
                 } else {
-                    $rootScope.notify = 'You both tied the hand. Split pot.';
+                    notify('You both tied the hand. Split pot.');
                 }
                 $rootScope.$apply();
             }, delay || 0);

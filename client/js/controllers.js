@@ -1,5 +1,5 @@
-function LobbyCtrl($scope, $rootScope,  pubsub) {
-    $rootScope.notify = 'Welcome to Versus Poker!';
+function LobbyCtrl($scope, $rootScope, notify, pubsub) {
+    notify('Welcome to Versus Poker!');
 
     setTimeout(function() {
         $('.card.logo').addClass('transform');
@@ -12,7 +12,7 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
             return;
         }
         $rootScope.enableFindGame = false;
-        $rootScope.notify = 'Searching for an opponent...';
+        notify('Searching for an opponent...');
 
         if (!socket) {
             socket = io.connect('http://localhost:4001/matchmaking',
@@ -20,7 +20,7 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
 
             socket.on('connect_failed', function() {
                 // Could not connect to server.
-                $rootScope.notify = 'Sorry, the server seems to be down.';
+                notify('Sorry, the server seems to be down.');
                 $rootScope.enableFindGame = true;
             });
 
@@ -31,9 +31,7 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
 
             // Match found, start a game.
             socket.on('match-found', function(data) {
-                $rootScope.$apply(function() {
-                    $rootScope.notify = 'Cards in the air!';
-                });
+                notify('Cards in the air!');
                 pubsub.publish('new-game', [data]);
                 $rootScope.gameView = true;
                 $rootScope.$apply();
@@ -44,9 +42,7 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
 
     $scope.pnpGame = function() {
         // Local pass and play game.
-        $rootScope.$apply(function() {
-            $rootScope.notify = 'Cards in the air!';
-        });
+        notify('Cards in the air!');
         pubsub.publish('new-game-pnp');
         $rootScope.gameView = true;
         $rootScope.$apply();
@@ -62,7 +58,7 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
         $scope.pnp = false;
         Socket.emit('new-game', data);
         if (!socketsInitialized) {
-            sockets($scope, $rootScope, Socket);
+            sockets($scope, $rootScope, notify, Socket);
         } else {
             $socketsInitialized = true;
         }
@@ -71,7 +67,7 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
     var game;
     pubsub.subscribe('new-game-pnp', function() {
         // Game loop.
-        game = Game($scope);
+        game = Game($scope, $rootScope, notify);
         game.newGame();
     });
 

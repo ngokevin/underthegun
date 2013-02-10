@@ -25,8 +25,7 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
             socket.emit(eventName, data);
         }
     };
-})
-.factory('pubsub', function() {
+}).factory('pubsub', function() {
     var cache = {};
     return {
         publish: function(topic, args) {
@@ -49,5 +48,9 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
                 }
             });
         }
+    };
+}).factory('notify', function($rootScope) {
+    return function(msg) {
+        $rootScope.notify = msg;
     };
 });
