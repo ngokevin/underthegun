@@ -41,6 +41,16 @@ function LobbyCtrl($scope, $rootScope,  pubsub) {
         }
         socket.emit('find-match', {playerId: playerId});
     };
+
+    $scope.pnpGame = function() {
+        // Local pass and play game.
+        $rootScope.$apply(function() {
+            $rootScope.notify = 'Cards in the air!';
+        });
+        pubsub.publish('new-game-pnp');
+        $rootScope.gameView = true;
+        $rootScope.$apply();
+    };
 }
 
 
@@ -49,12 +59,20 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
 
     var socketsInitialized;
     pubsub.subscribe('new-game', function(data) {
+        $scope.pnp = false;
         Socket.emit('new-game', data);
         if (!socketsInitialized) {
             sockets($scope, $rootScope, Socket);
         } else {
             $socketsInitialized = true;
         }
+    });
+
+    var game;
+    pubsub.subscribe('new-game-pnp', function() {
+        // Game loop.
+        game = Game($scope);
+        game.newGame();
     });
 
     $scope.checkCallText = function() {
@@ -110,6 +128,11 @@ function PokerCtrl($scope, $rootScope, pubsub, Socket) {
         }
         resetSlider(gs, seat, true);
         $('#slider-fill').attr('value', '');
-        Socket.emit('action', {action: action, gs: gs});
+
+        if ($scope.pnp) {
+            game.action({action: action});
+        } else {
+            Socket.emit('action', {action: action, gs: gs});
+        }
     };
 }

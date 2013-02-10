@@ -2,7 +2,6 @@
   <div class="not-bar">{{ notify }}</div>
 
   <h1>Versus Poker</h1>
-  <p>Heads-Up Hold'em</p>
   <div id="logo">
     <span class="card logo">
       <span class="rank">V</span>
@@ -15,8 +14,11 @@
       <span class="suit red">&hearts;</span>
     </span>
   </div>
+  <span id="pnp" class="button" ng-click="pnpGame()">
+    Pass and Play
+  </span>
   <span id="find-game" class="button" ng-class="{inactive: !enableFindGame}"
         ng-click="findGame()">
-    {{ (!enableFindGame && 'Finding Game...') || 'Find Game' }}
+    {{ (!enableFindGame && 'Finding Game...') || 'Find Onine Game' }}
   </span>
 </div>
