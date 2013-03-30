@@ -118,7 +118,7 @@ function initSlider($scope) {
 }
 
 
-function showdown($scope, gs) {
+function showdown($scope, gs, notify) {
     // Gray out buttons.
     $scope.gs.actionOn = gs.actionOn;
     $scope.gs.availableActions = gs.availableActions;
@@ -129,11 +129,13 @@ function showdown($scope, gs) {
     var delayInterval = 2000;
     var delay = 0;  // Set delays for all-in sequence.
     if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
-        for (var i = 0; i < 3; i++) {
+        setTimeout(function() {
             $scope.$apply(function() {
-                $scope.gs.boardCards[i] = gs.boardCards[i];
+                for (var i = 0; i < 3; i++) {
+                    $scope.gs.boardCards[i] = gs.boardCards[i];
+                }
             });
-        }
+        });
         delay += delayInterval;
     }
     if (!$scope.gs.boardCards[3] && gs.boardCards.length >= 4) {
@@ -160,5 +162,23 @@ function showdown($scope, gs) {
         $scope.gs.pot = gs.pot;
     }, gs.winner !== null ? delay: 0);
 
+    // Display winner.
+    if (gs.winner !== null) {
+        var hand;
+        if (gs.winner.hand) {
+            hand = c.hands[gs.winner.hand.strength];
+        }
+        setTimeout(function() {
+            if (gs.winner.seat === $scope.seat) {
+                notify('You won with ' + hand + ' and earned $' +
+                       gs.pot + '.');
+            } else if (gs.winner.seat !== $scope.seat) {
+                notify('You lost to ' + hand + '. Opponent earned $' +
+                       gs.pot + '.');
+            } else {
+                notify('You both tied the hand. Split pot.');
+            }
+        }, delay || 0);
+    }
     return delay;
 }

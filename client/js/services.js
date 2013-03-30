@@ -50,6 +50,7 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
         }
     };
 }).factory('notify', function($rootScope) {
+    // Top bar messages.
     return function(msg) {
         $rootScope.notify = msg;
     };

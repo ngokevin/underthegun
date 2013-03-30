@@ -50,7 +50,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
     };
 
     var _handComplete = function() {
-        showdown($scope, gs);
+        showdown($scope, gs, notify);
         if (gs.calcGameWinner() === null) {
             // Next hand.
             if (gs.winner) {
@@ -71,7 +71,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
     };
 
     var _allIn = function() {
-        var delay = showdown($scope, gs);
+        var delay = showdown($scope, gs, notify);
         if (gs.calcGameWinner() !== null) {
             setTimeout(function() {
                 gameOver($scope, $rootScope, notify);
