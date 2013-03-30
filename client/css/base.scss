@@ -34,6 +34,9 @@ html, body {
     &.gameView {
         @include transform(translateX(-320px));
     }
+    & > div:last-child {
+        height: 100%;
+    }
 }
 
 .not-bar {
@@ -133,6 +136,8 @@ span.button {
             top: 5px;
         }
     }
-
 }
 
+.hidden {
+    display: none;
+}

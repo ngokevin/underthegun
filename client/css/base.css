@@ -42,6 +42,8 @@ html, body {
     -ms-transform: translateX(-320px);
     -o-transform: translateX(-320px);
     -webkit-transform: translateX(-320px); }
+  #wrap > div:last-child {
+    height: 100%; }
 
 .not-bar {
   background: url("/img/dark_bg.png");
@@ -149,3 +151,6 @@ span.button {
       position: absolute;
       right: 0;
       top: 5px; }
+
+.hidden {
+  display: none; }

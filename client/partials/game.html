@@ -57,7 +57,7 @@
   <card card="{{ gs.players[seat].hole[0] }}" hole></card>
   <card card="{{ gs.players[seat].hole[1] }}" hole></card>
 
-  <div id="bet-slider">
+  <div id="bet-slider" ng-class="{hidden: gs.availableActions.indexOf(3) == -1}">
     <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
            name="slider-fill" data-highlight="true"
            value="{{ gs.bigBlind * 2 || 0 }}" step="10"

@@ -54,8 +54,11 @@ var PNPGame = function ($scope, $rootScope, notify) {
         if (gs.calcGameWinner() === null) {
             // Next hand.
             if (gs.winner) {
-                notify('Player ' + gs.winner.seat + ' won hand with ' +
-                       c.hands[gs.winner.hand.strength]);
+                msg = 'Player ' + gs.winner.seat + ' won hand';
+                if (gs.winner.hand) {
+                    msg += ' with ' + c.hands[gs.winner.hand.strength];
+                }
+                notify(msg + '.');
             }
             setTimeout(function() {
                 // Pause for a bit, then deal a new hand.

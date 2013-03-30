@@ -1,6 +1,7 @@
 #game {
-  position: relative;
   float: left;
+  height: 100%;
+  position: relative;
   width: 50%; }
   #game #pnp-overlay {
     -moz-box-shadow: 0 0 1px 1px #282828;
@@ -126,15 +127,16 @@
       #game .pkr-button span:after {
         content: "D"; }
   #game #actions {
+    bottom: 0;
     left: 10px;
-    position: relative;
-    top: 17px; }
+    position: absolute;
+    width: 100%; }
     #game #actions span.button {
-      border-radius: 10px 10px 0 0;
+      border-radius: 3px 3px 0 0;
       display: inline-block;
       float: left;
       width: 25%;
       margin: 0 3px;
-      padding: 10px 7px 17px; }
+      padding: 10px 7px 10px; }
       #game #actions span.button .inner-button {
         display: inline; }
