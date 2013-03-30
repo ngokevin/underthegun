@@ -67,7 +67,7 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
     var game;
     pubsub.subscribe('new-game-pnp', function() {
         // Game loop.
-        game = Game($scope, $rootScope, notify);
+        game = PNPGame($scope, $rootScope, notify);
         game.newGame();
     });
 
@@ -78,7 +78,7 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
             return 'Call';
         } else if (gs.availableActions.indexOf(c.ACTION_CALL) < 0) {
             return 'Check';
-        } else if (gs.toCall >= gs.players[seat].chips &&
+        } else if (seat >= 0 && gs.toCall >= gs.players[seat].chips &&
                    gs.actionOn == seat) {
             return 'All In';
         }

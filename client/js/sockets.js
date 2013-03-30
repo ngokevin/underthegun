@@ -20,7 +20,7 @@ function sockets($scope, $rootScope, notify, Socket) {
 
     Socket.on('next-turn', function(gs) {
         $scope.gs = gs;
-        notify(prettyLastAction(gs.history, $scope.seat));
+        notify(lastActionMsg(gs.history, $scope.seat));
         resetSlider(gs, $scope.seat, false);
     });
 

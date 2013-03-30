@@ -77,7 +77,7 @@ function resetSlider(gs, seat, zero) {
 }
 
 
-function prettyLastAction(history, seat) {
+function lastActionMsg(history, seat) {
     var highestRound = '0';
     for (var round in history) {
         if (history.hasOwnProperty(round)) {

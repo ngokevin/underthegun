@@ -7,6 +7,7 @@ Dependencies
 - Node.js
 - db-mysql
 - socket.io
+- express
 
 - Sass
 

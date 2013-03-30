@@ -127,7 +127,6 @@
       font-size: 14px;
       font-weight: bold;
       position: relative;
-      left: 1px;
       top: 3px; }
       #game .pkr-button span:after {
         content: "D"; }

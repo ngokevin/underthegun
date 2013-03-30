@@ -1,4 +1,4 @@
-var Game = function ($scope, $rootScope, notify) {
+var PNPGame = function ($scope, $rootScope, notify) {
     var gs;
 
     var newGame = function() {
@@ -19,6 +19,10 @@ var Game = function ($scope, $rootScope, notify) {
             _pnpOverlay();
         } else if ('hand-complete' in handStatus) {
             if (gs.calcGameWinner() === null) {
+                if (gs.winner) {
+                    notify('Player ' + gs.winner.seat + ' won hand with ' +
+                           c.hands[gs.winner.hand.strength]);
+                }
                 setTimeout(function() {
                     gs.newHand();
                     _syncView();
@@ -32,7 +36,7 @@ var Game = function ($scope, $rootScope, notify) {
 
     var _pnpOverlay= function() {
         $scope.pnpOverlay = true;
-        $scope.pnpAction = prettyLastAction(gs.history, $scope.seat);
+        $scope.pnpAction = lastActionMsg(gs.history, $scope.seat);
     };
 
     var _nextTurn = function() {
@@ -48,6 +52,6 @@ var Game = function ($scope, $rootScope, notify) {
 
     return {
         newGame: newGame,
-        action: action,
+        action: action
     };
 };
