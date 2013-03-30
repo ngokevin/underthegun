@@ -14,7 +14,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
 
     var action = function(actionObj) {
         var handStatus = gs.applyAction(actionObj.action);
-        if ('next-turn' in handStatus) {
+        if ('next-player' in handStatus) {
             _nextTurn();
             _pnpOverlay();
         } else if ('hand-complete' in handStatus) {
