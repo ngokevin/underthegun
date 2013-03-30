@@ -38,7 +38,10 @@ html, body {
   text-align: center;
   width: 640px; }
   #wrap.gameView {
-    right: 320px; }
+    -moz-transform: translateX(-320px);
+    -ms-transform: translateX(-320px);
+    -o-transform: translateX(-320px);
+    -webkit-transform: translateX(-320px); }
 
 .not-bar {
   background: url("/img/dark_bg.png");

@@ -32,7 +32,7 @@ html, body {
     text-align: center;
     width: 640px;
     &.gameView {
-        right: 320px;
+        @include transform(translateX(-320px));
     }
 }
 

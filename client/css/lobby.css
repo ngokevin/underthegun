@@ -1,9 +1,4 @@
 #lobby {
-  -moz-transition: right 0.5s linear;
-  -ms-transition: right 0.5s linear;
-  -o-transition: right 0.5s linear;
-  -webkit-transition: right 0.5s linear;
-  transition: right 0.5s linear;
   float: left;
   height: 100%;
   position: relative;

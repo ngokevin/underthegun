@@ -1,9 +1,4 @@
 #game {
-  -moz-transition: left 0.5s linear;
-  -ms-transition: left 0.5s linear;
-  -o-transition: left 0.5s linear;
-  -webkit-transition: left 0.5s linear;
-  transition: left 0.5s linear;
   position: relative;
   float: left;
   width: 50%; }

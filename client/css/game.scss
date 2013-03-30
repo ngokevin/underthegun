@@ -2,7 +2,6 @@
 
 
 #game {
-    @include transition(left .5s linear);
     position: relative;
     float: left;
     width: 50%;
