@@ -116,3 +116,46 @@ function initSlider($scope) {
         $('.bet-slider').trigger('change');
     });
 }
+
+
+function handComplete($scope, gs) {
+    // Gray out buttons.
+    $scope.gs.actionOn = gs.actionOn;
+    $scope.gs.availableActions = gs.availableActions;
+
+    // Show cards.
+    $scope.gs.players = gs.players;
+
+    var delayInterval = 2000;
+    var delay = 0;  // Set delays for all-in sequence.
+    if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
+        for (var i = 0; i < 3; i++) {
+            $scope.gs.boardCards[i] = gs.boardCards[i];
+        }
+        delay += delayInterval;
+    }
+    if (!$scope.gs.boardCards[3] && gs.boardCards.length >= 4) {
+        setTimeout(function() {
+            $scope.$apply(function() {
+                $scope.gs.boardCards[3] = gs.boardCards[3];
+            });
+        }, delay);
+        delay += delayInterval;
+    }
+    if (!$scope.gs.boardCards[4] && gs.boardCards.length >= 5) {
+        setTimeout(function() {
+            $scope.gs.boardCards[4] = gs.boardCards[4];
+            $scope.$apply(function() {
+                $scope.gs.boardCards[4] = gs.boardCards[4];
+            });
+        }, delay);
+        delay += delayInterval;
+    }
+
+    // Don't update chip counts until the all-in sequence is finished.
+    setTimeout(function() {
+        $scope.gs.players[$scope.opponentSeat].chips = gs.players[$scope.opponentSeat].chips;
+        $scope.gs.players[$scope.seat].chips = gs.players[$scope.seat].chips;
+        $scope.gs.pot = gs.pot;
+    }, gs.winner !== null ? delay: 0);
+}

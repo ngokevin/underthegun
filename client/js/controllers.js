@@ -45,7 +45,6 @@ function LobbyCtrl($scope, $rootScope, notify, pubsub) {
         notify('Cards in the air!');
         pubsub.publish('new-game-pnp');
         $rootScope.gameView = true;
-        $rootScope.$apply();
     };
 }
 

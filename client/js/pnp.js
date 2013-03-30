@@ -7,7 +7,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
         gs.addPlayer();
         gs.addPlayer();
         gs.newHand();
-        _syncView();
+        _syncView(true);
         initSlider($scope);
         _nextTurn();
     };
@@ -18,20 +18,13 @@ var PNPGame = function ($scope, $rootScope, notify) {
             _nextTurn();
             _pnpOverlay();
         } else if ('hand-complete' in handStatus) {
-            if (gs.calcGameWinner() === null) {
-                if (gs.winner) {
-                    notify('Player ' + gs.winner.seat + ' won hand with ' +
-                           c.hands[gs.winner.hand.strength]);
-                }
-                setTimeout(function() {
-                    gs.newHand();
-                    _syncView();
-                }, 6000);
-            } else {
-                gameOver($scope, $rootScope, notify);
-            }
+            _handComplete();
+        } else if ('all-in' in handStatus) {
+            _nextTurn();
+            gs.allIn();
+            _handComplete();
         }
-        _syncView();
+        _syncView(true);
     };
 
     var _pnpOverlay= function() {
@@ -45,9 +38,27 @@ var PNPGame = function ($scope, $rootScope, notify) {
         $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
     };
 
-    var _syncView = function() {
+    var _handComplete = function() {
+        handComplete($scope, gs);
+        if (gs.calcGameWinner() === null) {
+            if (gs.winner) {
+                notify('Player ' + gs.winner.seat + ' won hand with ' +
+                       c.hands[gs.winner.hand.strength]);
+            }
+            setTimeout(function() {
+                gs.newHand();
+                _syncView();
+            }, 6000);
+        } else {
+            gameOver($scope, $rootScope, notify);
+        }
+    };
+
+    var _syncView = function(noApply) {
         $scope.gs = gs.filter(gs.actionOn);
-        $scope.$apply();
+        if (!noApply) {
+            $scope.$apply();
+        }
     };
 
     return {
