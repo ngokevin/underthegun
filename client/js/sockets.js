@@ -50,7 +50,6 @@ function sockets($scope, $rootScope, notify, Socket) {
         }
         if (!$scope.gs.boardCards[4] && gs.boardCards.length >= 5) {
             setTimeout(function() {
-                $scope.gs.boardCards[4] = gs.boardCards[4];
                 $scope.$apply(function() {
                     $scope.gs.boardCards[4] = gs.boardCards[4];
                 });
@@ -58,7 +57,7 @@ function sockets($scope, $rootScope, notify, Socket) {
             delay += delayInterval;
         }
 
-        // Don't update chip counts until the all-in sequence is finish.
+        // Don't update chip counts until the all-in sequence is finished.
         setTimeout(function() {
             $scope.gs.players[$scope.opponentSeat].chips = gs.players[$scope.opponentSeat].chips;
             $scope.gs.players[$scope.seat].chips = gs.players[$scope.seat].chips;

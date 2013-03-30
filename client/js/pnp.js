@@ -1,4 +1,5 @@
 var PNPGame = function ($scope, $rootScope, notify) {
+    // Pass-and-play.
     var gs;
 
     var newGame = function() {
@@ -20,32 +21,44 @@ var PNPGame = function ($scope, $rootScope, notify) {
         } else if ('hand-complete' in handStatus) {
             _handComplete();
         } else if ('all-in' in handStatus) {
-            _nextTurn();
-            gs.allIn();
-            _handComplete();
+            setTimeout(function() {
+                // Angular doesn't know about async code, don't want $digest.
+                var oldGs = {};
+                $.extend(true, oldGs, gs);
+                gs.allIn();
+                $scope.gs = oldGs;
+            });
+            setTimeout(function() {
+                // Queue all-in UI update before all-in gs update.
+                _allIn();
+            });
+            return;
         }
         _syncView(true);
     };
 
     var _pnpOverlay= function() {
+        // Shows overlay.
         $scope.pnpOverlay = true;
         $scope.pnpAction = lastActionMsg(gs.history, $scope.seat);
     };
 
     var _nextTurn = function() {
-        // Switch seats.
+        // Switch seats (effectively rotates window).
         $scope.seat = gs.actionOn;
         $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
     };
 
     var _handComplete = function() {
-        handComplete($scope, gs);
+        showdown($scope, gs);
         if (gs.calcGameWinner() === null) {
+            // Next hand.
             if (gs.winner) {
                 notify('Player ' + gs.winner.seat + ' won hand with ' +
                        c.hands[gs.winner.hand.strength]);
             }
             setTimeout(function() {
+                // Pause for a bit, then deal a new hand.
                 gs.newHand();
                 _syncView();
             }, 6000);
@@ -54,7 +67,17 @@ var PNPGame = function ($scope, $rootScope, notify) {
         }
     };
 
+    var _allIn = function() {
+        var delay = showdown($scope, gs);
+        if (gs.calcGameWinner() !== null) {
+            setTimeout(function() {
+                gameOver($scope, $rootScope, notify);
+            }, delay);
+        }
+    };
+
     var _syncView = function(noApply) {
+        // Updates gs to scope, and applies scope.
         $scope.gs = gs.filter(gs.actionOn);
         if (!noApply) {
             $scope.$apply();

@@ -118,7 +118,7 @@ function initSlider($scope) {
 }
 
 
-function handComplete($scope, gs) {
+function showdown($scope, gs) {
     // Gray out buttons.
     $scope.gs.actionOn = gs.actionOn;
     $scope.gs.availableActions = gs.availableActions;
@@ -130,7 +130,9 @@ function handComplete($scope, gs) {
     var delay = 0;  // Set delays for all-in sequence.
     if ($scope.gs.boardCards.length < 3 && gs.boardCards.length >= 3) {
         for (var i = 0; i < 3; i++) {
-            $scope.gs.boardCards[i] = gs.boardCards[i];
+            $scope.$apply(function() {
+                $scope.gs.boardCards[i] = gs.boardCards[i];
+            });
         }
         delay += delayInterval;
     }
@@ -144,7 +146,6 @@ function handComplete($scope, gs) {
     }
     if (!$scope.gs.boardCards[4] && gs.boardCards.length >= 5) {
         setTimeout(function() {
-            $scope.gs.boardCards[4] = gs.boardCards[4];
             $scope.$apply(function() {
                 $scope.gs.boardCards[4] = gs.boardCards[4];
             });
@@ -158,4 +159,6 @@ function handComplete($scope, gs) {
         $scope.gs.players[$scope.seat].chips = gs.players[$scope.seat].chips;
         $scope.gs.pot = gs.pot;
     }, gs.winner !== null ? delay: 0);
+
+    return delay;
 }
