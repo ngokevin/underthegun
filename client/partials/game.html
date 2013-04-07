@@ -1,12 +1,26 @@
 <div id="game" ng-controller="PokerCtrl">
   <div class="not-bar">{{ notify }}</div>
 
-  <div id="pnp-overlay" ng-class="{show: pnpOverlay}">
+  <div id="pnp-overlay" class="overlay" ng-class="{show: pnpOverlay}">
     <h3>Next Turn</h3>
-    <div id="inner-overlay">
+    <div class="inner-overlay">
       <p>{{ pnpAction }}</p>
       <p>Pass the game to your opponent</p>
       <span class="button" ng-click="pnpOverlay = false">Play</span>
+    </div>
+  </div>
+
+  <div class="overlay" ng-class="{show: raiseOverlay}">
+    <h3>Bet or Raise</h3>
+    <div id="inner-overlay">
+      <p>Select a Bet or Raise Amount</p>
+      <div ng-directive="betSlider" class="bet-slider" ng-model="raiseAmount"
+           value="{{ gs.bigBlind * 2 || 0 }}"
+           step="10" min="{{gs.minRaiseTo || 0 }}"
+           max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0}}">
+        <span></span>
+      </div>
+      <span class="button" ng-click="doAction('raise')">Bet or Raise</span>
     </div>
   </div>
 
@@ -57,14 +71,6 @@
   <card card="{{ gs.players[seat].hole[0] }}" hole></card>
   <card card="{{ gs.players[seat].hole[1] }}" hole></card>
 
-  <div id="bet-slider" ng-class="{hidden: gs.availableActions.indexOf(3) == -1}">
-    <input ng-model="raiseAmount" id="slider-fill" class="bet-slider c" type="range"
-           name="slider-fill" data-highlight="true"
-           value="{{ gs.bigBlind * 2 || 0 }}" step="10"
-           min="{{ gs.minRaiseTo || 0 }}"
-           max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0}}">
-  </div>
-
   <div id="actions">
     <span class="button" ng-click="doAction('fold')"
           ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
@@ -78,7 +84,7 @@
       <span class="action c">{{ checkCallText() }}</span>
       <span class="inner-button">{{ gs.actionOn == seat && gs.toCall || '' }}</span>
     </span>
-    <span class="button" ng-click="doAction('raise')"
+    <span class="button" ng-click="raiseOverlay = true"
           ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      gs.availableActions.indexOf(3) == -1}">
       <span class="action c">

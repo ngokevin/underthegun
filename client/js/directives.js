@@ -1,6 +1,9 @@
-angular.module('poker-app.directives', []).directive('card', function() {
+angular.module('poker-app.directives', [])
+
+
+.directive('card', function() {
     return {
-        restrict: 'E',
+        restrict: 'E',  // on element: <card></card>
         replace: true,
         templateUrl: 'card.html',
         scope: {
@@ -27,5 +30,21 @@ angular.module('poker-app.directives', []).directive('card', function() {
                 }
             });
         },
+    };
+})
+
+
+.directive('betSlider', function() {
+    return {
+        restrict: 'E',
+        link: function(scope, element, attrs) {
+            element.bind('mousemove', function(evt) {
+                evt.preventDefault();
+                var touches = evt.changedTouches;
+                $(touches).each(function(idx, touch) {
+                    console.log(touch.pageX);
+                });
+            });
+        }
     };
 });

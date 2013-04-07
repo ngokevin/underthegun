@@ -50,7 +50,7 @@ function LobbyCtrl($scope, $rootScope, notify, pubsub) {
 
 
 function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
-    $('.bet-slider').slider();
+    // $('.bet-slider').slider();
 
     var socketsInitialized;
     pubsub.subscribe('new-game', function(data) {
@@ -119,10 +119,11 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
             case 'raise':
                 action = {seat: seat, action: c.ACTION_RAISE,
                           amount: $scope.raiseAmount};
+                $scope.raiseOverlay = false;
                 break;
         }
         resetSlider(gs, seat, true);
-        $('#slider-fill').attr('value', '');
+        // $('#slider-fill').attr('value', '');
 
         if ($scope.pnp) {
             game.action({action: action});

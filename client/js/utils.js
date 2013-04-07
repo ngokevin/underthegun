@@ -66,6 +66,7 @@ function strCard(card) {
 
 
 function resetSlider(gs, seat, zero) {
+    return;
     setTimeout(function() {
         if (gs.actionOn == seat) {
             $('.bet-slider').attr('value', zero ? gs.minRaiseTo : 0);
@@ -107,6 +108,7 @@ function lastActionMsg(history, seat) {
 
 
 function initSlider($scope) {
+    return;
     $('.bet-slider').slider()
         .on('change', function() {
             $scope.raiseAmount = $('.bet-slider').attr('value');

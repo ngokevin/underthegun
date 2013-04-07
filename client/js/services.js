@@ -1,4 +1,7 @@
-angular.module('poker-app.services', []).factory('gameHolder', function() {
+angular.module('poker-app.services', [])
+
+
+.factory('gameHolder', function() {
     var _gameData;
     return {
         gameData: function() {
@@ -8,7 +11,10 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
             _gameData = gameData;
         }
     };
-}).factory('Socket', function($rootScope) {
+})
+
+
+.factory('Socket', function($rootScope) {
     var socket = io.connect('http://localhost:4001/game');
 
     // Override socket.on to $apply the changes to angular.
@@ -25,7 +31,10 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
             socket.emit(eventName, data);
         }
     };
-}).factory('pubsub', function() {
+})
+
+
+.factory('pubsub', function() {
     var cache = {};
     return {
         publish: function(topic, args) {
@@ -49,7 +58,10 @@ angular.module('poker-app.services', []).factory('gameHolder', function() {
             });
         }
     };
-}).factory('notify', function($rootScope) {
+})
+
+
+.factory('notify', function($rootScope) {
     // Top bar messages.
     return function(msg) {
         $rootScope.notify = msg;
