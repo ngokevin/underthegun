@@ -37,19 +37,28 @@ angular.module('poker-app.directives', [])
 .directive('betSlider', function() {
     return {
         link: function(scope, element, attrs) {
+            var $element = $(element);
+            var $bar = $('span', $element);
+
             var mouseDown = false;
 
             element.bind('mousedown', function(evt) {
                 mouseDown = true;
             });
 
-            element.bind('mousemove', function(evt) {
-                evt.preventDefault();
+            var offset = $bar.offset().left;
+            var width = $bar.width();
+            element.bind('mousemove', _.throttle(_pd(function(evt) {
                 if (!mouseDown) {
                     return;
                 }
-                console.log(evt.pageX);
-            });
+                var diff = evt.pageX - offset;
+                if (diff < 0 || diff > width) {
+                    return;
+                }
+                var percent = (evt.pageX - offset) / width;
+                $bar.width(percent * 100 + '%');
+            }), 50));
 
             element.bind('mouseup', function(evt) {
                 mouseDown = false;

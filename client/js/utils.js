@@ -184,3 +184,11 @@ function showdown($scope, gs, notify) {
     }
     return delay;
 }
+
+
+function _pd(fn) {
+    return function(e) {
+        e.preventDefault();
+        fn.apply(this, arguments);
+    }
+}
