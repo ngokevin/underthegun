@@ -13,13 +13,12 @@
   </div>
 
   <div class="overlay" ng-class="{show: raiseOverlay}">
-    <h3>Bet or Raise</h3>
+    <h3>{{ betRaiseText() }}</h3>
     <div class="inner-overlay">
-      <p>Select a Bet or Raise Amount</p>
-      <div bet-slider class="bet-slider" ng-model="raiseAmount"
-           value="{{ gs.bigBlind * 2 || 0 }}"
+      <p>Select a {{ betRaiseText() }} Amount</p>
+      <div bet-slider class="bet-slider" value="{{ gs.bigBlind * 2 || 0 }}"
            step="10" min="{{gs.minRaiseTo || 0 }}"
-           max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0}}">
+           max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0 }}">
         <span></span>
       </div>
       <div class="overlay-buttons">
@@ -96,7 +95,7 @@
           ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      gs.availableActions.indexOf(3) == -1}">
       <span class="action c">
-        {{ betRaiseText(false) }}
+        {{ betRaiseText() }}
       </span>
     </span>
   </div>

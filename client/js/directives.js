@@ -42,6 +42,9 @@ angular.module('poker-app.directives', [])
 
             var step = $element.attr('step');
 
+            // Scope/DOM elements that are not initialized out of game.
+            var gs;
+            var seat;
             var width;
             var offset;
 
@@ -49,11 +52,16 @@ angular.module('poker-app.directives', [])
             element.on('mousedown', function(evt) {
                 mouseDown = true;
                 if (!width) {
-                    // Slider is initially display:none, calc width if needed.
                     width = $bar.width();
                 }
                 if (!offset) {
                     offset = $bar.offset().left;
+                }
+                if (!gs) {
+                    gs = scope.gs;
+                }
+                if (!seat) {
+                    seat = scope.seat;
                 }
             });
 
@@ -62,15 +70,22 @@ angular.module('poker-app.directives', [])
                     return;
                 }
                 var diff = evt.pageX - offset;
-                if (diff < 0 || diff > width) {
-                    // TODO: allow off-slider sliding, but impose min/max.
-                    return;
+
+                if (diff < 0) {
+                    scope.raiseAmount = scope.gs.minRaiseTo;
+                    $bar.width('0%');
+                } else if (diff > width) {
+                    scope.raiseAmount = gs.players[seat].chips +
+                                        gs.players[seat].roundPIP;
+                    $bar.width('100%');
+                } else {
+                    var percent = diff / width;
+                    $bar.width(percent * 100 + '%');
+                    scope.raiseAmount = (
+                        // slider-fill/width ~ raiseAmount/maxRaiseAmount
+                        Math.round(percent * $element.attr('max') / step) *
+                        step);
                 }
-                var percent = diff / width;
-                $bar.width(percent * 100 + '%');
-                scope.raiseAmount = (
-                    // slider-fill/width ~ raiseAmount/maxRaiseAmount, stepped
-                    Math.round(percent * $element.attr('max') / step) * step);
                 scope.$apply();
             }), 25));
 

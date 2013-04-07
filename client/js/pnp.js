@@ -9,7 +9,6 @@ var PNPGame = function ($scope, $rootScope, notify) {
         gs.addPlayer();
         gs.newHand();
         _syncView(true);
-        initSlider($scope);
         _nextTurn();
     };
 

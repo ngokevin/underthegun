@@ -42,8 +42,8 @@
       float: left;
       position: relative; }
     .overlay .inner-overlay .button.cancel {
-      width: 37%;
       left: 2.5%;
-      margin-right: 5.5%; }
+      margin-right: 5.5%;
+      width: 37%; }
     .overlay .inner-overlay .button.submit {
       width: 55%; }

@@ -50,8 +50,6 @@ function LobbyCtrl($scope, $rootScope, notify, pubsub) {
 
 
 function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
-    // $('.bet-slider').slider();
-
     var socketsInitialized;
     pubsub.subscribe('new-game', function(data) {
         $scope.pnp = false;
@@ -84,18 +82,19 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         return 'Call';
     };
 
-    $scope.betRaiseText = function(addTo) {
+    $scope.betRaiseText = function(raiseBtn) {
+        // Changes text of button [bet, raise, all-in] depending on context.
         var gs = $scope.gs;
         var seat = $scope.seat;
-
         // Default.
-        var raiseText = addTo ? ' to' : '';
+        var raiseText = raiseBtn ? ' to' : '';
         if (!gs) {
             return 'Raise';
         }
         // All-in.
         if ($scope.raiseAmount >= gs.players[seat].chips +
-                                  gs.players[seat].roundPIP) {
+                                  gs.players[seat].roundPIP &&
+            raiseBtn) {
             return 'All-in';
         }
         // Raise.
@@ -133,9 +132,6 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
                 $scope.raiseOverlay = false;
                 break;
         }
-        resetSlider(gs, seat, true);
-        // $('#slider-fill').attr('value', '');
-
         if ($scope.pnp) {
             game.action({action: action});
         } else {
