@@ -64,6 +64,11 @@ span.button {
   background-image: -ms-linear-gradient(#8c0a0a, #7e0909);
   background-image: -o-linear-gradient(#8c0a0a, #7e0909);
   background-image: linear-gradient(#8c0a0a, #7e0909);
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
   border-radius: 3px;
   color: #ebebeb;
   cursor: pointer;

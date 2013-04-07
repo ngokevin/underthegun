@@ -68,6 +68,22 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         game.newGame();
     });
 
+    $scope.$watch('gs', function(gs) {
+        if (!gs) {
+            return;
+        }
+        var prereqActive = gs || gs.actionOn == seat || !scope.pnpOverlay;
+
+        $scope.foldActive = prereqActive;
+
+        $scope.callActive = (prereqActive &&
+            gs.availableActions.indexOf(c.ACTION_CHECK) > -1 ||
+            gs.availableActions.indexOf(c.ACTION_CALL) > -1);
+
+        $scope.raiseActive = (prereqActive &&
+            gs.availableActions.indexOf(c.ACTION_RAISE) > -1);
+    });
+
     $scope.checkCallText = function() {
         var gs = $scope.gs;
         var seat = $scope.seat;

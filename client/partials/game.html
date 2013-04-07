@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <div class="overlay" ng-class="{show: raiseOverlay}">
+  <div class="overlay" ng-class="{show: raiseActive && raiseOverlay}">
     <h3>{{ betRaiseText() }}</h3>
     <div class="inner-overlay">
       <p>Select a {{ betRaiseText() }} Amount</p>
@@ -80,23 +80,17 @@
 
   <div id="actions">
     <span class="button" ng-click="doAction('fold')"
-          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
-                     gs.availableActions.indexOf(0) == -1}">
+          ng-class="{inactive: !foldActive}">
       <span class="action">Fold</span>
     </span>
     <span class="button" ng-click="doAction('checkCall')"
-          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
-                     (gs.availableActions.indexOf(1) == -1 &&
-                      gs.availableActions.indexOf(2) == -1)}">
+          ng-class="{inactive: !callActive}">
       <span class="action c">{{ checkCallText() }}</span>
       <span class="inner-button">{{ gs.actionOn == seat && gs.toCall || '' }}</span>
     </span>
     <span class="button" ng-click="raiseOverlay = true"
-          ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
-                     gs.availableActions.indexOf(3) == -1}">
-      <span class="action c">
-        {{ betRaiseText() }}
-      </span>
+          ng-class="{inactive: !raiseActive}">
+      <span class="action c">{{ betRaiseText() }}</span>
     </span>
   </div>
 </div>
