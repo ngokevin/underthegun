@@ -69,6 +69,7 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
     });
 
     $scope.$watch('gs', function(gs) {
+        // Watchers on the game state that require some calculations.
         if (!gs) {
             return;
         }
@@ -82,6 +83,9 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
 
         $scope.raiseActive = (prereqActive &&
             gs.availableActions.indexOf(c.ACTION_RAISE) > -1);
+
+        var seat = $scope.seat;
+        $scope.maxRaiseTo = gs.players[seat].chips + gs.players[seat].roundPIP;
     });
 
     $scope.checkCallText = function() {

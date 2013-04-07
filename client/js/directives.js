@@ -37,6 +37,7 @@ angular.module('poker-app.directives', [])
 .directive('betSlider', function() {
     return {
         link: function(scope, element, attrs) {
+            // TODO: register a watcher on raiseAmount.
             var $element = $(element);
             var $bar = $('span', $element);
 
@@ -53,14 +54,11 @@ angular.module('poker-app.directives', [])
                 mouseDown = true;
                 if (!width) {
                     width = $bar.width();
-                }
-                if (!offset) {
+                } if (!offset) {
                     offset = $bar.offset().left;
-                }
-                if (!gs) {
+                } if (!gs) {
                     gs = scope.gs;
-                }
-                if (!seat) {
+                } if (!seat) {
                     seat = scope.seat;
                 }
             });
@@ -75,8 +73,7 @@ angular.module('poker-app.directives', [])
                     scope.raiseAmount = scope.gs.minRaiseTo;
                     $bar.width('0%');
                 } else if (diff > width) {
-                    scope.raiseAmount = gs.players[seat].chips +
-                                        gs.players[seat].roundPIP;
+                    scope.raiseAmount = scope.maxRaiseTo;
                     $bar.width('100%');
                 } else {
                     var percent = diff / width;
