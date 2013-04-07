@@ -39,16 +39,22 @@ angular.module('poker-app.directives', [])
         link: function(scope, element, attrs) {
             var $element = $(element);
             var $bar = $('span', $element);
+            var width;
+            var offset;
 
             var mouseDown = false;
-
-            element.bind('mousedown', function(evt) {
+            element.on('mousedown', function(evt) {
                 mouseDown = true;
+                if (!width) {
+                    // Slider is initially display:none, calc width if needed.
+                    width = $bar.width();
+                }
+                if (!offset) {
+                    offset = $bar.offset().left;
+                }
             });
 
-            var offset = $bar.offset().left;
-            var width = $bar.width();
-            element.bind('mousemove', _.throttle(_pd(function(evt) {
+            element.on('mousemove', _.throttle(_pd(function(evt) {
                 if (!mouseDown) {
                     return;
                 }
@@ -56,11 +62,13 @@ angular.module('poker-app.directives', [])
                 if (diff < 0 || diff > width) {
                     return;
                 }
-                var percent = (evt.pageX - offset) / width;
+                var percent = diff / width;
                 $bar.width(percent * 100 + '%');
-            }), 50));
+                scope.raiseAmount = Math.round(percent * $element.attr('max'));
+                scope.$apply();
+            }), 25));
 
-            element.bind('mouseup', function(evt) {
+            element.on('mouseup', function(evt) {
                 mouseDown = false;
             });
         }

@@ -8,31 +8,40 @@
   -webkit-transition: opacity 0.2s linear;
   transition: opacity 0.2s linear;
   background: url("/img/dark_bg.png");
-  border-radius: 3px;
-  position: absolute;
-  top: 39px;
+  border-radius: 2px;
+  display: none;
+  height: 66%;
   left: 0;
-  right: 1px;
   margin: 0 auto;
   opacity: 0;
+  position: absolute;
+  right: 1px;
+  top: 39px;
   width: 100%;
-  height: 66%;
   z-index: 1; }
   .overlay.show {
+    display: block;
     opacity: .985; }
   .overlay .inner-overlay {
     -moz-box-shadow: 0 0 1px 1px #282828;
     -webkit-box-shadow: 0 0 1px 1px #282828;
     box-shadow: 0 0 1px 1px #282828;
     background: #505050;
-    border-radius: 5px;
-    height: 50%;
+    border-radius: 3px;
+    height: 60%;
     margin: 0 auto;
     padding: 13px;
     position: relative;
     width: 80%; }
-    .overlay .inner-overlay .button {
-      position: absolute;
+    .overlay .inner-overlay .overlay-buttons {
       bottom: 13px;
       left: 0;
+      position: absolute;
       right: 0; }
+    .overlay .inner-overlay .button.half {
+      float: left;
+      position: relative;
+      width: 45%; }
+      .overlay .inner-overlay .button.half:first-child {
+        left: 2.5%;
+        margin-right: 7.5%; }
