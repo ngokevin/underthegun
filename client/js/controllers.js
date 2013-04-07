@@ -84,16 +84,27 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         return 'Call';
     };
 
-    $scope.betRaiseText = function() {
+    $scope.betRaiseText = function(addTo) {
         var gs = $scope.gs;
+        var seat = $scope.seat;
+
+        // Default.
+        var raiseText = addTo ? ' to' : '';
         if (!gs) {
-            return 'Raise to';
+            return 'Raise';
         }
+        // All-in.
+        if ($scope.raiseAmount >= gs.players[seat].chips +
+                                  gs.players[seat].roundPIP) {
+            return 'All-in';
+        }
+        // Raise.
         for (var i = 0; i < gs.players.length; i++) {
             if (gs.players[i].roundPIP > 0) {
-                return 'Raise to';
+                return 'Raise' + raiseText;
             }
         }
+        // Bet.
         return 'Bet';
     };
 

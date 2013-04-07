@@ -39,6 +39,9 @@ angular.module('poker-app.directives', [])
         link: function(scope, element, attrs) {
             var $element = $(element);
             var $bar = $('span', $element);
+
+            var step = $element.attr('step');
+
             var width;
             var offset;
 
@@ -60,11 +63,14 @@ angular.module('poker-app.directives', [])
                 }
                 var diff = evt.pageX - offset;
                 if (diff < 0 || diff > width) {
+                    // TODO: allow off-slider sliding, but impose min/max.
                     return;
                 }
                 var percent = diff / width;
                 $bar.width(percent * 100 + '%');
-                scope.raiseAmount = Math.round(percent * $element.attr('max'));
+                scope.raiseAmount = (
+                    // slider-fill/width ~ raiseAmount/maxRaiseAmount, stepped
+                    Math.round(percent * $element.attr('max') / step) * step);
                 scope.$apply();
             }), 25));
 

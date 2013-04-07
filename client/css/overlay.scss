@@ -35,14 +35,17 @@
             position: absolute;
             right: 0;
         }
-        .button.half {
+        .button.cancel, .button.submit {
             float: left;
             position: relative;
-            width: 45%;
-            &:first-child {
-                left: 2.5%;
-                margin-right: 7.5%;
-            }
+        }
+        .button.cancel {
+            width: 37%;
+            left: 2.5%;
+            margin-right: 5.5%;
+        }
+        .button.submit {
+            width: 55%;
         }
     }
 }

@@ -23,8 +23,11 @@
         <span></span>
       </div>
       <div class="overlay-buttons">
-        <span class="button half" ng-click="raiseOverlay = false">Cancel</span>
-        <span class="button half" ng-click="doAction('raise')">Bet or Raise</span>
+        <span class="button cancel" ng-click="raiseOverlay = false">Cancel</span>
+        <span class="button submit" ng-click="doAction('raise')">
+          {{ betRaiseText(true) }}
+          {{ raiseAmount }}
+        </span>
       </div>
     </div>
   </div>
@@ -93,9 +96,8 @@
           ng-class="{inactive: gs.actionOn != seat || pnpOverlay ||
                      gs.availableActions.indexOf(3) == -1}">
       <span class="action c">
-        {{ raiseAmount >= gs.players[seat].chips + gs.players[seat].roundPIP && 'All-in' || betRaiseText() }}
+        {{ betRaiseText(false) }}
       </span>
-      <span class="inner-button">{{ gs.actionOn == seat && raiseAmount || '' }}</span>
     </span>
   </div>
 </div>
