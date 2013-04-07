@@ -14,7 +14,7 @@
     <h3>Bet or Raise</h3>
     <div id="inner-overlay">
       <p>Select a Bet or Raise Amount</p>
-      <div ng-directive="betSlider" class="bet-slider" ng-model="raiseAmount"
+      <div bet-slider class="bet-slider" ng-model="raiseAmount"
            value="{{ gs.bigBlind * 2 || 0 }}"
            step="10" min="{{gs.minRaiseTo || 0 }}"
            max="{{ gs.players[seat].chips + gs.players[seat].roundPIP || 0}}">

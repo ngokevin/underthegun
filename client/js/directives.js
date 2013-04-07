@@ -36,14 +36,23 @@ angular.module('poker-app.directives', [])
 
 .directive('betSlider', function() {
     return {
-        restrict: 'E',
         link: function(scope, element, attrs) {
+            var mouseDown = false;
+
+            element.bind('mousedown', function(evt) {
+                mouseDown = true;
+            });
+
             element.bind('mousemove', function(evt) {
                 evt.preventDefault();
-                var touches = evt.changedTouches;
-                $(touches).each(function(idx, touch) {
-                    console.log(touch.pageX);
-                });
+                if (!mouseDown) {
+                    return;
+                }
+                console.log(evt.pageX);
+            });
+
+            element.bind('mouseup', function(evt) {
+                mouseDown = false;
             });
         }
     };
