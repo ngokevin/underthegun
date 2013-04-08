@@ -4,7 +4,7 @@
   position: relative;
   width: 50%; }
   #game #board-cards {
-    margin-top: 12px; }
+    margin-top: 36px; }
   #game .bet-slider-tabs {
     height: 13px;
     padding-bottom: 14px;
@@ -51,28 +51,33 @@
   #game .info {
     font-size: 14px;
     margin-bottom: 6px; }
-  #game #hand-info span {
-    text-transform: capitalize; }
+  #game #hand-info {
+    margin-bottom: 24px; }
+    #game #hand-info span {
+      text-transform: capitalize; }
   #game .chipstack {
     position: absolute;
-    margin-left: 240px; }
+    left: 110px;
+    top: 110px;
+    width: 100px;
+    z-index: 1; }
     #game .chipstack .chip {
       float: left; }
     #game .chipstack .chip-val {
-      position: absolute;
-      left: 30px; }
+      left: 35px;
+      position: absolute; }
     #game .chipstack .stack {
       background: url("/img/dark_bg.png");
-      border-radius: 4px 0 0 4px;
+      border-radius: 4px;
       padding: 6px 57px 6px 10px; }
-    #game .chipstack#opponent-stack {
-      margin-top: 6px; }
     #game .chipstack#player-stack {
-      margin-top: 253px; }
-    #game .chipstack#opponent-pip {
-      margin-top: 64px; }
-    #game .chipstack#player-pip {
-      margin-top: 209px; }
+      margin-top: 246px; }
+  #game .pip {
+    position: absolute;
+    margin-left: 240px;
+    top: 116px; }
+    #game .pip#player-pip {
+      margin-top: 245px; }
   #game .chip {
     -moz-box-shadow: 0 0 1px 1px #282828;
     -webkit-box-shadow: 0 0 1px 1px #282828;

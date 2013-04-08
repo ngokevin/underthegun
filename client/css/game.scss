@@ -7,7 +7,7 @@
     position: relative;
     width: 50%;
     #board-cards {
-        margin-top: 12px;
+        margin-top: 36px;
     }
     .bet-slider-tabs {
         height: 13px;
@@ -50,36 +50,39 @@
         margin-bottom: 6px;
     }
     #hand-info {
+        margin-bottom: 24px;
         span {
             text-transform: capitalize;
         }
     }
     .chipstack {
         position: absolute;
-        margin-left: 240px;
+        left: 110px;
+        top: 110px;
+        width: 100px;
+        z-index: 1;
         .chip {
             float: left;
         }
         .chip-val {
+            left: 35px;
             position: absolute;
-            left: 30px;
         }
         .stack {
             background: url('/img/dark_bg.png');
-            border-radius: 4px 0 0 4px;
+            border-radius: 4px;
             padding: 6px 57px 6px 10px;
         }
-        &#opponent-stack {
-            margin-top: 6px;
-        }
         &#player-stack {
-            margin-top: 253px;
+            margin-top: 246px;
         }
-        &#opponent-pip {
-            margin-top: 64px;
-        }
+    }
+    .pip {
+        position: absolute;
+        margin-left: 240px;
+        top: 116px;
         &#player-pip {
-            margin-top: 209px;
+            margin-top: 245px;
         }
     }
     .chip {
