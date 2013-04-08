@@ -75,7 +75,8 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         }
         var prereqActive = gs || gs.actionOn == seat || !scope.pnpOverlay;
 
-        $scope.foldActive = prereqActive;
+        $scope.foldActive = (prereqActive &&
+            gs.availableActions.indexOf(c.ACTION_FOLD) > -1);
 
         $scope.callActive = (prereqActive &&
             gs.availableActions.indexOf(c.ACTION_CHECK) > -1 ||

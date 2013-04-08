@@ -37,7 +37,6 @@ angular.module('poker-app.directives', [])
 .directive('betSlider', function() {
     return {
         link: function(scope, element, attrs) {
-            // TODO: register a watcher on raiseAmount.
             var $element = $(element);
             var $bar = $('span', $element);
 
@@ -80,7 +79,7 @@ angular.module('poker-app.directives', [])
                     $bar.width(percent * 100 + '%');
                     scope.raiseAmount = (
                         // slider-fill/width ~ raiseAmount/maxRaiseAmount
-                        Math.round(percent * $element.attr('max') / step) *
+                        Math.round(percent * scope.maxRaiseTo / step) *
                         step);
                 }
                 scope.$apply();
@@ -88,6 +87,12 @@ angular.module('poker-app.directives', [])
 
             element.on('mouseup', function(evt) {
                 mouseDown = false;
+            });
+
+            scope.$watch('raiseAmount', function(raiseAmount) {
+                console.log(raiseAmount);
+                console.log(scope.maxRaiseTo);
+                $bar.width(raiseAmount / scope.maxRaiseTo * 100 + '%');
             });
         }
     };

@@ -16,6 +16,11 @@
     <h3>{{ betRaiseText() }}</h3>
     <div class="inner-overlay">
       <p>Select a {{ betRaiseText() }} Amount</p>
+      <div class="bet-slider-tabs">
+        <span class="min" ng-click="raiseAmount = gs.minRaiseTo">Min</span>
+        <span class="pot" ng-click="raiseAmount = gs.pot">Pot</span>
+        <span class="max" ng-click="raiseAmount = maxRaiseTo">Max</span>
+      </div>
       <div bet-slider class="bet-slider" step="10">
         <span></span>
       </div>

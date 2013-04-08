@@ -9,6 +9,19 @@
     #board-cards {
         margin-top: 12px;
     }
+    .bet-slider-tabs {
+        height: 13px;
+        padding-bottom: 14px;
+        position: relative;
+        width: 100%;
+        span {
+            background: url('/img/dark_bg.png');
+            border-radius: 4px 4px 0 0;
+            float: left;
+            padding: 6px 13px;
+            margin-right: 4px;
+        }
+    }
     .bet-slider {
         @include box-shadow(inset 0 -1px 1px rgba(255,255,255,0.3));
         background: url('/img/dark_bg.png');
@@ -17,6 +30,7 @@
         padding: 10px;
         position: relative;
         > span {
+            @include transition(width .3s);
             @include gradient(rgb(43,194,83) 37%, rgb(84,240,84) 69%);
             @include box-shadow(
                 inset 0 2px 9px  rgba(255,255,255,0.3)\,

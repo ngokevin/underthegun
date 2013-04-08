@@ -5,6 +5,17 @@
   width: 50%; }
   #game #board-cards {
     margin-top: 12px; }
+  #game .bet-slider-tabs {
+    height: 13px;
+    padding-bottom: 14px;
+    position: relative;
+    width: 100%; }
+    #game .bet-slider-tabs span {
+      background: url("/img/dark_bg.png");
+      border-radius: 4px 4px 0 0;
+      float: left;
+      padding: 6px 13px;
+      margin-right: 4px; }
   #game .bet-slider {
     -moz-box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
     -webkit-box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
@@ -15,6 +26,11 @@
     padding: 10px;
     position: relative; }
     #game .bet-slider > span {
+      -moz-transition: width 0.3s;
+      -ms-transition: width 0.3s;
+      -o-transition: width 0.3s;
+      -webkit-transition: width 0.3s;
+      transition: width 0.3s;
       background-color: #54f054 69%;
       background-image: -webkit-gradient(linear, left bottom, left top, from(#2bc253 37%), to(#54f054 69%));
       background-image: -webkit-linear-gradient(#2bc253 37%, #54f054 69%);
