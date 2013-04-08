@@ -9,6 +9,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
         gs.addPlayer();
         gs.newHand();
         _syncView(true);
+        resetSlider($scope, gs);
         _nextTurn();
     };
 
@@ -46,6 +47,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
         // Switch seats (effectively rotates window).
         $scope.seat = gs.actionOn;
         $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
+        resetSlider($scope, gs);
     };
 
     var _handComplete = function() {

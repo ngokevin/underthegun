@@ -49,7 +49,6 @@ html, body {
 }
 
 span.button {
-    @include default-box-shadow();
     @include gradient($red, darken($red, 3%));
     @include transition(all .2s);
     border-radius: 3px;

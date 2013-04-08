@@ -6,7 +6,7 @@ function sockets($scope, $rootScope, notify, Socket) {
 
     Socket.on('new-game', function(gs) {
         $scope.gs = gs;
-        initSlider($scope);
+        resetSlider($scope, gs);
     });
 
     Socket.on('new-hand', function(gs) {

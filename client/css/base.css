@@ -54,9 +54,6 @@ html, body {
   width: 100%; }
 
 span.button {
-  -moz-box-shadow: 0 0 1px 1px #282828;
-  -webkit-box-shadow: 0 0 1px 1px #282828;
-  box-shadow: 0 0 1px 1px #282828;
   background-color: #7e0909;
   background-image: -webkit-gradient(linear, left bottom, left top, from(#8c0a0a), to(#7e0909));
   background-image: -webkit-linear-gradient(#8c0a0a, #7e0909);

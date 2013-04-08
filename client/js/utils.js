@@ -65,16 +65,8 @@ function strCard(card) {
 }
 
 
-function resetSlider(gs, seat, zero) {
-    return;
-    setTimeout(function() {
-        if (gs.actionOn == seat) {
-            $('.bet-slider').attr('value', zero ? gs.minRaiseTo : 0);
-            $('.bet-slider').trigger('change');
-        } else {
-            $('#slider-fill').attr('value', '');
-        }
-    });
+function resetSlider(scope, gs) {
+    scope.raiseAmount = gs.minRaiseTo;
 }
 
 
@@ -104,19 +96,6 @@ function lastActionMsg(history, seat) {
     }
     msg += '.';
     return msg;
-}
-
-
-function initSlider($scope) {
-    return;
-    $('.bet-slider').slider()
-        .on('change', function() {
-            $scope.raiseAmount = $('.bet-slider').attr('value');
-            $scope.$apply();
-        });
-    setTimeout(function() {
-        $('.bet-slider').trigger('change');
-    });
 }
 
 

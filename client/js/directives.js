@@ -52,7 +52,7 @@ angular.module('poker-app.directives', [])
             element.on('mousedown', function(evt) {
                 mouseDown = true;
                 if (!width) {
-                    width = $bar.width();
+                    width = $element.width();
                 } if (!offset) {
                     offset = $bar.offset().left;
                 } if (!gs) {
@@ -78,7 +78,7 @@ angular.module('poker-app.directives', [])
                     var percent = diff / width;
                     $bar.width(percent * 100 + '%');
                     scope.raiseAmount = (
-                        // slider-fill/width ~ raiseAmount/maxRaiseAmount
+                        // slider-fill/width ~ raiseAmount/maxRaiseTo
                         Math.round(percent * scope.maxRaiseTo / step) *
                         step);
                 }
@@ -90,8 +90,6 @@ angular.module('poker-app.directives', [])
             });
 
             scope.$watch('raiseAmount', function(raiseAmount) {
-                console.log(raiseAmount);
-                console.log(scope.maxRaiseTo);
                 $bar.width(raiseAmount / scope.maxRaiseTo * 100 + '%');
             });
         }
