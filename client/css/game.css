@@ -26,11 +26,6 @@
     padding: 10px;
     position: relative; }
     #game .bet-slider > span {
-      -moz-transition: width 0.1s;
-      -ms-transition: width 0.1s;
-      -o-transition: width 0.1s;
-      -webkit-transition: width 0.1s;
-      transition: width 0.1s;
       background-color: #54f054 69%;
       background-image: -webkit-gradient(linear, left bottom, left top, from(#2bc253 37%), to(#54f054 69%));
       background-image: -webkit-linear-gradient(#2bc253 37%, #54f054 69%);

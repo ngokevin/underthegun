@@ -49,7 +49,7 @@ angular.module('poker-app.directives', [])
             var offset;
 
             var mouseDown = false;
-            element.on('mousedown', function(evt) {
+            element.on('mousedown touchstart', function(evt) {
                 mouseDown = true;
                 if (!width) {
                     width = $element.width();
@@ -62,11 +62,16 @@ angular.module('poker-app.directives', [])
                 }
             });
 
-            element.on('mousemove', _.throttle(_pd(function(evt) {
+            element.on('mousemove touchmove', _.throttle(_pd(function(evt) {
                 if (!mouseDown) {
                     return;
                 }
-                var diff = evt.pageX - offset;
+                var diff;
+                if (evt.pageX) {
+                    diff = evt.pageX - offset;
+                } else {
+                    diff = evt.originalEvent.touches[0].pageX - offset;
+                }
 
                 if (diff < 0) {
                     scope.raiseAmount = scope.gs.minRaiseTo;
@@ -85,7 +90,7 @@ angular.module('poker-app.directives', [])
                 scope.$apply();
             }), 25));
 
-            element.on('mouseup', function(evt) {
+            element.on('mouseup touchend', function(evt) {
                 mouseDown = false;
             });
 
