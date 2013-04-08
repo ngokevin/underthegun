@@ -72,14 +72,15 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         if (!gs) {
             return;
         }
-        var prereqActive = gs || gs.actionOn == seat || !scope.pnpOverlay;
+        var prereqActive = gs.actionOn == $scope.seat ||
+                           ($scope.pnp && !$scope.pnpOverlay);
 
         $scope.foldActive = (prereqActive &&
             gs.availableActions.indexOf(c.ACTION_FOLD) > -1);
 
         $scope.callActive = (prereqActive &&
-            gs.availableActions.indexOf(c.ACTION_CHECK) > -1 ||
-            gs.availableActions.indexOf(c.ACTION_CALL) > -1);
+            (gs.availableActions.indexOf(c.ACTION_CHECK) > -1 ||
+             gs.availableActions.indexOf(c.ACTION_CALL) > -1));
 
         $scope.raiseActive = (prereqActive &&
             gs.availableActions.indexOf(c.ACTION_RAISE) > -1);
