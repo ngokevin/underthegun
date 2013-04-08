@@ -13,7 +13,6 @@ function LobbyCtrl($scope, $rootScope, notify, pubsub) {
         }
         $rootScope.enableFindGame = false;
         notify('Searching for an opponent...');
-
         if (!socket) {
             socket = io.connect('http://localhost:4001/matchmaking',
                                 {'connect timeout': 8000});
@@ -150,13 +149,23 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
             case 'raise':
                 action = {seat: seat, action: c.ACTION_RAISE,
                           amount: $scope.raiseAmount};
-                $scope.raiseOverlay = false;
                 break;
         }
+        $scope.raiseOverlay = false;
         if ($scope.pnp) {
             game.action({action: action});
         } else {
             Socket.emit('action', {action: action, gs: gs});
         }
     };
+
+    $scope.toggleRaiseOverlay = function() {
+        if ($scope.raiseOverlay) {
+            $scope.raiseOverlay = false;
+            return;
+        }
+        if ($scope.raiseActive) {
+            $scope.raiseOverlay = true;
+        }
+    }
 }
