@@ -7,7 +7,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
         gs = new Holdem.Gs();
         gs.addPlayer();
         gs.addPlayer();
-        gs.newHand();
+        _newHand();
         _syncView(true);
         resetSlider($scope, gs);
         _nextTurn();
@@ -37,56 +37,80 @@ var PNPGame = function ($scope, $rootScope, notify) {
         _syncView(true);
     };
 
-    var _pnpOverlay= function() {
-        // Shows overlay.
-        $scope.pnpOverlay = true;
-        $scope.pnpAction = lastActionMsg(gs.history, $scope.seat);
-    };
-
-    var _nextTurn = function() {
-        // Switch seats (effectively rotates window).
-        $scope.seat = gs.actionOn;
-        $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
-        resetSlider($scope, gs);
-    };
-
-    var _handComplete = function() {
-        showdown($scope, gs, notify);
-        if (gs.calcGameWinner() === null) {
-            // Next hand.
-            if (gs.winner) {
-                msg = 'Player ' + gs.winner.seat + ' won hand';
-                if (gs.winner.hand) {
-                    msg += ' with ' + c.hands[gs.winner.hand.strength];
-                }
-                notify(msg + '.');
-            }
-            setTimeout(function() {
-                // Pause for a bit, then deal a new hand.
-                gs.newHand();
-                _syncView();
-            }, 6000);
-        } else {
-            gameOver($scope, $rootScope, notify);
-        }
-    };
-
-    var _allIn = function() {
-        var delay = showdown($scope, gs, notify);
-        if (gs.calcGameWinner() !== null) {
-            setTimeout(function() {
-                gameOver($scope, $rootScope, notify);
-            }, delay);
-        }
-    };
-
-    var _syncView = function(noApply) {
+    function _syncView(noApply) {
         // Updates gs to scope, and applies scope.
         $scope.gs = gs.filter(gs.actionOn);
         if (!noApply) {
             $scope.$apply();
         }
-    };
+    }
+
+    function _pnpOverlay() {
+        // Shows overlay.
+        $scope.pnpOverlay = true;
+        $scope.pnpAction = lastActionMsg(gs.history, $scope.seat);
+    }
+
+    function _newHand() {
+        $scope.pnpOverlay = true;
+        gs.newHand();
+        $scope.pnpAction = 'Player ' + gs.actionOn + '\'s Turn';
+        notify("Dealt new hand.");
+    }
+
+    function _nextTurn() {
+        // Switch seats (effectively rotates window).
+        $scope.seat = gs.actionOn;
+        $scope.opponentSeat = $scope.seat === 0 ? 1 : 0;
+        resetSlider($scope, gs);
+    }
+
+    function _handComplete() {
+        var delay = showdown($scope, gs, notify);
+        if (gs.calcGameWinner() === null) {
+            setTimeout(function() {
+                _displayWinner();
+                _syncView();
+            }, delay);
+            setTimeout(function() {
+                // Pause for a bit, then deal a new hand.
+               _newHand();
+               _syncView();
+            }, delay + 6000);
+        } else {
+            _gameOver();
+        }
+    }
+
+    function _allIn() {
+        var delay = showdown($scope, gs, notify);
+        if (gs.calcGameWinner() !== null) {
+            _gameOver();
+        }
+    }
+
+    function _displayWinner() {
+        // Display winner.
+        if (gs.winner !== null) {
+            var hand;
+            if (gs.winner.hand) {
+                hand = c.hands[gs.winner.hand.strength];
+            }
+            if (gs.winner.seat !== -1) {
+                notify('Player ' + gs.winner.seat + ' won hand with ' + hand +
+                       '. ($' + gs.pot + ')');
+            } else {
+                notify('You both tied the hand with ' + hand + '.');
+            }
+        }
+    }
+
+    function _gameOver() {
+        notify('Player ' + gs.gameWinner + ' won!');
+            setTimeout(function() {
+                toLobby($scope, $rootScope);
+            }, delay);
+    }
 
     return {
         newGame: newGame,

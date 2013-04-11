@@ -1,15 +1,4 @@
-function gameOver($scope, $rootScope, notify, disconnect) {
-    var msg = '';
-    if (disconnect) {
-        msg = 'Opponent disconnected. ';
-    }
-    if ($scope.gs.gameWinner == $scope.seat) {
-        msg += 'You won!';
-    } else {
-        msg += 'You lost.';
-    }
-    notify(msg);
-
+function toLobby($scope, $rootScope) {
     // Switch to lobby.
     setTimeout(function() {
        $rootScope.enableFindGame = true;
@@ -99,7 +88,7 @@ function lastActionMsg(history, seat) {
 }
 
 
-function showdown($scope, gs, notify) {
+function showdown($scope, gs) {
     // Gray out buttons.
     $scope.gs.actionOn = gs.actionOn;
     $scope.gs.availableActions = gs.availableActions;
@@ -143,24 +132,6 @@ function showdown($scope, gs, notify) {
         $scope.gs.pot = gs.pot;
     }, gs.winner !== null ? delay: 0);
 
-    // Display winner.
-    if (gs.winner !== null) {
-        var hand;
-        if (gs.winner.hand) {
-            hand = c.hands[gs.winner.hand.strength];
-        }
-        setTimeout(function() {
-            if (gs.winner.seat === $scope.seat) {
-                notify('You won with ' + hand + ' and earned $' +
-                       gs.pot + '.');
-            } else if (gs.winner.seat !== $scope.seat) {
-                notify('You lost to ' + hand + '. Opponent earned $' +
-                       gs.pot + '.');
-            } else {
-                notify('You both tied the hand. Split pot.');
-            }
-        }, delay || 0);
-    }
     return delay;
 }
 
