@@ -48,7 +48,7 @@ function sockets($scope, $rootScope, notify, Socket) {
         _gameOver(true);
     });
 
-    function _gameOver(disconnnect) {
+    function _gameOver(disconnect) {
         var msg = '';
         if (disconnect) {
             msg = 'Opponent disconnected. ';

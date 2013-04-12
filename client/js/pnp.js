@@ -53,7 +53,6 @@ var PNPGame = function ($scope, $rootScope, notify) {
 
     function _newHand() {
         $scope.pnpOverlay = true;
-        // TODO: not switching.
         gs.newHand();
         $scope.pnpAction = 'Player ' + gs.actionOn + '\'s Turn';
         notify("Dealt new hand.");
