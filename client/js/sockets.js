@@ -25,16 +25,17 @@ function sockets($scope, $rootScope, notify, Socket) {
 
     Socket.on('hand-complete', function(gs) {
         var delay = showdown($scope, gs, notify);
+        $scope.activeBtns(gs);
         setTimeout(function() {
-            _displayWinner(delay, gs);
+            $rootScope.$apply(function() {
+                _displayWinner(delay, gs);
+            });
         }, delay);
 
         setTimeout(function() {
             Socket.emit('hand-complete', {gs: gs});
             $scope.gs = gs;
         }, delay || 0);
-
-        $rootScope.$apply();
     });
 
     Socket.on('game-over', function(gs) {
@@ -68,15 +69,21 @@ function sockets($scope, $rootScope, notify, Socket) {
             var hand;
             if (gs.winner.hand) {
                 hand = c.hands[gs.winner.hand.strength];
-            }
-            if (gs.winner.seat === $scope.seat) {
-                notify('You won with ' + hand + ' and earned $' +
-                       gs.pot + '.');
-            } else if (gs.winner.seat !== $scope.seat) {
-                notify('You lost to ' + hand + '. Opponent earned $' +
-                       gs.pot + '.');
+                if (gs.winner.seat === $scope.seat) {
+                    notify('You won with ' + hand + ' and earned $' +
+                           gs.pot + '.');
+                } else if (gs.winner.seat !== $scope.seat) {
+                    notify('You lost to ' + hand + '. Opponent earned $' +
+                           gs.pot + '.');
+                } else {
+                    notify('You both tied the hand. Split pot.');
+                }
             } else {
-                notify('You both tied the hand. Split pot.');
+                if (gs.winner.seat === $scope.seat) {
+                    notify('Opponent folded. ($' + gs.pot + ')');
+                } else if (gs.winner.seat !== $scope.seat) {
+                    notify('You folded. Opponent won $' + gs.pot + '.');
+                }
             }
         }
     }

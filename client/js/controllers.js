@@ -72,6 +72,13 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
         if (!gs) {
             return;
         }
+        $scope.activeBtns(gs);
+
+        var seat = $scope.seat;
+        $scope.maxRaiseTo = gs.players[seat].chips + gs.players[seat].roundPIP;
+    });
+
+    $scope.activeBtns = function(gs) {
         var prereqActive = gs.actionOn == $scope.seat ||
                            ($scope.pnp && !$scope.pnpOverlay);
 
@@ -84,10 +91,7 @@ function PokerCtrl($scope, $rootScope, notify, pubsub, Socket) {
 
         $scope.raiseActive = (prereqActive &&
             gs.availableActions.indexOf(c.ACTION_RAISE) > -1);
-
-        var seat = $scope.seat;
-        $scope.maxRaiseTo = gs.players[seat].chips + gs.players[seat].roundPIP;
-    });
+    };
 
     $scope.checkCallText = function() {
         var gs = $scope.gs;

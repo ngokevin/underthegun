@@ -53,6 +53,7 @@ var PNPGame = function ($scope, $rootScope, notify) {
 
     function _newHand() {
         $scope.pnpOverlay = true;
+        // TODO: not switching.
         gs.newHand();
         $scope.pnpAction = 'Player ' + gs.actionOn + '\'s Turn';
         notify("Dealt new hand.");
@@ -78,14 +79,14 @@ var PNPGame = function ($scope, $rootScope, notify) {
                _syncView();
             }, delay + 6000);
         } else {
-            _gameOver();
+            _gameOver(delay);
         }
     }
 
     function _allIn() {
         var delay = showdown($scope, gs, notify);
         if (gs.calcGameWinner() !== null) {
-            _gameOver();
+            _gameOver(delay);
         }
     }
 
@@ -95,21 +96,28 @@ var PNPGame = function ($scope, $rootScope, notify) {
             var hand;
             if (gs.winner.hand) {
                 hand = c.hands[gs.winner.hand.strength];
-            }
-            if (gs.winner.seat !== -1) {
-                notify('Player ' + gs.winner.seat + ' won hand with ' + hand +
-                       '. ($' + gs.pot + ')');
+                if (gs.winner.seat !== -1) {
+                    notify('Player ' + gs.winner.seat + ' won hand with '+
+                            hand + '. ($' + gs.pot + ')');
+                } else {
+                    notify('You both tied the hand with ' + hand + '.');
+                }
             } else {
-                notify('You both tied the hand with ' + hand + '.');
+                var loser = gs.winner.seat === 0 ? 1 : 0;
+                notify('Player ' + loser + ' folded. Player ' +
+                       gs.winner.seat + ' won $' + gs.pot + '.');
             }
         }
     }
 
-    function _gameOver() {
-        notify('Player ' + gs.gameWinner + ' won!');
-            setTimeout(function() {
-                toLobby($scope, $rootScope);
-            }, delay);
+    function _gameOver(delay) {
+        setTimeout(function() {
+            notify('Player ' + gs.gameWinner + ' won!');
+            _syncView();
+        }, delay);
+        setTimeout(function() {
+            toLobby($scope, $rootScope);
+        }, delay + 6000);
     }
 
     return {
