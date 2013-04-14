@@ -1,10 +1,6 @@
 function LobbyCtrl($scope, $rootScope, notify, pubsub) {
     notify('Welcome to Versus Poker!');
 
-    setTimeout(function() {
-        $('.card.logo').addClass('transform');
-    }, 100);
-
     var playerId, socket;
     $scope.findGame = function() {
         // Connect to the match-making system.
